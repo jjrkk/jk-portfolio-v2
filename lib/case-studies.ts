@@ -75,6 +75,8 @@ export type CaseStudy = {
    * Placeholder items are replaced in-place when Figma exports arrive.
    */
   gallery?: CaseGalleryItem[];
+  /** Number of columns for the gallery grid. Defaults to 2. Use 3 for three even side-by-side items. */
+  galleryColumns?: 2 | 3;
 
   judgment: {
     eyebrow: string;
@@ -213,9 +215,9 @@ const VIOLET_MAGENTA: CaseStudy = {
       src: "/work/ff-reports-rose.png",
       alt: "ROSE donor lot report — egg donation clinics, Spanish localization",
       caption: "ROSE™ — Egg Donation Insights. The design system extended to donor oocyte assessment, with built-in localization.",
-      colSpan2: true,
     },
   ],
+  galleryColumns: 3,
 
   next: { slug: "modus-v", title: "Modus V", eyebrow: "Surgical navigation · Synaptive Medical" },
 };

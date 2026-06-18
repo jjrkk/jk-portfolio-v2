@@ -9,11 +9,22 @@ import type { CaseGalleryItem } from "@/lib/case-studies";
  * Sits between body beats and Judgment in CaseStudyTemplate. Only renders when
  * study.gallery is present and non-empty.
  */
-export function CaseGallery({ items }: { items: CaseGalleryItem[] }) {
+export function CaseGallery({
+  items,
+  columns = 2,
+}: {
+  items: CaseGalleryItem[];
+  columns?: 2 | 3;
+}) {
+  const gridCols =
+    columns === 3
+      ? "grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6"
+      : "grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6";
+
   return (
     <section className="bg-background pb-16 pt-4 sm:pb-20 sm:pt-6">
       <div className="px-4 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+        <div className={`grid ${gridCols}`}>
           {items.map((item, i) => (
             <Reveal key={i} delay={0.06 * i} className={item.colSpan2 ? "sm:col-span-2" : undefined}>
               <figure className={item.colSpan2 ? "sm:max-w-[50%] sm:mx-auto" : undefined}>

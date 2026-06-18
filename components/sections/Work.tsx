@@ -494,6 +494,7 @@ function CarouselText({ item }: { item: WorkItem }) {
 
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
 function WorkStage({ item }: { item: WorkItem }) {
+  const isClickable = item.kind !== "intro" && !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Springs for 3D tilt (smooth spring physics, reset on leave)
@@ -578,7 +579,10 @@ function WorkStage({ item }: { item: WorkItem }) {
   };
 
   return (
-    <div className="group relative w-full transition-transform duration-500 hover:scale-[1.015]" style={{ perspective: 1000 }}>
+    <div
+      className="group relative w-full transition-transform duration-500 hover:scale-[1.015]"
+      style={{ perspective: 1000 }}
+    >
       {/* Morphing color burst glass blobs */}
       <div className="absolute -inset-12 overflow-visible opacity-[0.34] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.50] group-hover:blur-[110px] group-hover:-inset-16">
         {/* Blob 1 - rotating clockwise (accent color) */}
@@ -624,7 +628,7 @@ function WorkStage({ item }: { item: WorkItem }) {
       </div>
       <motion.div
         ref={cardRef}
-        className={shell}
+        className={cn(shell, isClickable ? "cursor-pointer" : "")}
         style={{
           rotateX,
           rotateY,
@@ -634,26 +638,31 @@ function WorkStage({ item }: { item: WorkItem }) {
         onMouseLeave={handleMouseLeave}
       >
         {renderContent()}
-        
-        {/* Specular hairline glass border */}
-        <div 
-          className="absolute inset-0 pointer-events-none rounded-[1.5rem] z-30"
-          style={{
-            border: "1px solid transparent",
-            background: "linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(21, 19, 15, 0.12) 100%) border-box",
-            WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "destination-out",
-            maskComposite: "exclude",
-          }}
-        />
-        
+
         {/* Gloss sheen overlay */}
         <motion.div
           className="absolute inset-0 z-20 pointer-events-none mix-blend-overlay rounded-[1.5rem]"
-          style={{
-            background: glossBackground,
-          }}
+          style={{ background: glossBackground }}
         />
+
+        {/* Clickable link overlay + "View case study" hover label */}
+        {isClickable && (
+          <>
+            {/* Bottom gradient + label — fades in on hover */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-end px-6 pb-6 pt-16 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                 style={{ background: "linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 100%)" }}>
+              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/90">
+                View case study →
+              </span>
+            </div>
+            {/* Full-card link sits above the gradient so the whole card is clickable */}
+            <Link
+              href={item.href!}
+              className="absolute inset-0 z-40 cursor-pointer rounded-[1.5rem]"
+              aria-label={`View ${item.title} case study`}
+            />
+          </>
+        )}
       </motion.div>
     </div>
   );
@@ -806,47 +815,41 @@ function HorizontalCarousel({ className }: { className: string }) {
               </div>
 
               {/* Card shell */}
-              <div className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
-                {slide.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
+              {slide.kind !== "intro" && slide.href ? (
+                <Link href={slide.href} className="relative block overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={slide.image}
-                    alt={
-                      slide.kind === "intro"
-                        ? "Justin Kirkey at the whiteboard"
-                        : `${slide.title} — case study`
-                    }
+                    src={slide.image ?? ""}
+                    alt={`${slide.title} — case study`}
                     loading="eager"
                     className="block aspect-[4/3] w-full object-cover"
                   />
-                ) : (
-                  <div
-                    className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 px-8 text-center"
-                    style={{ background: "var(--accent)", opacity: 0.1 }}
-                  >
-                    <span
-                      className="font-mono text-eyebrow uppercase"
-                      style={{ color: "var(--accent)", opacity: 1 }}
+                </Link>
+              ) : (
+                <div className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
+                  {slide.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={slide.image}
+                      alt="Justin Kirkey at the whiteboard"
+                      loading="eager"
+                      className="block aspect-[4/3] w-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 px-8 text-center"
+                      style={{ background: "var(--accent)", opacity: 0.1 }}
                     >
-                      Confidential · Flagship
-                    </span>
-                  </div>
-                )}
-
-                {/* Specular hairline glass border */}
-                <div
-                  className="pointer-events-none absolute inset-0 z-30 rounded-[1.5rem]"
-                  style={{
-                    border: "1px solid transparent",
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 50%, rgba(21,19,15,0.12) 100%) border-box",
-                    WebkitMask:
-                      "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "destination-out",
-                    maskComposite: "exclude",
-                  }}
-                />
-              </div>
+                      <span
+                        className="font-mono text-eyebrow uppercase"
+                        style={{ color: "var(--accent)", opacity: 1 }}
+                      >
+                        Confidential · Flagship
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
         ))}
       </div>

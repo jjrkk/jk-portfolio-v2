@@ -17,7 +17,7 @@ export function MetaList({
   return (
     <dl className={cn("flex flex-col", className)}>
       {items.map((item) => (
-        <div key={item.label} className="border-t border-border py-4 first:pt-0">
+        <div key={item.label} className="border-t border-border py-4 first:border-t-0 first:pt-0">
           <dt>
             <Eyebrow mark={false} className="text-faint">
               {item.label}

@@ -46,7 +46,7 @@ export function CaseHero({ study }: { study: CaseStudy }) {
             </h1>
 
             {/* Hero image — overlaps the title's right/tail */}
-            <div className="relative z-10 ml-[34%] w-[66%] overflow-hidden rounded-2xl shadow-[0_40px_90px_-40px_rgba(0,0,0,0.5)]">
+            <div className="relative z-10 ml-[34%] w-[66%] overflow-hidden rounded-2xl shadow-[0_40px_90px_-40px_rgba(0,0,0,0.5)]" style={{ background: "var(--panel-bg)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={hero.src} alt={hero.alt} className="aspect-[16/11] w-full object-cover" />
             </div>

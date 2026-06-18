@@ -42,7 +42,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
           <CaseNarrative key={i} block={block} />
         ))}
         {study.gallery && study.gallery.length > 0 && (
-          <CaseGallery items={study.gallery} />
+          <CaseGallery items={study.gallery} columns={study.galleryColumns} />
         )}
         <CaseJudgment study={study} />
         <CaseImpact study={study} />
