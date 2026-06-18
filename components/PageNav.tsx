@@ -64,9 +64,9 @@ export function PageNav({
           showBackdrop ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         style={{
-          background: "rgba(247,245,242,0.88)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
+          background: "rgba(247,245,242,0.72)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
           boxShadow: "0 1px 0 0 rgba(21,19,15,0.06)",
         }}
       />
