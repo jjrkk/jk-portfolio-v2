@@ -32,6 +32,12 @@ export type CaseNarrativeBlock = {
   title: string;
   body: string[];
   figure?: CaseFigure;
+  /** Desktop layout for the figure. "below" (default) stacks it under the text;
+   *  "aside" places it in a right column next to the text for a more compact beat. */
+  figureLayout?: "below" | "aside";
+  /** Section background tone. "default" is the cream canvas; "tinted" is a
+   *  warm near-white step darker, used to add rhythm between narrative beats. */
+  sectionTone?: "default" | "tinted";
 };
 
 export type CaseGalleryItem = {
@@ -111,7 +117,7 @@ const VIOLET_MAGENTA: CaseStudy = {
   subtitle:
     "Reframing a clinical AI report around the question patients actually ask — so clinicians could hand it across the table, not narrate around it.",
   hero: {
-    src: "/work/ff-reports-hero.png",
+    src: "/work/egg-reports/ff-reports-hero.png",
     alt: "VIOLET and MAGENTA predictive fertility reports, redesigned",
   },
 
@@ -134,25 +140,28 @@ const VIOLET_MAGENTA: CaseStudy = {
     {
       eyebrow: "The problem",
       title: "A report designed for the database, not the decision",
+      figureLayout: "aside",
       body: [
         "VIOLET and MAGENTA each produced a numerical prediction of fertility outcomes — the result of a computer-vision model trained on thousands of IVF cycles. That prediction had real clinical value. But the reports reading it out led with comparative language: where a patient's result ranked against a reference population, at a moment when ranking was the last thing they needed.",
         "The downstream signal was hard to ignore. Clinicians were softening, narrating around, or quietly setting aside the report rather than handing it to a patient. A tool built to build confidence in the science was instead creating a moment of dread — and the workaround was the clinician's voice, not the design.",
       ],
       figure: {
-        src: "/work/ff-reports-before.png",
+        src: "/work/egg-reports/ff-reports-before.png",
         alt: "The original VIOLET report — dense comparative layout with buried headline number",
         caption: "The original VIOLET report. Comparative framing, buried live-birth probability, language that required clinician narration to soften.",
+        frameless: true,
       },
     },
     {
       eyebrow: "Discovery",
       title: "Two failure modes, one root cause",
+      sectionTone: "tinted",
       body: [
         "I started with a structured audit of both reports: layout, language, information hierarchy, and the sequences clinicians were actually using them in. Two failure modes emerged. The first was comparative framing: leading with a percentile positioned patients against a benchmark rather than toward an outcome. The second was information hierarchy: the single number that mattered most — an absolute live-birth probability — was buried in the detail rows.",
         "Both had the same root: the reports were organised around what the AI knew, not around what a clinician needed to say. Before removing anything, I mapped what was working quietly — the things users never filed tickets about: a cumulative multi-cycle view patients had come to rely on across appointments, and the VIOLET/MAGENTA colour signal that gave specialists an at-a-glance read. The redesign would protect both.",
       ],
       figure: {
-        src: "/work/sketches.png",
+        src: "/work/egg-reports/sketches.png",
         alt: "Synthesis of clinician feedback and redesign ideas from the discovery audit",
         caption: "Synthesised feedback from clinicians, framing failures identified in the audit, and the core redesign principles that followed.",
         frameless: true,
@@ -166,7 +175,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "Tone was a live design surface. In a regulated clinical product, the words are as much the interface as the layout — so every sentence went through the same clinical review cycle as the visual structure. What emerged was a report a clinician could hand across the table. The cumulative view and the VIOLET/MAGENTA signal stayed intact; the comparative framing and chart-junk that made the reports feel dated were stripped.",
       ],
       figure: {
-        src: "/work/ff-reports-hero-2x.png",
+        src: "/work/egg-reports/ff-reports-hero-2x.png",
         alt: "Redesigned VIOLET and MAGENTA report layouts on a light stage",
         caption:
           "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout.",
@@ -216,17 +225,17 @@ const VIOLET_MAGENTA: CaseStudy = {
   // Next swap-ins: oocyte AI imagery, localization spread, A/B iteration concepts.
   gallery: [
     {
-      src: "/work/ff-reports-violet.png",
+      src: "/work/egg-reports/ff-reports-violet.png",
       alt: "Redesigned VIOLET report — egg-freezing counselling layout",
       caption: "VIOLET™ — Egg Freezing Insights. Patient-first layout for egg-freezing counselling.",
     },
     {
-      src: "/work/ff-reports-magenta.png",
+      src: "/work/egg-reports/ff-reports-magenta.png",
       alt: "Redesigned MAGENTA report — IVF embryo-selection layout",
       caption: "MAGENTA™ — IVF Insights. The parallel redesign for embryo-selection decisions.",
     },
     {
-      src: "/work/ff-reports-rose.png",
+      src: "/work/egg-reports/ff-reports-rose.png",
       alt: "ROSE donor lot report — egg donation clinics, Spanish localization",
       caption: "ROSE™ — Egg Donation Insights. The design system extended to donor oocyte assessment, with built-in localization.",
     },
@@ -234,17 +243,17 @@ const VIOLET_MAGENTA: CaseStudy = {
   galleryColumns: 3,
 
   filmstrip: [
-    { src: "/work/violet-1@2x.png",        alt: "VIOLET report — personalized live-birth probability predictions" },
-    { src: "/work/violet-2@2x.png",        alt: "VIOLET egg images and AI predictions — microscopy grid with probability scores" },
-    { src: "/work/brochure.png",            alt: "Clinician reviewing printed VIOLET report with patient" },
-    { src: "/work/magenta-1@2x.png",       alt: "MAGENTA report — embryo quality scores and euploidy predictions" },
-    { src: "/work/magenta-2@2x.png",       alt: "MAGENTA egg assessment grid with per-oocyte MAGENTA scores" },
-    { src: "/work/rose-donor-lot-1@2x.png", alt: "ROSE donor lot report — aggregate oocyte quality assessment for egg donation clinics" },
-    { src: "/work/oocyte-images-1@2x.png", alt: "Future Fertility oocyte images report — egg microscopy with AI quality assessment" },
-    { src: "/work/download.png",            alt: "Future Fertility web app — customize and share report panel" },
+    { src: "/work/egg-reports/violet-1@2x.png",        alt: "VIOLET report — personalized live-birth probability predictions" },
+    { src: "/work/egg-reports/violet-2@2x.png",        alt: "VIOLET egg images and AI predictions — microscopy grid with probability scores" },
+    { src: "/work/egg-reports/brochure.png",            alt: "Clinician reviewing printed VIOLET report with patient" },
+    { src: "/work/egg-reports/magenta-1@2x.png",       alt: "MAGENTA report — embryo quality scores and euploidy predictions" },
+    { src: "/work/egg-reports/magenta-2@2x.png",       alt: "MAGENTA egg assessment grid with per-oocyte MAGENTA scores" },
+    { src: "/work/egg-reports/rose-donor-lot-1@2x.png", alt: "ROSE donor lot report — aggregate oocyte quality assessment for egg donation clinics" },
+    { src: "/work/egg-reports/oocyte-images-1@2x.png", alt: "Future Fertility oocyte images report — egg microscopy with AI quality assessment" },
+    { src: "/work/egg-reports/download.png",            alt: "Future Fertility web app — customize and share report panel" },
   ],
 
-  next: { slug: "modus-v", title: "Modus V", eyebrow: "Surgical navigation · Synaptive Medical" },
+  next: { slug: "modus-v", title: "Modus X", eyebrow: "Surgical navigation · Synaptive Medical" },
 };
 
 export const CASE_STUDIES: Record<string, CaseStudy> = {

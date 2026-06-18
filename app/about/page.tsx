@@ -8,6 +8,7 @@ import { ExperienceTimeline } from "@/components/sections/about/ExperienceTimeli
 import { LogoWall } from "@/components/sections/LogoWall";
 import { Personality } from "@/components/sections/Personality";
 import { Contact } from "@/components/sections/Contact";
+import { FooterReveal } from "@/components/ui/FooterReveal";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -31,13 +32,17 @@ export default function AboutPage() {
       <AccentReset />
       <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} />
       <main id="main-content" tabIndex={-1}>
-        <AboutHero />
-        <AboutStatement />
-        <AtWork />
-        <ExperienceTimeline />
-        <LogoWall />
-        <Personality />
-        <Contact />
+        <div className="relative z-[1]">
+          <AboutHero />
+          <AboutStatement />
+          <AtWork />
+          <ExperienceTimeline />
+          <LogoWall />
+          <Personality />
+        </div>
+        <FooterReveal>
+          <Contact />
+        </FooterReveal>
       </main>
     </>
   );
