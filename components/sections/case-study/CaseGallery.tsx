@@ -1,0 +1,40 @@
+import { Reveal } from "@/components/ui/Reveal";
+import type { CaseGalleryItem } from "@/lib/case-studies";
+
+/**
+ * A 2-column image grid — lets the work breathe visually between the narrative
+ * beats and the Judgment section. Same white-card treatment as CaseFigure but
+ * side-by-side, suited to individual product / detail shots.
+ *
+ * Sits between body beats and Judgment in CaseStudyTemplate. Only renders when
+ * study.gallery is present and non-empty.
+ */
+export function CaseGallery({ items }: { items: CaseGalleryItem[] }) {
+  return (
+    <section className="bg-background pb-16 pt-4 sm:pb-20 sm:pt-6">
+      <div className="px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+          {items.map((item, i) => (
+            <Reveal key={i} delay={0.06 * i}>
+              <figure>
+                <div className="rounded-2xl border border-border bg-surface p-3 shadow-[0_20px_60px_-40px_rgba(21,19,15,0.35)] sm:p-6">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className="w-full rounded-lg"
+                  />
+                </div>
+                {item.caption && (
+                  <figcaption className="mt-3 font-sans text-caption text-faint">
+                    {item.caption}
+                  </figcaption>
+                )}
+              </figure>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

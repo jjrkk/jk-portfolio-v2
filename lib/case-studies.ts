@@ -32,6 +32,12 @@ export type CaseNarrativeBlock = {
   figure?: CaseFigure;
 };
 
+export type CaseGalleryItem = {
+  src: string;
+  alt: string;
+  caption?: string;
+};
+
 export type CaseTradeoff = {
   decision: string;
   rationale: string;
@@ -60,6 +66,13 @@ export type CaseStudy = {
 
   /** Narrative beats, each an eyebrow + title + body with optional figure. */
   body: CaseNarrativeBlock[];
+
+  /**
+   * Optional image grid rendered between the narrative body and Judgment.
+   * Use for individual product shots, detail views, or process artifacts.
+   * Placeholder items are replaced in-place when Figma exports arrive.
+   */
+  gallery?: CaseGalleryItem[];
 
   judgment: {
     eyebrow: string;
@@ -113,6 +126,11 @@ const VIOLET_MAGENTA: CaseStudy = {
         "VIOLET and MAGENTA each produced a numerical prediction of fertility outcomes — the result of a computer-vision model trained on thousands of IVF cycles. That prediction had real clinical value. But the reports reading it out led with comparative language: where a patient's result ranked against a reference population, at a moment when ranking was the last thing they needed.",
         "The downstream signal was hard to ignore. Clinicians were softening, narrating around, or quietly setting aside the report rather than handing it to a patient. A tool built to build confidence in the science was instead creating a moment of dread — and the workaround was the clinician's voice, not the design.",
       ],
+      figure: {
+        src: "/work/ff-reports-before.png",
+        alt: "The original VIOLET report — dense comparative layout with buried headline number",
+        caption: "The original VIOLET report. Comparative framing, buried live-birth probability, language that required clinician narration to soften.",
+      },
     },
     {
       eyebrow: "Discovery",
@@ -175,6 +193,22 @@ const VIOLET_MAGENTA: CaseStudy = {
       { value: "One", label: "Unified report system", note: "VIOLET and MAGENTA redesigned together for the first time, under one information architecture" },
     ],
   },
+
+  // Placeholder assets — replace src values with Figma re-exports on light stages.
+  // Intended slots: VIOLET individual, MAGENTA individual, oocyte AI imagery,
+  // localization spread (Spanish / Portuguese / Italian), A/B iteration concepts.
+  gallery: [
+    {
+      src: "/work/ff-reports-violet.png",
+      alt: "Redesigned VIOLET report — egg-freezing counselling layout",
+      caption: "VIOLET — Egg Freezing Insights. Patient-first layout for egg-freezing counselling.",
+    },
+    {
+      src: "/work/ff-reports-magenta.png",
+      alt: "Redesigned MAGENTA report — IVF embryo-selection layout",
+      caption: "MAGENTA — IVF Insights. The parallel redesign for embryo-selection decisions.",
+    },
+  ],
 
   next: { slug: "modus-v", title: "Modus V", eyebrow: "Surgical navigation · Synaptive Medical" },
 };

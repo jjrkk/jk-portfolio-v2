@@ -8,6 +8,7 @@ import { CaseOverview } from "./CaseOverview";
 import { CaseNarrative } from "./CaseNarrative";
 import { CaseJudgment } from "./CaseJudgment";
 import { CaseImpact } from "./CaseImpact";
+import { CaseGallery } from "./CaseGallery";
 import { CaseNext } from "./CaseNext";
 import { Contact } from "@/components/sections/Contact";
 
@@ -40,6 +41,9 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
         {study.body.map((block, i) => (
           <CaseNarrative key={i} block={block} />
         ))}
+        {study.gallery && study.gallery.length > 0 && (
+          <CaseGallery items={study.gallery} />
+        )}
         <CaseJudgment study={study} />
         <CaseImpact study={study} />
         {study.next && <CaseNext next={study.next} />}
