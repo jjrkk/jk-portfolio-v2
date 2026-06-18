@@ -30,7 +30,7 @@ export const INTRO: WorkItem = {
   title: "I design it — then build it.",
   blurb:
     "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products. Proven track record shipping innovative product features & services for startups & industry heavyweights alike.",
-  image: "/work/jk-whiteboard.png",
+  image: "/personality/jk-whiteboard.png",
   href: "/about",
   chips: [
     "15+ years",
@@ -47,10 +47,10 @@ export const WORK: WorkItem[] = [
     slug: "ff-cloud",
     kind: "project",
     eyebrow: "AI healthtech · Design lead",
-    title: "FF Cloud",
+    title: "Cloud",
     blurb:
       "Modernizing a clinical AI platform — and pioneering the human-AI workflow that built it.",
-    image: "/work/ff-cloud.png",
+    image: "/work/cloud/ff-cloud.png",
     confidential: true,
     flagship: true,
     href: "/work/ff-cloud",
@@ -62,7 +62,7 @@ export const WORK: WorkItem[] = [
     title: "Image Capture",
     blurb:
       "Rethinking the embryologist's image-capture workflow for speed, clarity, and clinical trust.",
-    image: "/work/cap-app-after-2x.png",
+    image: "/work/image-capture/cap-app-after-2x.png",
     href: "/work/cap-app-redesign",
   },
   {
@@ -72,17 +72,17 @@ export const WORK: WorkItem[] = [
     title: "Violet & Magenta",
     blurb:
       "Designing the egg- and embryo-quality reports clinicians use to counsel fertility patients.",
-    image: "/work/ff-reports-card.png",
+    image: "/work/egg-reports/ff-reports-card.png",
     href: "/work/ff-reports",
   },
   {
     slug: "modus-v",
     kind: "project",
     eyebrow: "Surgical navigation · Synaptive Medical",
-    title: "Modus V",
+    title: "Modus X",
     blurb:
       "UX for a robotic digital microscope used by surgeons in live neurosurgery.",
-    image: "/work/modus-v-hero-image.jpg",
+    image: "/work/synaptive/modus-v-hero-image.jpg",
     href: "/work/modus-v",
   },
   {
@@ -92,7 +92,7 @@ export const WORK: WorkItem[] = [
     title: "PRESTO",
     blurb:
       "Field research and service blueprinting across a transit network serving 50M+ riders.",
-    image: "/work/presto-ticketing-machines.jpg",
+    image: "/work/presto/presto-ticketing-machines.jpg",
     href: "/work/metrolinx-presto",
   },
   {
@@ -102,7 +102,7 @@ export const WORK: WorkItem[] = [
     title: "Impact",
     blurb:
       "A modular design-sprint simulation delivered to Fortune 100 teams worldwide.",
-    image: "/work/impact.png",
+    image: "/work/experiencepoint/impact.png",
     href: "/work/experiencepoint-impact",
   },
 ];

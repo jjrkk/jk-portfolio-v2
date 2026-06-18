@@ -29,10 +29,10 @@ export type ProjectTheme = {
 export const SITE_ACCENT = "#D7355D";
 
 export const PROJECT_THEMES: ProjectTheme[] = [
-  { slug: "ff-cloud", label: "FF Cloud", accent: "#40539e", panelBg: "#ebedf6", panelFg: "#15130f" },
+  { slug: "ff-cloud", label: "Cloud", accent: "#40539e", panelBg: "#ebedf6", panelFg: "#15130f" },
   { slug: "cap-app-redesign", label: "Image Capture", accent: "#6d54c9", panelBg: "#ece9f8", panelFg: "#15130f" },
   { slug: "ff-reports", label: "Violet & Magenta", accent: "#b1309a", panelBg: "#f6e7f3", panelFg: "#15130f" },
-  { slug: "modus-v", label: "Modus V", accent: "#0e8c9c", panelBg: "#e2f2f4", panelFg: "#15130f" },
+  { slug: "modus-v", label: "Modus X", accent: "#0e8c9c", panelBg: "#e2f2f4", panelFg: "#15130f" },
   { slug: "metrolinx-presto", label: "PRESTO", accent: "#3e8e57", panelBg: "#e8f2eb", panelFg: "#15130f" },
   { slug: "experiencepoint-impact", label: "Impact", accent: "#c8860e", panelBg: "#f8efdd", panelFg: "#15130f" },
 ];
