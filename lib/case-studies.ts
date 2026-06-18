@@ -36,6 +36,8 @@ export type CaseGalleryItem = {
   src: string;
   alt: string;
   caption?: string;
+  /** Span both columns — useful for a lone portrait item that would otherwise orphan. */
+  colSpan2?: boolean;
 };
 
 export type CaseTradeoff = {
@@ -99,7 +101,7 @@ const VIOLET_MAGENTA: CaseStudy = {
   subtitle:
     "Reframing a clinical AI report around the question patients actually ask — so clinicians could hand it across the table, not narrate around it.",
   hero: {
-    src: "/work/violet-magenta.png",
+    src: "/work/ff-reports-hero.png",
     alt: "VIOLET and MAGENTA predictive fertility reports, redesigned",
   },
 
@@ -148,7 +150,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "Tone was a live design surface. In a regulated clinical product, the words are as much the interface as the layout — so every sentence went through the same clinical review cycle as the visual structure. What emerged was a report a clinician could hand across the table. The cumulative view and the VIOLET/MAGENTA signal stayed intact; the comparative framing and chart-junk that made the reports feel dated were stripped.",
       ],
       figure: {
-        src: "/work/violet-magenta.png",
+        src: "/work/ff-reports-hero.png",
         alt: "Redesigned VIOLET and MAGENTA report layouts on a light stage",
         caption:
           "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout.",
@@ -190,23 +192,28 @@ const VIOLET_MAGENTA: CaseStudy = {
     metrics: [
       { value: "+18", label: "Customer NPS lift", note: "Post-launch; placeholder — final figure in progress", placeholder: true },
       { value: "Global", label: "Default from day one", note: "Every clinic using Future Fertility received the redesign at launch, Jan 2025" },
-      { value: "One", label: "Unified report system", note: "VIOLET and MAGENTA redesigned together for the first time, under one information architecture" },
+      { value: "3 products", label: "One report system", note: "VIOLET, MAGENTA, and ROSE — unified information architecture, built-in localization" },
     ],
   },
 
-  // Placeholder assets — replace src values with Figma re-exports on light stages.
-  // Intended slots: VIOLET individual, MAGENTA individual, oocyte AI imagery,
-  // localization spread (Spanish / Portuguese / Italian), A/B iteration concepts.
+  // Gallery — individual product shots showing the unified report system.
+  // Next swap-ins: oocyte AI imagery, localization spread, A/B iteration concepts.
   gallery: [
     {
       src: "/work/ff-reports-violet.png",
       alt: "Redesigned VIOLET report — egg-freezing counselling layout",
-      caption: "VIOLET — Egg Freezing Insights. Patient-first layout for egg-freezing counselling.",
+      caption: "VIOLET™ — Egg Freezing Insights. Patient-first layout for egg-freezing counselling.",
     },
     {
       src: "/work/ff-reports-magenta.png",
       alt: "Redesigned MAGENTA report — IVF embryo-selection layout",
-      caption: "MAGENTA — IVF Insights. The parallel redesign for embryo-selection decisions.",
+      caption: "MAGENTA™ — IVF Insights. The parallel redesign for embryo-selection decisions.",
+    },
+    {
+      src: "/work/ff-reports-rose.png",
+      alt: "ROSE donor lot report — egg donation clinics, Spanish localization",
+      caption: "ROSE™ — Egg Donation Insights. The design system extended to donor oocyte assessment, with built-in localization.",
+      colSpan2: true,
     },
   ],
 

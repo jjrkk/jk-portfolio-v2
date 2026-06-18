@@ -72,7 +72,7 @@ export const WORK: WorkItem[] = [
     title: "Violet & Magenta",
     blurb:
       "Designing the egg- and embryo-quality reports clinicians use to counsel fertility patients.",
-    image: "/work/violet-magenta.png",
+    image: "/work/ff-reports-card.png",
     href: "/work/ff-reports",
   },
   {

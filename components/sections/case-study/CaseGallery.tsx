@@ -15,8 +15,8 @@ export function CaseGallery({ items }: { items: CaseGalleryItem[] }) {
       <div className="px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
           {items.map((item, i) => (
-            <Reveal key={i} delay={0.06 * i}>
-              <figure>
+            <Reveal key={i} delay={0.06 * i} className={item.colSpan2 ? "sm:col-span-2" : undefined}>
+              <figure className={item.colSpan2 ? "sm:max-w-[50%] sm:mx-auto" : undefined}>
                 <div className="rounded-2xl border border-border bg-surface p-3 shadow-[0_20px_60px_-40px_rgba(21,19,15,0.35)] sm:p-6">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

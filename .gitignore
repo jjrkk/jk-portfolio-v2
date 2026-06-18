@@ -36,11 +36,24 @@ yarn-error.log*
 # vercel
 .vercel
 
+# personal career materials in assets/ — local use only
+assets/career-materials/
+
+# case-study source PDFs (internal reference docs, not served by the site)
+assets/case-studies/**/*.pdf
+
 # sensitive source docs (NDA / personal — keep out of public repo)
 docs/FF-Cloud-Context-Pack*.md
 docs/ACD-FF*.pdf
 docs/Career-Materials-Audit*.md
 docs/Justin-Kirkey-LinkedIn-Profile*.pdf
+
+# resume source/reference variants (ATS + visual ref) — local use only
+# Justin-Kirkey-Resume-Design-Leader.pdf is already committed and linked from
+# Contact — that one stays tracked. Add new filename variants here as created.
+docs/Justin-Kirkey-Resume-ATS*.pdf
+docs/Justin-Kirkey-Resume-Visual*.pdf
+docs/Justin-Kirkey-Resume-*Reference*.pdf
 
 # typescript
 *.tsbuildinfo
