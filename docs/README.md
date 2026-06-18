@@ -26,7 +26,8 @@
   section + dual-thread diagram), then Phase 5 ports the remaining 4 studies.
 - **Stack:** Next.js 16 static export · Tailwind v4 · Lenis · Framer Motion ·
   Fraunces + Geist. Target host: Cloudflare Pages.
-- **Not a git repo yet; no Cloudflare project yet** — both deferred (need Justin).
+- **Repo:** [github.com/jjrkk/jk-portfolio-v2](https://github.com/jjrkk/jk-portfolio-v2) (public). Branch → preview URL; merge to `main` → auto-deploys.
+- **Cloudflare Pages:** `jk-portfolio-v2.pages.dev`. Build: `npm run build` → `out/`, `NODE_VERSION=20`.
 
 ## How to run / verify
 
@@ -145,8 +146,7 @@
 - **Phase 7 — polish**: responsive/mobile, a11y/contrast, **perf (images are large PNGs)**,
   motion-restraint, copy proofing, OG/SEO finalize (sitemap/robots/JSON-LD done; OG art),
   analytics, base-canvas tone exploration, DNS cutover.
-- **Deferred infra:** `git init` + first commit; Cloudflare Pages project (build `next build`,
-  output `out/`).
+- **Infra: DONE** — repo live at github.com/jjrkk/jk-portfolio-v2; Cloudflare Pages at jk-portfolio-v2.pages.dev. DNS cutover (justinkirkey.com → Cloudflare) happens in Phase 7.
 
 ## Model plan (per phase)
 
