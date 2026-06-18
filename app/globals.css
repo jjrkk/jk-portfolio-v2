@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Light-first, work-dominant design system — Phase 1
+   ----------------------------------------------------------------------------
+   Tokens live in :root. Color utilities are generated via `@theme inline` so
+   the per-project scroll theming (Phase 2) can swap the :root vars at runtime
+   and every Tailwind color utility follows automatically. The type scale and
+   structural tokens use a plain `@theme` block (static values).
+   ============================================================================ */
+
+:root {
+  /* — Canvas & ink — */
+  --background: #f7f5f2; /* warm off-white: calm, premium, not clinical white */
+  --foreground: #15130f; /* near-black ink: high contrast (fixes old-site sin) */
+  --muted: #57544e; /* secondary text — passes AA on the canvas */
+  --faint: #8a8780; /* labels / tertiary — large or non-essential text only */
+  --border: #e4e0d9; /* hairline structure: "borders before shadows" */
+  --surface: #ffffff; /* light "stages" screenshots sit on — the brightest layer */
+
+  /* — Accent — site BRAND value: the violet-magenta "home" color (eyebrows,
+     links, focus, the hero before you enter a project). LOCKED via Direction A
+     (branded & harmonized). Per-project accents in lib/theme.ts override this
+     per work panel during Phase 2 scroll theming. */
+  --accent: #D7355D;
+  --accent-contrast: #fdfcfb; /* text/icon color on an accent fill */
+
+  /* — Per-project theming channel — the carousel animates these on the root
+     element as you scroll (drives the panel bg AND the page frame). Defaults
+     match the intro slide so first paint is correct before JS hydrates. */
+  --panel-bg: #f8ecf2;
+  --panel-fg: var(--foreground);
+}
+
+@theme inline {
+  /* Colors → Tailwind utilities (bg-*, text-*, border-*) that track :root */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-panel-bg: var(--panel-bg);
+  --color-panel-fg: var(--panel-fg);
+
+  /* Two-typeface system (CLAUDE.md grammar #2) */
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@theme {
+  /* ---- Type scale — fluid, "fearless" display (CLAUDE.md grammar #2) ----
+     Display tiers ride Fraunces; text tiers ride Geist. clamp() keeps titles
+     huge on desktop (display → 144px) without overflowing small screens. */
+  /* Carousel project titles — scale hard on widescreen for a bold, confident
+     read (the "fearless scale" pushed further than text-display). */
+  --text-hero: clamp(3rem, 7.5vw, 10rem);
+  --text-hero--line-height: 0.9;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 600;
+
+  --text-display: clamp(3.25rem, 8vw, 9rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.025em;
+  --text-display--font-weight: 600;
+
+  --text-display-sm: clamp(2.5rem, 5.5vw, 5rem);
+  --text-display-sm--line-height: 0.98;
+  --text-display-sm--letter-spacing: -0.02em;
+  --text-display-sm--font-weight: 600;
+
+  --text-title: clamp(1.75rem, 3vw, 2.75rem);
+  --text-title--line-height: 1.05;
+  --text-title--letter-spacing: -0.015em;
+  --text-title--font-weight: 600;
+
+  --text-heading: clamp(1.2rem, 1.6vw, 1.6rem);
+  --text-heading--line-height: 1.25;
+  --text-heading--letter-spacing: -0.01em;
+
+  --text-body-lg: 1.1875rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.5;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.18em;
+
+  /* ---- Structure ---- */
+  --container-page: 88rem; /* 1408px — generous editorial max width */
+}
+
+/* ---- Base canvas ---- */
+html {
+  scroll-behavior: auto; /* Lenis owns smooth scroll; don't let CSS fight it */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Let Fraunces' optical-size axis track the font-size automatically, so big
+   titles get the high-contrast display cut and smaller serif stays readable. */
+.font-serif {
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Cross-browser scrollbar hide — used by the mobile horizontal carousel */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

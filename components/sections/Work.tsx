@@ -1,0 +1,1029 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useReducedMotion,
+  useSpring,
+  type MotionValue,
+} from "framer-motion";
+import { SLIDES, type WorkItem } from "@/lib/work";
+import { PROJECT_THEMES, SITE_ACCENT, getProjectTheme } from "@/lib/theme";
+import { cn } from "@/lib/cn";
+import { hexLerp } from "@/lib/color";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { Reveal } from "@/components/ui/Reveal";
+
+/**
+ * The landing — the ENTIRE homepage is one pinned vertical card carousel:
+ * an intro slide ("Justin 101") followed by the selected work. As you scroll:
+ *  - right-side cards move as a "peeking deck" (active centered, neighbors
+ *    peeking above/below), edge-to-edge images with no frame;
+ *  - the sticky left pane crossfades its copy to the active slide;
+ *  - --panel-bg / --accent interpolate across the palette (grammar #1).
+ * One eased "playhead" drives all three; cards DWELL at center then hand off.
+ *
+ * Persistent chrome (name + counter) lives in a top bar, separate from the
+ * crossfading per-slide copy. Mobile + reduced-motion fall back to a stacked list.
+ */
+
+const TOTAL = SLIDES.length;
+const SPACING = 80; // % of stage height between adjacent cards (resting peek)
+const SCALE_FALLOFF = 0.12;
+const MIN_SCALE = 0.82;
+
+// Shared horizontal rhythm — generous gutters, scales into widescreen, capped
+// so it never sprawls on ultrawide. Top bar and content share this padding.
+const PAD = "mx-auto w-full max-w-[140rem] px-6 sm:px-10 lg:px-16 xl:px-24";
+
+// Per-slide theme: intro rides the base canvas + brand accent, then the work.
+const SLIDE_THEMES = [
+  // Intro rides a pale, cool magenta tint from the fuchsia family (cooler than
+  // the warm base canvas; pairs with the accent; reads pink against FF Cloud's
+  // blue-lavender for a clean transition).
+  { panelBg: "#f8ecf2", accent: SITE_ACCENT },
+  ...PROJECT_THEMES.map((t) => ({ panelBg: t.panelBg, accent: t.accent })),
+];
+
+/** Per-chip border/bg/text styling: accent for the new-school tag, a softer
+ *  secondary tint for old-school, plain for everything else. */
+function chipStyle(chip: string) {
+  const lower = chip.toLowerCase();
+  if (lower.includes("new school") || lower.includes("claude"))
+    return "border-accent/40 bg-accent/10 text-accent";
+  if (lower.includes("old school") || lower.includes("figma"))
+    return "border-blue-400/40 bg-blue-500/[0.08] text-blue-600/80";
+  return "border-foreground/20 text-foreground/80";
+}
+
+/** Scroll past the carousel to the Contact section below it. */
+function scrollToContact() {
+  if (typeof window === "undefined") return;
+  const el = document.getElementById("contact");
+  const lenis = (
+    window as unknown as {
+      lenis?: { scrollTo: (t: HTMLElement | number, o?: { duration?: number }) => void };
+    }
+  ).lenis;
+  if (el) {
+    if (lenis?.scrollTo) lenis.scrollTo(el, { duration: 0.85 });
+    else el.scrollIntoView({ behavior: "smooth" });
+  } else {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (lenis?.scrollTo) lenis.scrollTo(maxScroll, { duration: 0.85 });
+    else window.scrollTo({ top: maxScroll, behavior: "smooth" });
+  }
+}
+
+/** Smooth-scroll the carousel to a given slide index (clamped, Lenis-aware).
+ *  Used by the keyboard control, pagination pills, the name link, and the
+ *  intro "WORK" CTA — one source of truth for "go to slide N". */
+function scrollToSlideIndex(index: number, duration = 0.85) {
+  if (typeof window === "undefined") return;
+  const el = document.getElementById("work");
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  // Guard: on mobile the carousel is display:none — bail to native scroll.
+  if (rect.height <= window.innerHeight) return;
+  const top = rect.top + window.scrollY;
+  const i = Math.max(0, Math.min(TOTAL - 1, index));
+  const target = top + (i / (TOTAL - 1)) * (rect.height - window.innerHeight);
+  const lenis = (
+    window as unknown as {
+      lenis?: { scrollTo: (t: number, o?: { duration?: number }) => void };
+    }
+  ).lenis;
+  if (lenis?.scrollTo) lenis.scrollTo(target, { duration });
+  else window.scrollTo({ top: target, behavior: "smooth" });
+}
+
+/** Raw scroll progress (0–1) → playhead (0…TOTAL-1) with a dwell at each slide
+ *  (smootherstep per segment: flat ends = hold, steep middle = hand-off). */
+function easedPos(p: number) {
+  if (TOTAL <= 1) return 0;
+  const seg = 1 / (TOTAL - 1);
+  const i = Math.min(TOTAL - 2, Math.max(0, Math.floor(p / seg)));
+  const t = Math.min(1, Math.max(0, (p - i * seg) / seg));
+  const e = t * t * t * (t * (t * 6 - 15) + 10);
+  return i + e;
+}
+
+export function Work() {
+  const reduce = useReducedMotion();
+  if (reduce) return <StackedList className="" />;
+  return (
+    <>
+      <Carousel />
+      <HorizontalCarousel className="min-[1350px]:hidden" />
+    </>
+  );
+}
+
+/** "Justin Kirkey" chrome button with a 🍁 that bounces in from the left on hover. */
+function NameButton() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => scrollToSlideIndex(0)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative cursor-pointer font-mono text-eyebrow uppercase text-foreground transition-colors hover:text-accent"
+    >
+      <AnimatePresence>
+        {hovered && (
+          <motion.span
+            key="flag"
+            aria-hidden
+            className="pointer-events-none absolute right-full pr-2"
+            initial={{ x: -14, opacity: 0, scale: 0.5 }}
+            animate={{ x: 0, opacity: 1, scale: 1 }}
+            exit={{ x: -10, opacity: 0, transition: { duration: 0.14, ease: "easeIn" } }}
+            transition={{ type: "spring", stiffness: 380, damping: 18 }}
+          >
+            🍁
+          </motion.span>
+        )}
+      </AnimatePresence>
+      Justin Kirkey
+    </button>
+  );
+}
+
+function Carousel() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+
+  const pos = useTransform(scrollYProgress, easedPos);
+  // Spring-smoothed position drives the cards so they feel weighted and physical;
+  // raw pos still drives color vars and the active index so theming stays snappy.
+  const springPos = useSpring(pos, { stiffness: 100, damping: 26 });
+  const indices = SLIDE_THEMES.map((_, i) => i);
+  const bg = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.panelBg));
+  const accent = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.accent));
+  // Write theme vars to the ROOT element so both the section content AND the
+  // page frame (a fixed sibling) follow the scroll.
+  useMotionValueEvent(bg, "change", (v) =>
+    document.documentElement.style.setProperty("--panel-bg", v),
+  );
+  useMotionValueEvent(accent, "change", (v) =>
+    document.documentElement.style.setProperty("--accent", v),
+  );
+
+  const [active, setActive] = useState(0);
+  const activeRef = useRef(0);
+  const activeIndex = useTransform(pos, (v) => Math.round(v));
+  useMotionValueEvent(activeIndex, "change", (v) => {
+    setActive(v);
+    activeRef.current = v;
+  });
+
+  // Keyboard control: down/right → next slide (or contact footer at last slide),
+  // up/left → previous slide.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        e.preventDefault();
+        if (activeRef.current >= TOTAL - 1) scrollToContact();
+        else scrollToSlideIndex(activeRef.current + 1);
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        scrollToSlideIndex(activeRef.current - 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Snap navigation: a natural wheel/trackpad gesture commits to exactly ONE
+  // card (next/prev) and smooth-scrolls there — no free-scrub dead zone. A
+  // cooldown that refreshes while events keep arriving absorbs trackpad
+  // momentum so one flick = one card. Capture-phase + stopImmediatePropagation
+  // keeps Lenis from also free-scrolling while we're driving the deck.
+  useEffect(() => {
+    const carouselPinned = () => {
+      const el = ref.current;
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.top <= 1 && r.bottom >= window.innerHeight - 1;
+    };
+
+    let locked = false;
+    let cooldown: ReturnType<typeof setTimeout>;
+    const refresh = () => {
+      clearTimeout(cooldown);
+      cooldown = setTimeout(() => {
+        locked = false;
+      }, 480);
+    };
+    const wouldStep = (dir: number) =>
+      activeRef.current + dir >= 0 && activeRef.current + dir <= TOTAL - 1;
+
+    const drive = (dir: number, e: Event) => {
+      // At a boundary in the scroll-away direction, let native scroll carry on
+      // to whatever sits above/below the carousel.
+      if (!wouldStep(dir)) return;
+      e.preventDefault();
+      (e as Event & { stopImmediatePropagation: () => void }).stopImmediatePropagation();
+      if (locked) {
+        refresh();
+        return;
+      }
+      locked = true;
+      scrollToSlideIndex(activeRef.current + dir);
+      refresh();
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!carouselPinned() || Math.abs(e.deltaY) < 2) return;
+      drive(e.deltaY > 0 ? 1 : -1, e);
+    };
+
+    let touchY: number | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = carouselPinned() ? e.touches[0].clientY : null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchY === null || !carouselPinned()) return;
+      const dy = touchY - e.touches[0].clientY;
+      if (Math.abs(dy) < 28) return;
+      drive(dy > 0 ? 1 : -1, e);
+      touchY = null;
+    };
+
+    window.addEventListener("wheel", onWheel, { capture: true, passive: false });
+    window.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
+    window.addEventListener("touchmove", onTouchMove, { capture: true, passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel, { capture: true });
+      window.removeEventListener("touchstart", onTouchStart, { capture: true });
+      window.removeEventListener("touchmove", onTouchMove, { capture: true });
+      clearTimeout(cooldown);
+    };
+  }, []);
+
+  // Hand the root theme vars back to their defaults on unmount (so a later
+  // route doesn't inherit the last slide's accent).
+  useEffect(() => {
+    const root = document.documentElement;
+    return () => {
+      root.style.removeProperty("--panel-bg");
+      root.style.removeProperty("--accent");
+    };
+  }, []);
+
+  // Frame hand-off: once scrolled past the pinned carousel, ease the accent and
+  // panel bg from the last slide (amber) to the brand fuchsia / base canvas —
+  // so the page frame and the lower sections settle on the brand color. Scroll-
+  // driven, so it picks up seamlessly where the carousel's own theming leaves
+  // off at the boundary. (Carousel scrollYProgress clamps at 1 past the deck, so
+  // its theming doesn't fight this.)
+  useEffect(() => {
+    const root = document.documentElement;
+    const last = SLIDE_THEMES[SLIDE_THEMES.length - 1];
+    const onScroll = () => {
+      const el = ref.current;
+      if (!el || el.offsetHeight === 0) return; // hidden on mobile → skip
+      const docTop = el.getBoundingClientRect().top + window.scrollY;
+      const releaseStart = docTop + el.offsetHeight - window.innerHeight;
+      const beyond = window.scrollY - releaseStart;
+      if (beyond <= 0) return; // inside the carousel — its theming handles it
+      const t = Math.min(1, beyond / (window.innerHeight * 0.4));
+      root.style.setProperty("--accent", hexLerp(last.accent, SITE_ACCENT, t));
+      root.style.setProperty("--panel-bg", hexLerp(last.panelBg, "#f7f5f2", t));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <section
+      id="work"
+      ref={ref}
+      className="relative hidden bg-panel-bg min-[1350px]:block"
+      style={{ height: `${TOTAL * 100}vh` }}
+    >
+      <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
+        {/* Persistent chrome — name (links to slide 1) + progress counter.
+            z above the deck (cards reach z-50) so it never gets occluded. */}
+        <div className={`${PAD} relative z-[60] flex items-center justify-between pt-12 lg:pt-14`}>
+          <NameButton />
+          <Link
+            href="/about"
+            className="group inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
+          >
+            About
+            <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
+              →
+            </span>
+          </Link>
+        </div>
+
+        <Pagination active={active} onJump={scrollToSlideIndex} />
+
+        {/* Centered stage — card gets the larger share; tight gap to the copy */}
+        <div className={`${PAD} flex flex-1 items-center`}>
+          <div className="grid w-full grid-cols-12 items-center gap-x-12">
+            <div className="relative col-span-5 min-h-[520px]">
+              <AnimatePresence mode="wait">
+                <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} />
+              </AnimatePresence>
+            </div>
+            <div className="relative col-span-7 h-[66vh]">
+              {SLIDES.map((item, i) => (
+                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+/** Right-edge progress pills — a tick per slide; click to jump. */
+function Pagination({
+  active,
+  onJump,
+}: {
+  active: number;
+  onJump: (i: number) => void;
+}) {
+  return (
+    <div className="absolute right-6 top-1/2 z-[60] flex -translate-y-1/2 flex-col items-end gap-3 xl:right-10">
+      {SLIDES.map((s, i) => {
+        const isActive = i === active;
+        return (
+          <button
+            key={s.slug}
+            type="button"
+            onClick={() => onJump(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            aria-current={isActive ? "true" : undefined}
+            className="group flex h-4 w-8 cursor-pointer items-center justify-end"
+          >
+            <span
+              className={cn(
+                "h-px rounded-full transition-all duration-300",
+                isActive
+                  ? "w-7 bg-accent"
+                  : "w-3.5 bg-foreground/25 group-hover:w-5 group-hover:bg-foreground/50",
+              )}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function CarouselCard({
+  item,
+  index,
+  pos,
+}: {
+  item: WorkItem;
+  index: number;
+  pos: MotionValue<number>;
+}) {
+  const y = useTransform(pos, (p) => `${(index - p) * SPACING}%`);
+  const scale = useTransform(pos, (p) =>
+    Math.max(MIN_SCALE, 1 - Math.min(Math.abs(index - p), 2) * SCALE_FALLOFF),
+  );
+  const opacity = useTransform(pos, (p) =>
+    Math.max(0, Math.min(1, 1.5 - Math.abs(index - p))),
+  );
+  const zIndex = useTransform(pos, (p) => Math.round(50 - Math.abs(index - p) * 10));
+  const pointerEvents = useTransform(pos, (p) =>
+    Math.abs(index - p) < 0.5 ? "auto" : "none",
+  );
+
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ y, scale, opacity, zIndex, pointerEvents }}
+    >
+      <WorkStage item={item} />
+    </motion.div>
+  );
+}
+
+function CarouselText({ item }: { item: WorkItem }) {
+  const isIntro = item.kind === "intro";
+
+  return (
+    <motion.div
+      className="absolute inset-y-0 left-0 right-0 flex flex-col justify-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12, transition: { duration: 0.2, ease: "easeIn" } }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+    >
+      <div className="flex flex-wrap items-center gap-3">
+        <Eyebrow>{item.eyebrow}</Eyebrow>
+        {item.confidential && (
+          <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
+            Confidential
+          </span>
+        )}
+      </div>
+
+      {isIntro ? (
+        <h1 className="mt-7 font-serif text-hero text-accent">{item.title}</h1>
+      ) : (
+        <h2 className="mt-7 font-serif text-hero text-accent">{item.title}</h2>
+      )}
+
+      <p className="mt-7 max-w-xl font-sans text-body-lg text-foreground/75">
+        {item.blurb}
+      </p>
+
+      {item.chips && (
+        <div className="mt-8 flex flex-wrap gap-2.5">
+          {item.chips.map((chip) => (
+            <span
+              key={chip}
+              className={cn(
+                "inline-flex items-center rounded-full border px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em]",
+                chipStyle(chip),
+              )}
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+        {isIntro ? (
+          <>
+            <button
+              type="button"
+              onClick={() => scrollToSlideIndex(1)}
+              className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-12px_var(--accent)] active:translate-y-0 active:scale-100 active:duration-100"
+            >
+              Work
+              <span
+                aria-hidden
+                className="transition-transform duration-300 ease-out group-hover:translate-y-0.5"
+              >
+                ↓
+              </span>
+            </button>
+            <ArrowLink href={item.href ?? "/about"}>About</ArrowLink>
+          </>
+        ) : (
+          <ArrowLink href={item.href ?? "#"}>View case study</ArrowLink>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+/** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
+function WorkStage({ item }: { item: WorkItem }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Springs for 3D tilt (smooth spring physics, reset on leave)
+  const rotateX = useSpring(0, { damping: 25, stiffness: 150 });
+  const rotateY = useSpring(0, { damping: 25, stiffness: 150 });
+
+  // Springs for specular reflection/gloss (0% to 100% bounds)
+  const glossX = useSpring(50, { damping: 25, stiffness: 150 });
+  const glossY = useSpring(50, { damping: 25, stiffness: 150 });
+
+  // Transform gloss coordinates into a dynamic radial gradient background style
+  const glossBackground = useTransform(
+    [glossX, glossY],
+    ([x, y]) => `radial-gradient(circle at ${x}% ${y}%, rgba(255, 255, 255, 0.15) 0%, transparent 60%)`
+  );
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    
+    // Relative coordinates from card top-left
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Calculate rotation: maximum 4 degrees tilt
+    const MAX_ROT = 4;
+    const rY = ((mouseX / width) - 0.5) * MAX_ROT * 2; // -4 to 4
+    const rX = ((mouseY / height) - 0.5) * -MAX_ROT * 2; // -4 to 4
+
+    rotateY.set(rY);
+    rotateX.set(rX);
+
+    // Position gloss sheen under the cursor
+    const gX = (mouseX / width) * 100;
+    const gY = (mouseY / height) * 100;
+    glossX.set(gX);
+    glossY.set(gY);
+  };
+
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+    glossX.set(50);
+    glossY.set(50);
+  };
+
+  const shell =
+    "relative z-10 w-full overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]";
+
+  const renderContent = () => {
+    if (!item.image) {
+      return (
+        <div
+          className="flex aspect-[4/3] flex-col items-center justify-center gap-3 rounded-[1.5rem] bg-accent/10 px-8 text-center"
+        >
+          <span className="font-mono text-eyebrow uppercase text-accent">
+            Confidential · Flagship
+          </span>
+          <span className="max-w-sm font-sans text-caption text-foreground/60">
+            Abstracted before/after and prototype walkthrough land here in Phase&nbsp;4.
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img
+        src={item.image}
+        alt={
+          item.kind === "intro"
+            ? "Justin Kirkey sketching a product flow at the whiteboard"
+            : `${item.title} — case study preview`
+        }
+        loading="lazy"
+        className="block aspect-[4/3] w-full rounded-[1.5rem] object-cover"
+      />
+    );
+  };
+
+  return (
+    <div className="group relative w-full transition-transform duration-500 hover:scale-[1.015]" style={{ perspective: 1000 }}>
+      {/* Morphing color burst glass blobs */}
+      <div className="absolute -inset-12 overflow-visible opacity-[0.34] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.50] group-hover:blur-[110px] group-hover:-inset-16">
+        {/* Blob 1 - rotating clockwise (accent color) */}
+        <motion.div
+          className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%]"
+          style={{ background: "var(--accent)", opacity: 0.72 }}
+          animate={{
+            borderRadius: [
+              "40% 60% 70% 30% / 40% 50% 60% 50%",
+              "60% 40% 50% 70% / 50% 60% 40% 60%",
+              "50% 60% 60% 40% / 40% 40% 70% 60%",
+              "40% 60% 70% 30% / 40% 50% 60% 50%",
+            ],
+            rotate: [0, 90, 180, 360],
+            scale: [1, 1.12, 0.92, 1],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        {/* Blob 2 - rotating counter-clockwise (white highlight, creating pastel blend) */}
+        <motion.div
+          className="absolute -inset-4 rounded-[60%_40%_50%_70%_/_50%_60%_40%_60%]"
+          style={{ background: "#ffffff", opacity: 0.58 }}
+          animate={{
+            borderRadius: [
+              "60% 40% 50% 70% / 50% 60% 40% 60%",
+              "40% 60% 70% 30% / 40% 50% 60% 50%",
+              "50% 40% 60% 50% / 60% 50% 50% 60%",
+              "60% 40% 50% 70% / 50% 60% 40% 60%",
+            ],
+            rotate: [360, 270, 180, 0],
+            scale: [1, 0.9, 1.1, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+      <motion.div
+        ref={cardRef}
+        className={shell}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        {renderContent()}
+        
+        {/* Specular hairline glass border */}
+        <div 
+          className="absolute inset-0 pointer-events-none rounded-[1.5rem] z-30"
+          style={{
+            border: "1px solid transparent",
+            background: "linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(21, 19, 15, 0.12) 100%) border-box",
+            WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "destination-out",
+            maskComposite: "exclude",
+          }}
+        />
+        
+        {/* Gloss sheen overlay */}
+        <motion.div
+          className="absolute inset-0 z-20 pointer-events-none mix-blend-overlay rounded-[1.5rem]"
+          style={{
+            background: glossBackground,
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile: full-screen horizontal swipe carousel                      */
+/* ------------------------------------------------------------------ */
+
+function HorizontalCarousel({ className }: { className: string }) {
+  const [active, setActive] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(0);
+
+  const goTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const firstSlide = el.firstElementChild as HTMLElement | null;
+    if (!firstSlide) return;
+    const slideWidth = firstSlide.offsetWidth;
+    const step = slideWidth + 12; // gap-3 = 12px
+    // P = leading track padding; offsetLeft already includes it.
+    const P = firstSlide.offsetLeft;
+    el.scrollTo({ left: P + i * step + slideWidth / 2 - el.clientWidth / 2, behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const firstSlide = el.firstElementChild as HTMLElement | null;
+    if (!firstSlide) return;
+    const slideWidth = firstSlide.offsetWidth;
+    const step = slideWidth + 12;
+    const P = firstSlide.offsetLeft;
+    const idx = Math.round((el.scrollLeft + el.clientWidth / 2 - P - slideWidth / 2) / step);
+    const clamped = Math.max(0, Math.min(idx, TOTAL - 1));
+    activeRef.current = clamped;
+    setActive(clamped);
+  };
+
+  // Keyboard: right/down → next (or contact footer at last slide), left/up → prev.
+  // Guard against firing when the lg+ desktop carousel is visible.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (window.innerWidth >= 1350) return;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        if (activeRef.current >= TOTAL - 1) scrollToContact();
+        else goTo(activeRef.current + 1);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        goTo(Math.max(activeRef.current - 1, 0));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Keep root theme vars in sync with the visible slide (drives the page frame + section glow)
+  useEffect(() => {
+    const { panelBg, accent } = SLIDE_THEMES[active] ?? SLIDE_THEMES[0];
+    document.documentElement.style.setProperty("--accent", accent);
+    document.documentElement.style.setProperty("--panel-bg", panelBg);
+    // rgba variant for the section radial-gradient glow (gradients can't use hex vars directly)
+    const r = parseInt(accent.slice(1, 3), 16);
+    const g = parseInt(accent.slice(3, 5), 16);
+    const b = parseInt(accent.slice(5, 7), 16);
+    document.documentElement.style.setProperty("--accent-glow", `rgba(${r},${g},${b},0.18)`);
+  }, [active]);
+
+  useEffect(() => {
+    return () => {
+      document.documentElement.style.removeProperty("--accent");
+      document.documentElement.style.removeProperty("--panel-bg");
+      document.documentElement.style.removeProperty("--accent-glow");
+    };
+  }, []);
+
+  const item = SLIDES[active];
+  const theme = SLIDE_THEMES[active];
+  const isIntro = item?.kind === "intro";
+
+  return (
+    <section
+      className={cn(
+        "relative h-[100svh] overflow-hidden bg-panel-bg [transition:background-color_0.45s_ease]",
+        className
+      )}
+    >
+      {/* Chrome: name/counter row + pagination */}
+      <div className="absolute inset-x-0 top-0 z-20 flex flex-col gap-5 px-8 pt-10">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-eyebrow uppercase text-foreground">
+            Justin Kirkey
+          </span>
+          <Link
+            href="/about"
+            className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
+          >
+            About
+          </Link>
+        </div>
+        <div className="flex items-center justify-center gap-2.5">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={cn(
+                "rounded-full transition-all duration-300",
+                i === active
+                  ? "h-1.5 w-6 bg-accent"
+                  : "h-1.5 w-1.5 bg-foreground/25",
+              )}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Image scroll track — absolute inset-0 so shadow falls freely, no strip boundary */}
+      <div
+        ref={trackRef}
+        onScroll={handleScroll}
+        className="scrollbar-none absolute inset-0 flex snap-x snap-mandatory overflow-x-auto gap-3 px-8 pt-[5.5rem] [scroll-padding-inline:2rem]"
+      >
+        {SLIDES.map((slide, i) => (
+          <div
+            key={slide.slug}
+            className="relative w-[calc(100vw-4rem)] flex-shrink-0 snap-center pt-3"
+          >
+              {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
+              <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
+                <motion.div
+                  className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%]"
+                  style={{ background: SLIDE_THEMES[i]?.accent ?? "var(--accent)", opacity: 0.65 }}
+                  animate={{
+                    borderRadius: [
+                      "40% 60% 70% 30% / 40% 50% 60% 50%",
+                      "60% 40% 50% 70% / 50% 60% 40% 60%",
+                      "50% 60% 60% 40% / 40% 40% 70% 60%",
+                      "40% 60% 70% 30% / 40% 50% 60% 50%",
+                    ],
+                    rotate: [0, 90, 180, 360],
+                    scale: [1, 1.1, 0.92, 1],
+                  }}
+                  transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </div>
+
+              {/* Card shell */}
+              <div className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
+                {slide.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={slide.image}
+                    alt={
+                      slide.kind === "intro"
+                        ? "Justin Kirkey at the whiteboard"
+                        : `${slide.title} — case study`
+                    }
+                    loading="eager"
+                    className="block aspect-[4/3] w-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 px-8 text-center"
+                    style={{ background: "var(--accent)", opacity: 0.1 }}
+                  >
+                    <span
+                      className="font-mono text-eyebrow uppercase"
+                      style={{ color: "var(--accent)", opacity: 1 }}
+                    >
+                      Confidential · Flagship
+                    </span>
+                  </div>
+                )}
+
+                {/* Specular hairline glass border */}
+                <div
+                  className="pointer-events-none absolute inset-0 z-30 rounded-[1.5rem]"
+                  style={{
+                    border: "1px solid transparent",
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 50%, rgba(21,19,15,0.12) 100%) border-box",
+                    WebkitMask:
+                      "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "destination-out",
+                    maskComposite: "exclude",
+                  }}
+                />
+              </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Text area — starts at card bottom, no background so shadow bleeds naturally through it */}
+      <div
+        style={{ top: "calc(6.25rem + (100vw - 4rem) * 0.75)" }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 overflow-hidden"
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.28, ease: "easeOut", delay: 0.1 }}
+            style={{ "--accent": theme.accent } as React.CSSProperties}
+            className="pointer-events-auto px-8 pt-14"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <Eyebrow mark={false}>{item.eyebrow}</Eyebrow>
+              {item.confidential && (
+                <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
+                  Confidential
+                </span>
+              )}
+            </div>
+
+            {isIntro ? (
+              <h1 className="mt-3 font-serif text-display-sm text-accent">
+                {item.title}
+              </h1>
+            ) : (
+              <h2 className="mt-3 font-serif text-display-sm text-accent">
+                {item.title}
+              </h2>
+            )}
+
+            <p className="mt-2 line-clamp-2 font-sans text-body text-foreground/75">
+              {item.blurb}
+            </p>
+
+            {isIntro && item.chips && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {item.chips.map((chip) => (
+                  <span
+                    key={chip}
+                    className={cn(
+                      "inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]",
+                      chipStyle(chip),
+                    )}
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+              {isIntro ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => goTo(1)}
+                    className="group inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.22)] transition-all duration-300"
+                  >
+                    Work
+                    <span
+                      aria-hidden
+                      className="transition-transform duration-300 group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </button>
+                  <ArrowLink href={item.href ?? "/about"}>About</ArrowLink>
+                </>
+              ) : (
+                <ArrowLink href={item.href ?? "#"}>Case study</ArrowLink>
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Fallback: clean stacked list (reduced-motion only)                 */
+/* ------------------------------------------------------------------ */
+
+function StackedList({ className }: { className: string }) {
+  return (
+    <section id="work" className={className}>
+      <div className="mx-auto w-full max-w-3xl px-6 py-20 sm:px-10">
+        <div className="mb-16 flex items-center justify-between">
+          <span className="font-mono text-eyebrow uppercase text-foreground">
+            Justin Kirkey
+          </span>
+          <Link
+            href="/about"
+            className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
+          >
+            About →
+          </Link>
+        </div>
+        {SLIDES.map((item) =>
+          item.kind === "intro" ? (
+            <IntroBlock key={item.slug} item={item} />
+          ) : (
+            <StackedItem key={item.slug} item={item} />
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
+
+function IntroBlock({ item }: { item: WorkItem }) {
+  return (
+    <div className="mb-16">
+      <Eyebrow>{item.eyebrow}</Eyebrow>
+      <h1 className="mt-6 font-serif text-display-sm text-accent">{item.title}</h1>
+      <p className="mt-6 font-sans text-body-lg text-muted">{item.blurb}</p>
+      {item.chips && (
+        <div className="mt-6 flex flex-wrap gap-2">
+          {item.chips.map((chip) => (
+            <span
+              key={chip}
+              className={cn(
+                "inline-flex items-center rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em]",
+                chipStyle(chip),
+              )}
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+      )}
+      {item.image && (
+        <div className="mt-8">
+          <WorkStage item={item} />
+        </div>
+      )}
+      <div className="mt-8">
+        <ArrowLink href={item.href ?? "/about"}>About Justin</ArrowLink>
+      </div>
+    </div>
+  );
+}
+
+function StackedItem({ item }: { item: WorkItem }) {
+  const theme = getProjectTheme(item.slug);
+  return (
+    <Reveal as="div" className="mb-6">
+      <div
+        style={theme ? ({ ["--accent" as string]: theme.accent } as React.CSSProperties) : undefined}
+      >
+      <div className="flex flex-wrap items-center gap-3">
+        <Eyebrow>{item.eyebrow}</Eyebrow>
+        {item.confidential && (
+          <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
+            Confidential
+          </span>
+        )}
+      </div>
+      <h2 className="mt-4 font-serif text-title text-accent">{item.title}</h2>
+      <p className="mt-3 font-sans text-body text-foreground/75">{item.blurb}</p>
+      <div className="mt-5">
+        <WorkStage item={item} />
+      </div>
+      <div className="mt-5">
+        <ArrowLink href={item.href ?? "#"}>
+          {item.flagship ? "Read the flagship case study" : "View case study"}
+        </ArrowLink>
+      </div>
+      </div>
+    </Reveal>
+  );
+}
