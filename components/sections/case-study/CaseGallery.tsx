@@ -28,14 +28,12 @@ export function CaseGallery({
           {items.map((item, i) => (
             <Reveal key={i} delay={0.06 * i} className={item.colSpan2 ? "sm:col-span-2" : undefined}>
               <figure className={item.colSpan2 ? "sm:max-w-[50%] sm:mx-auto" : undefined}>
-                <div className="rounded-2xl border border-border bg-surface p-3 shadow-[0_20px_60px_-40px_rgba(21,19,15,0.35)] sm:p-6">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.src}
-                    alt={item.alt}
-                    className="w-full rounded-lg"
-                  />
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className="w-full rounded-xl shadow-[0_4px_32px_-4px_rgba(21,19,15,0.16)]"
+                />
                 {item.caption && (
                   <figcaption className="mt-3 font-sans text-caption text-faint">
                     {item.caption}

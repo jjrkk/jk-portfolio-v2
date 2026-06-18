@@ -143,6 +143,11 @@ const VIOLET_MAGENTA: CaseStudy = {
         "I started with a structured audit of both reports: layout, language, information hierarchy, and the sequences clinicians were actually using them in. Two failure modes emerged. The first was comparative framing: leading with a percentile positioned patients against a benchmark rather than toward an outcome. The second was information hierarchy: the single number that mattered most — an absolute live-birth probability — was buried in the detail rows.",
         "Both had the same root: the reports were organised around what the AI knew, not around what a clinician needed to say. Before removing anything, I mapped what was working quietly — the things users never filed tickets about: a cumulative multi-cycle view patients had come to rely on across appointments, and the VIOLET/MAGENTA colour signal that gave specialists an at-a-glance read. The redesign would protect both.",
       ],
+      figure: {
+        src: "/work/sketches.png",
+        alt: "Synthesis of clinician feedback and redesign ideas from the discovery audit",
+        caption: "Synthesised feedback from clinicians, framing failures identified in the audit, and the core redesign principles that followed.",
+      },
     },
     {
       eyebrow: "Approach",
@@ -152,7 +157,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "Tone was a live design surface. In a regulated clinical product, the words are as much the interface as the layout — so every sentence went through the same clinical review cycle as the visual structure. What emerged was a report a clinician could hand across the table. The cumulative view and the VIOLET/MAGENTA signal stayed intact; the comparative framing and chart-junk that made the reports feel dated were stripped.",
       ],
       figure: {
-        src: "/work/ff-reports-hero.png",
+        src: "/work/ff-reports-hero-2x.png",
         alt: "Redesigned VIOLET and MAGENTA report layouts on a light stage",
         caption:
           "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout.",
