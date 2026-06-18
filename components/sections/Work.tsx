@@ -218,35 +218,62 @@ function Carousel() {
       return r.top <= 1 && r.bottom >= window.innerHeight - 1;
     };
 
-    let locked = false;
-    let cooldown: ReturnType<typeof setTimeout>;
-    const refresh = () => {
-      clearTimeout(cooldown);
-      cooldown = setTimeout(() => {
-        locked = false;
-      }, 480);
-    };
     const wouldStep = (dir: number) =>
       activeRef.current + dir >= 0 && activeRef.current + dir <= TOTAL - 1;
 
-    const drive = (dir: number, e: Event) => {
-      // At a boundary in the scroll-away direction, let native scroll carry on
-      // to whatever sits above/below the carousel.
-      if (!wouldStep(dir)) return;
-      e.preventDefault();
-      (e as Event & { stopImmediatePropagation: () => void }).stopImmediatePropagation();
-      if (locked) {
-        refresh();
-        return;
-      }
-      locked = true;
-      scrollToSlideIndex(activeRef.current + dir);
-      refresh();
+    // Velocity-aware navigation: respond immediately on the first event, then
+    // update the target slide as more delta accumulates during the same gesture.
+    // gestureStartSlide anchors the target calculation so mid-gesture updates
+    // are always relative to where the gesture began, not where we've scrolled to.
+    let gestureStartSlide = 0;
+    let accumulator = 0;
+    let gesture = false;
+    let committedTarget = -1;
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    // ~120px per slide: one mouse click (~100-120px) = 1 slide immediately.
+    // Faster/longer trackpad swipes cross thresholds to jump 2, 3, 4+ slides.
+    const velocityToSlides = (delta: number) =>
+      Math.min(TOTAL - 1, Math.max(1, Math.round(Math.abs(delta) / 120)));
+
+    const settle = () => {
+      gesture = false;
+      accumulator = 0;
+      committedTarget = -1;
+      settleTimer = null;
     };
 
     const onWheel = (e: WheelEvent) => {
       if (!carouselPinned() || Math.abs(e.deltaY) < 2) return;
-      drive(e.deltaY > 0 ? 1 : -1, e);
+      const dir = e.deltaY > 0 ? 1 : -1;
+      // At a boundary and not mid-gesture, let native scroll carry on.
+      if (!gesture && !wouldStep(dir)) return;
+      e.preventDefault();
+      (e as Event & { stopImmediatePropagation: () => void }).stopImmediatePropagation();
+
+      if (!gesture) {
+        // Capture starting slide once per gesture so accumulated delta is always
+        // measured from a fixed origin, not a moving one.
+        gestureStartSlide = activeRef.current;
+        accumulator = 0;
+        committedTarget = activeRef.current;
+        gesture = true;
+      }
+
+      accumulator += e.deltaY;
+      const rawDir = accumulator > 0 ? 1 : -1;
+      const slides = velocityToSlides(accumulator);
+      const target = Math.max(0, Math.min(TOTAL - 1, gestureStartSlide + rawDir * slides));
+
+      // Only trigger a new scroll when the target slide actually changes —
+      // keeps rapid micro-events from retriggering identical animations.
+      if (target !== committedTarget) {
+        committedTarget = target;
+        scrollToSlideIndex(target, 0.6);
+      }
+
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(settle, 150);
     };
 
     let touchY: number | null = null;
@@ -257,7 +284,11 @@ function Carousel() {
       if (touchY === null || !carouselPinned()) return;
       const dy = touchY - e.touches[0].clientY;
       if (Math.abs(dy) < 28) return;
-      drive(dy > 0 ? 1 : -1, e);
+      const dir = dy > 0 ? 1 : -1;
+      if (!wouldStep(dir)) return;
+      e.preventDefault();
+      (e as Event & { stopImmediatePropagation: () => void }).stopImmediatePropagation();
+      scrollToSlideIndex(activeRef.current + dir);
       touchY = null;
     };
 
@@ -311,10 +342,10 @@ function Carousel() {
     <section
       id="work"
       ref={ref}
-      className="relative hidden bg-panel-bg min-[1350px]:block"
+      className="relative mx-[10px] hidden min-[1350px]:block overflow-clip rounded-b-[2rem]"
       style={{ height: `${TOTAL * 100}vh` }}
     >
-      <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
+      <div className="sticky top-0 flex h-screen flex-col overflow-hidden rounded-b-[2rem] bg-panel-bg">
         {/* Persistent chrome — name (links to slide 1) + progress counter.
             z above the deck (cards reach z-50) so it never gets occluded. */}
         <div className={`${PAD} relative z-[60] flex items-center justify-between pt-12 lg:pt-14`}>
