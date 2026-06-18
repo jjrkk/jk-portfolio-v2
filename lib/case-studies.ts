@@ -23,6 +23,8 @@ export type CaseFigure = {
   caption?: string;
   /** Render on a wide, near-full-measure light stage vs. the default centered. */
   wide?: boolean;
+  /** Skip the card border/bg wrapper (image + shadow only). Stays within Container width. */
+  frameless?: boolean;
 };
 
 export type CaseNarrativeBlock = {
@@ -153,6 +155,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         src: "/work/sketches.png",
         alt: "Synthesis of clinician feedback and redesign ideas from the discovery audit",
         caption: "Synthesised feedback from clinicians, framing failures identified in the audit, and the core redesign principles that followed.",
+        frameless: true,
       },
     },
     {

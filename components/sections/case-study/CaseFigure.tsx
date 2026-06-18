@@ -35,6 +35,28 @@ export function CaseFigure({ figure }: { figure: CaseFigureData }) {
     );
   }
 
+  if (figure.frameless) {
+    return (
+      <Container>
+        <Reveal>
+          <figure className="mx-auto max-w-4xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={figure.src}
+              alt={figure.alt}
+              className="w-full rounded-2xl shadow-[0_20px_60px_-16px_rgba(21,19,15,0.22)]"
+            />
+            {figure.caption && (
+              <figcaption className="mt-4 font-sans text-caption text-faint">
+                {figure.caption}
+              </figcaption>
+            )}
+          </figure>
+        </Reveal>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Reveal>
