@@ -8,8 +8,8 @@
  * on top of this same shape.
  *
  * ⚠️ COPY IS DRAFT. Violet & Magenta is the reference port — content is drawn
- * from the FF context pack + Justin's basics, written to be replaced/refined.
- * Metrics marked `placeholder` are stand-ins until Justin sources real figures.
+ * from Justin's project knowledge, written to be refined with real metrics and
+ * final assets. Metrics marked `placeholder` are stand-ins.
  *
  * Confidentiality (Future Fertility): no real colleague names; VIOLET/MAGENTA
  * are public product names; framed to what shipped (global launch, Jan 2025).
@@ -84,7 +84,7 @@ const VIOLET_MAGENTA: CaseStudy = {
   eyebrow: "Clinical reporting · Future Fertility",
   title: "Violet & Magenta",
   subtitle:
-    "Redesigning the egg- and embryo-quality reports clinicians use to counsel fertility patients.",
+    "Reframing a clinical AI report around the question patients actually ask — so clinicians could hand it across the table, not narrate around it.",
   hero: {
     src: "/work/violet-magenta.png",
     alt: "VIOLET and MAGENTA predictive fertility reports, redesigned",
@@ -92,7 +92,7 @@ const VIOLET_MAGENTA: CaseStudy = {
 
   overview: [
     "Future Fertility uses AI to assess egg and embryo quality from microscope images taken in IVF and egg-freezing labs. The output is a predictive report — VIOLET for egg-freezing counselling, MAGENTA for embryo-selection decisions — that a clinician walks a patient through at one of the most emotionally charged moments in their care.",
-    "The reports worked, but they read like clinical printouts: comparative framing, a buried headline number, and language that could distress a patient rather than inform a decision. I led the redesign that reframed them around the question patients actually ask — what does this mean for me? — and shipped it as the global default.",
+    "The reports worked, but they read like clinical printouts: comparative framing, a buried headline number, and language that was distressing patients rather than informing decisions. I led the redesign across both VIOLET and MAGENTA — working with clinical, engineering, and product — to ship a unified report system a clinician could hand to a patient. It launched as the global default in January 2025.",
   ],
   meta: [
     { label: "Role", value: "Product Design Lead" },
@@ -108,24 +108,32 @@ const VIOLET_MAGENTA: CaseStudy = {
   body: [
     {
       eyebrow: "The problem",
-      title: "A clinical tool that read like a printout",
+      title: "A report designed for the database, not the decision",
       body: [
-        "A report's real job is to turn an AI prediction into a decision a patient can make. But the existing layout led with comparative language — telling someone their result sat below a benchmark at exactly the wrong moment — and made the single most important number, an absolute probability of a live birth, hard to find.",
-        "The downstream effect was telling: clinicians were softening, narrating around, or quietly setting aside the report rather than handing it to a patient. A tool meant to build confidence in the science was undercutting it.",
+        "VIOLET and MAGENTA each produced a numerical prediction of fertility outcomes — the result of a computer-vision model trained on thousands of IVF cycles. That prediction had real clinical value. But the reports reading it out led with comparative language: where a patient's result ranked against a reference population, at a moment when ranking was the last thing they needed.",
+        "The downstream signal was hard to ignore. Clinicians were softening, narrating around, or quietly setting aside the report rather than handing it to a patient. A tool built to build confidence in the science was instead creating a moment of dread — and the workaround was the clinician's voice, not the design.",
+      ],
+    },
+    {
+      eyebrow: "Discovery",
+      title: "Two failure modes, one root cause",
+      body: [
+        "I started with a structured audit of both reports: layout, language, information hierarchy, and the sequences clinicians were actually using them in. Two failure modes emerged. The first was comparative framing: leading with a percentile positioned patients against a benchmark rather than toward an outcome. The second was information hierarchy: the single number that mattered most — an absolute live-birth probability — was buried in the detail rows.",
+        "Both had the same root: the reports were organised around what the AI knew, not around what a clinician needed to say. Before removing anything, I mapped what was working quietly — the things users never filed tickets about: a cumulative multi-cycle view patients had come to rely on across appointments, and the VIOLET/MAGENTA colour signal that gave specialists an at-a-glance read. The redesign would protect both.",
       ],
     },
     {
       eyebrow: "Approach",
       title: "Design for the conversation, not the database",
       body: [
-        "I reframed the report around the patient-facing question — what does this mean for me? — and led with a plain-language, absolute outcome instead of a comparative percentile. Tone became a design surface: in a regulated clinical product, the words are part of the interface.",
-        "Crucially, the redesign preserved what already worked. Before removing anything, I catalogued the quiet strengths users never file tickets about — the cumulative, multi-cycle view patients valued most, and the at-a-glance VIOLET/MAGENTA colour signal — and protected them while stripping the chart-junk that made the report feel dated.",
+        "I redesigned VIOLET and MAGENTA together for the first time — as one report system with shared information architecture. The lead changed from a percentile to a plain-language, absolute outcome: what a patient's result means for their specific treatment path, not where it ranks. The structure that followed built toward the counselling conversation, not the raw data.",
+        "Tone was a live design surface. In a regulated clinical product, the words are as much the interface as the layout — so every sentence went through the same clinical review cycle as the visual structure. What emerged was a report a clinician could hand across the table. The cumulative view and the VIOLET/MAGENTA signal stayed intact; the comparative framing and chart-junk that made the reports feel dated were stripped.",
       ],
       figure: {
         src: "/work/violet-magenta.png",
         alt: "Redesigned VIOLET and MAGENTA report layouts on a light stage",
         caption:
-          "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout. (Interim asset; final exports in progress.)",
+          "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout.",
         wide: true,
       },
     },
@@ -135,22 +143,22 @@ const VIOLET_MAGENTA: CaseStudy = {
     eyebrow: "Judgment",
     title: "The decisions that mattered",
     intro:
-      "The redesign came down to a few load-bearing calls — each a trade-off, not a default.",
+      "The redesign came down to three load-bearing calls — each a deliberate trade-off, not a default.",
     tradeoffs: [
       {
         decision: "Absolute framing over comparative framing",
         rationale:
-          "Leading with a live-birth probability instead of a percentile risked feeling blunt. But comparative language was actively distressing patients and eroding clinician trust. I chose the framing that served the counselling conversation, then softened the tone in the wording — not in the data.",
+          "Leading with a live-birth probability instead of a percentile risked feeling blunt or clinically imprecise. But comparative language was actively distressing patients before the conversation had a chance to begin. I chose the framing that served the counselling moment, then worked with the clinical team to make the wording humane — not by softening the data, but by contextualising it.",
       },
       {
-        decision: "Preserve before you simplify",
+        decision: "Protect the quiet features before simplifying anything",
         rationale:
-          "The easy win would have been a dramatic reinvention. Instead I protected the features users quietly relied on — cumulative reporting, the scannable first page, the colour-coded product badges. The result is restrained on purpose: the goal was clarity, not novelty.",
+          "The obvious redesign move would have been a clean-slate reinvention. Instead I mapped what users never complained about before touching anything: the cumulative multi-cycle view patients had come to rely on across appointments, and the scannable first-page structure. Both stayed. What came out was the comparative framing, the buried hierarchy, and the chart elements that added visual complexity without adding meaning.",
       },
       {
-        decision: "Empathy as a constraint, not a polish pass",
+        decision: "Clinical review as a design constraint, not a sign-off step",
         rationale:
-          "In a regulated clinical product, language is a safety surface. Wording went through the same clinical review as layout, so the report could be handed to a patient — not just read by a specialist.",
+          "In a regulated product used at an emotionally charged moment, language is a safety surface. Every rewritten sentence — not just the layout — went through clinical review. A phrase like 'your result falls below the average' became 'here is what this means for your next steps.' That shift changed the register of the entire report: from a printout to a tool a clinician could hand a patient.",
       },
     ],
   },
@@ -159,13 +167,12 @@ const VIOLET_MAGENTA: CaseStudy = {
     eyebrow: "Impact",
     title: "Shipped as the global default",
     body: [
-      "The redesigned reports entered development in fall 2024 and launched globally in January 2025 as the standard VIOLET and MAGENTA output — unifying two products under one patient-first system.",
+      "The redesigned reports entered development in fall 2024 and launched in January 2025 — becoming the standard output for every fertility clinic using Future Fertility from day one.",
     ],
     metrics: [
-      // PLACEHOLDER — Justin to source final figures.
-      { value: "+18", label: "Customer NPS lift", note: "Post-launch; placeholder figure", placeholder: true },
-      { value: "Global", label: "Rollout", note: "Default report for all clinics, Jan 2025" },
-      { value: "2", label: "Products unified", note: "VIOLET & MAGENTA on one report system" },
+      { value: "+18", label: "Customer NPS lift", note: "Post-launch; placeholder — final figure in progress", placeholder: true },
+      { value: "Global", label: "Default from day one", note: "Every clinic using Future Fertility received the redesign at launch, Jan 2025" },
+      { value: "One", label: "Unified report system", note: "VIOLET and MAGENTA redesigned together for the first time, under one information architecture" },
     ],
   },
 

@@ -6,31 +6,43 @@ import type { CaseStudy } from "@/lib/case-studies";
 
 /**
  * Closing "next case study" link — keeps the reader moving through the work.
- * Themed to the *next* project's accent so it previews where it leads.
+ * The section floods with the *next* project's accent so it previews where it
+ * leads and gives the page a strong visual close before Contact.
  */
 export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
   const theme = getProjectTheme(next.slug);
   return (
-    <section className="border-t border-border bg-background">
+    <section
+      className="bg-accent"
+      style={theme ? ({ "--accent": theme.accent } as React.CSSProperties) : undefined}
+    >
       <Container>
         <Link
           href={`/work/${next.slug}`}
-          className="group flex flex-col gap-4 py-16 sm:py-20"
-          style={theme ? ({ "--accent": theme.accent } as React.CSSProperties) : undefined}
+          className="group flex flex-col gap-4 py-20 sm:py-28"
         >
-          <Eyebrow>Next case study</Eyebrow>
-          <div className="flex items-baseline justify-between gap-6">
-            <span className="font-serif text-display-sm font-semibold text-foreground transition-colors group-hover:text-accent">
+          <Eyebrow mark={false} className="text-[color:var(--accent-contrast)]/70">
+            Next case study
+          </Eyebrow>
+          <div className="flex items-end justify-between gap-8">
+            <span
+              className="font-serif text-display-sm font-semibold leading-none transition-opacity duration-300 group-hover:opacity-75"
+              style={{ color: "var(--accent-contrast)" }}
+            >
               {next.title}
             </span>
             <span
               aria-hidden
-              className="font-serif text-display-sm text-accent transition-transform duration-300 ease-out group-hover:translate-x-2"
+              className="shrink-0 font-serif text-display-sm font-semibold transition-transform duration-300 ease-out group-hover:translate-x-3"
+              style={{ color: "var(--accent-contrast)" }}
             >
               →
             </span>
           </div>
-          <span className="font-mono text-eyebrow uppercase tracking-[0.14em] text-faint">
+          <span
+            className="font-mono text-eyebrow uppercase tracking-[0.14em] opacity-70"
+            style={{ color: "var(--accent-contrast)" }}
+          >
             {next.eyebrow}
           </span>
         </Link>
