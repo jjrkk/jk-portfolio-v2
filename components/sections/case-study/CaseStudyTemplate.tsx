@@ -38,18 +38,22 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
 
       <main>
         <CaseHero study={study} />
-        <CaseOverview study={study} />
-        {study.body.map((block, i) => (
-          <CaseNarrative key={i} block={block} />
-        ))}
-        {study.gallery && study.gallery.length > 0 && (
-          <CaseGallery items={study.gallery} columns={study.galleryColumns} />
-        )}
-        <CaseJudgment study={study} />
-        <CaseImpact study={study} />
-        {study.filmstrip && study.filmstrip.length > 0 && (
-          <CaseFilmstrip images={study.filmstrip} />
-        )}
+        {/* Cream content block — rounded top corners, inset to clear the PageFrame
+            boundary so the arc is fully visible rather than clipped by the 10px gap. */}
+        <div className="mx-[10px] overflow-hidden rounded-t-[2rem]">
+          <CaseOverview study={study} />
+          {study.body.map((block, i) => (
+            <CaseNarrative key={i} block={block} />
+          ))}
+          {study.gallery && study.gallery.length > 0 && (
+            <CaseGallery items={study.gallery} columns={study.galleryColumns} />
+          )}
+          <CaseJudgment study={study} />
+          <CaseImpact study={study} />
+          {study.filmstrip && study.filmstrip.length > 0 && (
+            <CaseFilmstrip images={study.filmstrip} />
+          )}
+        </div>
         {study.next && <CaseNext next={study.next} />}
         <Contact dark />
       </main>

@@ -13,7 +13,7 @@ export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
   const theme = getProjectTheme(next.slug);
   return (
     <section
-      className="bg-accent"
+      className="mx-[10px] overflow-hidden rounded-b-[2rem] bg-accent"
       style={theme ? ({ "--accent": theme.accent } as React.CSSProperties) : undefined}
     >
       <Container>
