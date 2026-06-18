@@ -7,7 +7,7 @@ import { Reveal } from "@/components/ui/Reveal";
 // the repo — swap in when available).
 const PHOTOS = [
   { src: "/personality/talk.png", alt: "Justin speaking at a design talk" },
-  { src: "/work/jk-whiteboard.png", alt: "Justin sketching at the whiteboard" },
+  { src: "/personality/jk-whiteboard.png", alt: "Justin sketching at the whiteboard" },
   { src: "/personality/candid-1.jpg", alt: "Candid" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
 ];
