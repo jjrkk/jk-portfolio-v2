@@ -28,9 +28,11 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
   return (
     <div
       style={
-        theme
-          ? ({ "--accent": theme.accent, "--panel-bg": theme.panelBg } as React.CSSProperties)
-          : undefined
+        {
+          "--accent": theme?.accent,
+          "--panel-bg": theme?.panelBg,
+          background: "var(--accent)",
+        } as React.CSSProperties
       }
     >
       {theme && <ProjectAccent accent={theme.accent} />}
