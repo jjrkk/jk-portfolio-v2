@@ -38,7 +38,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
       {theme && <ProjectAccent accent={theme.accent} />}
       <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} tone="light" />
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <CaseHero study={study} />
         {/* Cream content block — rounded top corners, inset to clear the PageFrame
             boundary so the arc is fully visible rather than clipped by the 10px gap. */}

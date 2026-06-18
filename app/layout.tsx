@@ -3,6 +3,7 @@ import { serif, sans, mono } from "./fonts";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import { PageFrame } from "@/components/PageFrame";
+import { SkipLink } from "@/components/SkipLink";
 import "./globals.css";
 
 // Per-page <title>/meta via the Next Metadata API (CLAUDE.md SEO build-in).
@@ -63,6 +64,7 @@ export default function RootLayout({
           // Static, build-time constant — no user input, safe to inline.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        <SkipLink />
         <SmoothScroll />
         <PageFrame />
         {children}

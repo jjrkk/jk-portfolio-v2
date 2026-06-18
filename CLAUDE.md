@@ -108,6 +108,20 @@ A from-scratch rebuild of Justin Kirkey's design portfolio (justinkirkey.com). T
 
 ---
 
+## Keyboard & accessibility rules (global, non-negotiable)
+
+Every page must satisfy these three things — they're wired once and maintained by convention:
+
+1. **`<main id="main-content" tabIndex={-1}>`** on every page. The `tabIndex={-1}` lets the `<SkipLink>` move keyboard focus here programmatically without putting `<main>` in the tab order.
+2. **`<SkipLink>`** is already in `layout.tsx` — first child of `<body>`. Do not remove it or add a second one.
+3. **`:focus-visible` ring** is in `globals.css` — do not add per-component focus styles; the global rule covers everything and shifts with the accent token automatically.
+
+Lenis is configured with `keyEvents: true` (explicit in `SmoothScroll.tsx`), so Home / End / arrow keys / Page Up / Page Down all work smoothly via the smooth scroller.
+
+Future interactive components (carousels, modals, dropdowns) should additionally handle `Escape` to dismiss and arrow keys to navigate within the component — but that's per-component work, not the baseline above.
+
+---
+
 ## Do-nots / guardrails
 
 - Don't clone Robin Noguier — grammar only, plus Justin's own palette + signature.

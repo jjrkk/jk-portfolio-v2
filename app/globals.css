@@ -122,6 +122,14 @@ body {
   color: var(--accent-contrast);
 }
 
+/* Keyboard focus ring — consistent across all interactive elements.
+   Uses the accent token so it shifts with per-project theming. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
 /* Filmstrip outro — auto-scrolling marquee on case-study pages */
 @keyframes case-filmstrip {
   from { transform: translateX(0); }

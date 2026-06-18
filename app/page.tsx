@@ -6,7 +6,7 @@ import { Contact } from "@/components/sections/Contact";
 // (sitting on the accent-color page background) is revealed naturally below.
 export default function Home() {
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <Work />
       <Contact dark />
     </main>
