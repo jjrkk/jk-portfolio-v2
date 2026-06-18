@@ -10,6 +10,7 @@ import { CaseJudgment } from "./CaseJudgment";
 import { CaseImpact } from "./CaseImpact";
 import { CaseGallery } from "./CaseGallery";
 import { CaseNext } from "./CaseNext";
+import { CaseFilmstrip } from "./CaseFilmstrip";
 import { Contact } from "@/components/sections/Contact";
 
 /**
@@ -46,6 +47,9 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
         )}
         <CaseJudgment study={study} />
         <CaseImpact study={study} />
+        {study.filmstrip && study.filmstrip.length > 0 && (
+          <CaseFilmstrip images={study.filmstrip} />
+        )}
         {study.next && <CaseNext next={study.next} />}
         <Contact dark />
       </main>

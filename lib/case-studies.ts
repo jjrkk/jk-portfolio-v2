@@ -92,6 +92,12 @@ export type CaseStudy = {
     metrics: CaseMetric[];
   };
 
+  /**
+   * Optional filmstrip outro — auto-scrolling row of product shots that runs
+   * between Impact and the Next panel. Curated per-study; leave empty to omit.
+   */
+  filmstrip?: Array<{ src: string; alt: string }>;
+
   /** The next case study to send the reader to (color-journey order). */
   next?: { slug: string; title: string; eyebrow: string };
 };
@@ -223,6 +229,17 @@ const VIOLET_MAGENTA: CaseStudy = {
     },
   ],
   galleryColumns: 3,
+
+  filmstrip: [
+    { src: "/work/violet-1@2x.png",        alt: "VIOLET report — personalized live-birth probability predictions" },
+    { src: "/work/violet-2@2x.png",        alt: "VIOLET egg images and AI predictions — microscopy grid with probability scores" },
+    { src: "/work/brochure.png",            alt: "Clinician reviewing printed VIOLET report with patient" },
+    { src: "/work/magenta-1@2x.png",       alt: "MAGENTA report — embryo quality scores and euploidy predictions" },
+    { src: "/work/magenta-2@2x.png",       alt: "MAGENTA egg assessment grid with per-oocyte MAGENTA scores" },
+    { src: "/work/rose-donor-lot-1@2x.png", alt: "ROSE donor lot report — aggregate oocyte quality assessment for egg donation clinics" },
+    { src: "/work/oocyte-images-1@2x.png", alt: "Future Fertility oocyte images report — egg microscopy with AI quality assessment" },
+    { src: "/work/download.png",            alt: "Future Fertility web app — customize and share report panel" },
+  ],
 
   next: { slug: "modus-v", title: "Modus V", eyebrow: "Surgical navigation · Synaptive Medical" },
 };

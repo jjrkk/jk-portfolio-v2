@@ -122,6 +122,12 @@ body {
   color: var(--accent-contrast);
 }
 
+/* Filmstrip outro — auto-scrolling marquee on case-study pages */
+@keyframes case-filmstrip {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 /* Cross-browser scrollbar hide — used by the mobile horizontal carousel */
 .scrollbar-none {
   scrollbar-width: none;
