@@ -33,8 +33,8 @@ export const INTRO: WorkItem = {
   image: "/personality/jk-whiteboard.png",
   href: "/about",
   chips: [
-    "15+ years",
     "UX/UI",
+    "Product",
     "Healthcare & regulated",
     "Consumer tech",
     "New school: build w/ Claude Code",
