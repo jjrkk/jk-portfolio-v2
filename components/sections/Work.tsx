@@ -824,7 +824,7 @@ function HorizontalCarousel({ className }: { className: string }) {
         {SLIDES.map((slide, i) => (
           <div
             key={slide.slug}
-            className="relative w-[calc(100vw-4rem)] flex-shrink-0 snap-center pt-3"
+            className="relative w-[calc(100vw-6rem)] flex-shrink-0 snap-center pt-3"
           >
               {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
               <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
@@ -887,7 +887,7 @@ function HorizontalCarousel({ className }: { className: string }) {
 
       {/* Text area — starts at card bottom, no background so shadow bleeds naturally through it */}
       <div
-        style={{ top: "calc(6.25rem + (100vw - 4rem) * 0.75)" }}
+        style={{ top: "calc(6.25rem + (100vw - 6rem) * 0.75)" }}
         className="pointer-events-none absolute inset-x-0 bottom-0 z-10 overflow-hidden"
       >
         <AnimatePresence mode="wait">
@@ -898,7 +898,7 @@ function HorizontalCarousel({ className }: { className: string }) {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.28, ease: "easeOut", delay: 0.1 }}
             style={{ "--accent": theme.accent } as React.CSSProperties}
-            className="pointer-events-auto px-8 pt-14"
+            className="pointer-events-auto px-8 pt-8"
           >
             <div className="flex flex-wrap items-center gap-2">
               <Eyebrow mark={false}>{item.eyebrow}</Eyebrow>

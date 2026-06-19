@@ -29,7 +29,7 @@ export const INTRO: WorkItem = {
   eyebrow: "AI-Native Product Design Leader",
   title: "I design it — then build it.",
   blurb:
-    "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products. Proven track record shipping innovative product features & services for startups & industry heavyweights alike.",
+    "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products.",
   image: "/personality/jk-whiteboard.png",
   href: "/about",
   chips: [
