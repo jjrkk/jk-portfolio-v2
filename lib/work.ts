@@ -35,7 +35,7 @@ export const INTRO: WorkItem = {
   chips: [
     "UX/UI",
     "Product",
-    "Healthcare & regulated",
+    "Health tech",
     "Consumer tech",
   ],
 };
