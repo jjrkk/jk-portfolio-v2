@@ -120,7 +120,7 @@ export function Work() {
   return (
     <>
       <Carousel />
-      <HorizontalCarousel className="min-[1350px]:hidden" />
+      <HorizontalCarousel className="min-[1024px]:hidden" />
     </>
   );
 }
@@ -342,7 +342,7 @@ function Carousel() {
     <section
       id="work"
       ref={ref}
-      className="relative mx-[10px] hidden min-[1350px]:block overflow-clip rounded-b-[2rem]"
+      className="relative mx-[10px] hidden min-[1024px]:block overflow-clip rounded-b-[2rem]"
       style={{ height: `${TOTAL * 100}vh` }}
     >
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden rounded-b-[2rem] bg-panel-bg">
@@ -739,7 +739,7 @@ function HorizontalCarousel({ className }: { className: string }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (window.innerWidth >= 1350) return;
+      if (window.innerWidth >= 1024) return;
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
         if (activeRef.current >= TOTAL - 1) scrollToContact();
@@ -824,7 +824,7 @@ function HorizontalCarousel({ className }: { className: string }) {
         {SLIDES.map((slide, i) => (
           <div
             key={slide.slug}
-            className="relative w-[calc(100vw-6rem)] flex-shrink-0 snap-center pt-3"
+            className="relative w-[calc(100vw-6rem)] flex-shrink-0 snap-center pt-3 sm:w-[calc(100vw-9rem)]"
           >
               {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
               <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
@@ -847,28 +847,35 @@ function HorizontalCarousel({ className }: { className: string }) {
 
               {/* Card shell */}
               {slide.kind !== "intro" && slide.href ? (
-                <Link href={slide.href} className="relative block overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
+                <Link
+                  href={slide.href}
+                  className="relative block overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
+                  style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={slide.image ?? ""}
                     alt={`${slide.title} — case study`}
                     loading="eager"
-                    className="block aspect-[4/3] w-full object-cover"
+                    className="block h-full w-full object-cover"
                   />
                 </Link>
               ) : (
-                <div className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]">
+                <div
+                  className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
+                  style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
+                >
                   {slide.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={slide.image}
                       alt="Justin Kirkey at the whiteboard"
                       loading="eager"
-                      className="block aspect-[4/3] w-full object-cover"
+                      className="block h-full w-full object-cover"
                     />
                   ) : (
                     <div
-                      className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 px-8 text-center"
+                      className="flex h-full w-full flex-col items-center justify-center gap-3 px-8 text-center"
                       style={{ background: "var(--accent)", opacity: 0.1 }}
                     >
                       <span
@@ -887,7 +894,7 @@ function HorizontalCarousel({ className }: { className: string }) {
 
       {/* Text area — starts at card bottom, no background so shadow bleeds naturally through it */}
       <div
-        style={{ top: "calc(6.25rem + (100vw - 6rem) * 0.75)" }}
+        style={{ top: "calc(min(calc((100vw - 6rem) * 0.75), 52svh) + 7rem)" }}
         className="pointer-events-none absolute inset-x-0 bottom-0 z-10 overflow-hidden"
       >
         <AnimatePresence mode="wait">

@@ -22,7 +22,7 @@ export function CaseGallery({
       : "grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6";
 
   return (
-    <section className="bg-panel-bg pb-16 pt-4 sm:pb-20 sm:pt-6">
+    <section className="bg-panel-bg pb-16 pt-10 sm:pb-20 sm:pt-14">
       <div className="px-4 sm:px-6 lg:px-10">
         <div className={`grid ${gridCols}`}>
           {items.map((item, i) => (
