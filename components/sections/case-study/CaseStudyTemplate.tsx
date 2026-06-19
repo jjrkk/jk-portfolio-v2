@@ -40,30 +40,37 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
       <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} tone="light" />
 
       <main id="main-content" tabIndex={-1}>
-        {/* Hero — sticky underlay at top; sits above the footer (z-[1]) but below
-            the cream content (z-[2]) so neither the footer nor cream bleed into it */}
-        <div className="sticky top-0 z-[1]">
-          <CaseHero study={study} />
-        </div>
-
-        {/* Cream content — highest z-index; slides over the hero and peels to reveal footer */}
-        <div className="relative z-[2]">
-          {/* Rounded top corners, inset to clear the PageFrame boundary */}
-          <div className="mx-[10px] overflow-hidden rounded-t-[2rem]">
-            <CaseOverview study={study} />
-            {study.body.map((block, i) => (
-              <CaseNarrative key={i} block={block} />
-            ))}
-            {study.gallery && study.gallery.length > 0 && (
-              <CaseGallery items={study.gallery} columns={study.galleryColumns} />
-            )}
-            <CaseJudgment study={study} />
-            <CaseImpact study={study} />
-            {study.filmstrip && study.filmstrip.length > 0 && (
-              <CaseFilmstrip images={study.filmstrip} />
-            )}
+        {/* Hero + content group. This wrapper BOUNDS the hero's sticky range:
+            the hero stays pinned only while this block is in view, then releases
+            and scrolls away with it — so it never bleeds over the footer at the
+            bottom. (Same pattern the landing carousel uses.) The hero is pinned
+            to this wrapper's bottom edge = the cream's bottom edge, so the cream
+            always covers it and it can't poke out below. */}
+        <div className="relative">
+          {/* Hero — sticky underlay; cream (z-[2]) slides over it on the way down */}
+          <div className="sticky top-0 z-[1]">
+            <CaseHero study={study} />
           </div>
-          {study.next && <CaseNext next={study.next} />}
+
+          {/* Cream content — highest z-index; slides over the hero and peels to reveal footer */}
+          <div className="relative z-[2]">
+            {/* Rounded top corners, inset to clear the PageFrame boundary */}
+            <div className="mx-[10px] overflow-hidden rounded-t-[2rem]">
+              <CaseOverview study={study} />
+              {study.body.map((block, i) => (
+                <CaseNarrative key={i} block={block} />
+              ))}
+              {study.gallery && study.gallery.length > 0 && (
+                <CaseGallery items={study.gallery} columns={study.galleryColumns} />
+              )}
+              <CaseJudgment study={study} />
+              <CaseImpact study={study} />
+              {study.filmstrip && study.filmstrip.length > 0 && (
+                <CaseFilmstrip images={study.filmstrip} />
+              )}
+            </div>
+            {study.next && <CaseNext next={study.next} />}
+          </div>
         </div>
 
         {/* Footer — sticky underlay at bottom; content peels away to reveal it */}
