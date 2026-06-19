@@ -299,7 +299,7 @@ function Carousel() {
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
-      clearTimeout(cooldown);
+      if (settleTimer) clearTimeout(settleTimer);
     };
   }, []);
 

@@ -18,7 +18,7 @@ export default function SmoothScroll() {
     ).matches;
     if (prefersReduced) return;
 
-    const lenis = new Lenis({ keyEvents: true });
+    const lenis = new Lenis();
     // Expose for in-page smooth-scroll CTAs (e.g. the intro "WORK ↓" jump),
     // so they animate through Lenis rather than fighting it.
     (window as unknown as { lenis?: Lenis }).lenis = lenis;
