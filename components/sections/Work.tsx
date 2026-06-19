@@ -243,8 +243,41 @@ function Carousel() {
       settleTimer = null;
     };
 
+    // Snap-on-scroll-end: when scroll activity pauses while the carousel is
+    // pinned, check if the position has drifted off a clean slide. If it has
+    // (> 8px from ideal), apply a gentle pull back to the nearest slide.
+    // The `snapping` flag suppresses the listener during the Lenis animation
+    // so the snap can't cascade into a loop.
+    let snapTimer: ReturnType<typeof setTimeout> | null = null;
+    let snapping = false;
+
+    const snapToNearest = () => {
+      if (!carouselPinned()) return;
+      const el = ref.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      const nearest = activeRef.current;
+      // Ideal pixel offset for this slide within the carousel scroll range.
+      const idealY = top + (nearest / (TOTAL - 1)) * (el.offsetHeight - window.innerHeight);
+      if (Math.abs(window.scrollY - idealY) > 8) {
+        snapping = true;
+        scrollToSlideIndex(nearest, 0.45);
+        // Clear the flag after the animation has finished (0.45s + buffer).
+        setTimeout(() => { snapping = false; }, 600);
+      }
+    };
+
+    const onScrollSnap = () => {
+      if (snapping) return;
+      if (!carouselPinned()) return;
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, 120);
+    };
+
     const onWheel = (e: WheelEvent) => {
-      if (!carouselPinned() || Math.abs(e.deltaY) < 2) return;
+      // Filter sub-8px events entirely — incidental trackpad noise that shouldn't
+      // move the carousel. The snap-on-scroll-end corrects any residual drift.
+      if (!carouselPinned() || Math.abs(e.deltaY) < 8) return;
       const dir = e.deltaY > 0 ? 1 : -1;
       // At a boundary and not mid-gesture, let native scroll carry on.
       if (!gesture && !wouldStep(dir)) return;
@@ -295,11 +328,14 @@ function Carousel() {
     window.addEventListener("wheel", onWheel, { capture: true, passive: false });
     window.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
     window.addEventListener("touchmove", onTouchMove, { capture: true, passive: false });
+    window.addEventListener("scroll", onScrollSnap, { passive: true });
     return () => {
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
+      window.removeEventListener("scroll", onScrollSnap);
       if (settleTimer) clearTimeout(settleTimer);
+      if (snapTimer) clearTimeout(snapTimer);
     };
   }, []);
 
