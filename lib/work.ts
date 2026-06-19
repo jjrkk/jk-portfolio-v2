@@ -37,8 +37,6 @@ export const INTRO: WorkItem = {
     "Product",
     "Healthcare & regulated",
     "Consumer tech",
-    "New school: build w/ Claude Code",
-    "Old school: design w/ Figma",
   ],
 };
 

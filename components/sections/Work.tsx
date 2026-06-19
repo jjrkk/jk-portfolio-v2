@@ -62,6 +62,78 @@ function chipStyle(chip: string) {
   return "border-foreground/20 text-foreground/80";
 }
 
+// Rotating old/new school contrasting pairs. Both advance on the same timer
+// so they always read as a matched juxtaposition.
+const SCHOOL_PAIRS = [
+  { old: "Design w/ Figma",     new: "Build w/ Claude Code" },
+  { old: "Wireframes & low-fi", new: "Agentic prototyping" },
+  { old: "Design systems",      new: "LLM product design" },
+  { old: "User research",       new: "Context engineering" },
+] as const;
+
+// Slot-machine suffix pill: fixed-width container clips a slide-up animation
+// so the pill never resizes as the text rotates.
+function SchoolPills() {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx((i) => (i + 1) % SCHOOL_PAIRS.length), 2800);
+    return () => clearInterval(t);
+  }, []);
+
+  const pair = SCHOOL_PAIRS[idx];
+
+  const pillBase =
+    "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em]";
+  // Fixed-width, clipped container for the rotating text so pill width never jumps
+  const suffixStyle: React.CSSProperties = {
+    width: "26ch",
+    height: "1.35em",
+    position: "relative",
+    overflow: "hidden",
+    flexShrink: 0,
+  };
+  const motionProps = {
+    initial: { y: "100%" },
+    animate: { y: "0%" },
+    exit:    { y: "-100%" },
+    transition: { duration: 0.2, ease: [0.25, 0, 0.35, 1] as [number, number, number, number] },
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2.5">
+      <span className={cn(pillBase, "border-blue-400/40 bg-blue-500/[0.08]")}>
+        <span className="whitespace-nowrap text-blue-600/50">Old school:</span>
+        <span style={suffixStyle}>
+          <AnimatePresence>
+            <motion.span
+              key={pair.old}
+              className="absolute inset-0 whitespace-nowrap text-blue-600/80"
+              {...motionProps}
+            >
+              {pair.old}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </span>
+      <span className={cn(pillBase, "border-accent/40 bg-accent/10")}>
+        <span className="whitespace-nowrap text-accent/60">New school:</span>
+        <span style={suffixStyle}>
+          <AnimatePresence>
+            <motion.span
+              key={pair.new}
+              className="absolute inset-0 whitespace-nowrap text-accent"
+              {...motionProps}
+            >
+              {pair.new}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </span>
+    </div>
+  );
+}
+
 /** Scroll past the carousel to the Contact section below it. */
 function scrollToContact() {
   if (typeof window === "undefined") return;
@@ -518,18 +590,21 @@ function CarouselText({ item }: { item: WorkItem }) {
       </p>
 
       {item.chips && (
-        <div className="mt-8 flex flex-wrap gap-2.5">
-          {item.chips.map((chip) => (
-            <span
-              key={chip}
-              className={cn(
-                "inline-flex items-center rounded-full border px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em]",
-                chipStyle(chip),
-              )}
-            >
-              {chip}
-            </span>
-          ))}
+        <div className="mt-8 flex flex-col gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            {item.chips.map((chip) => (
+              <span
+                key={chip}
+                className={cn(
+                  "inline-flex items-center rounded-full border px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em]",
+                  chipStyle(chip),
+                )}
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+          {isIntro && <SchoolPills />}
         </div>
       )}
 
