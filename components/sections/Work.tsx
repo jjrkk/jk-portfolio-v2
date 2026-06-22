@@ -16,9 +16,34 @@ import { SLIDES, type WorkItem } from "@/lib/work";
 import { PROJECT_THEMES, SITE_ACCENT, getProjectTheme } from "@/lib/theme";
 import { cn } from "@/lib/cn";
 import { hexLerp } from "@/lib/color";
+import { SITE } from "@/lib/site";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
+import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
+import { RESUME_URL } from "@/components/sections/Contact";
+
+/** Publish the four page-frame edges to the root element. Whichever scrolling
+ *  surface is visible owns this; PageFrame consumes it. See PageFrame.tsx. */
+function setEdges(edges: { top: boolean; bottom: boolean; left: boolean; right: boolean }) {
+  const d = document.documentElement.dataset;
+  d.edgeTop = edges.top ? "on" : "off";
+  d.edgeBottom = edges.bottom ? "on" : "off";
+  d.edgeLeft = edges.left ? "on" : "off";
+  d.edgeRight = edges.right ? "on" : "off";
+}
+
+function clearEdges() {
+  const d = document.documentElement.dataset;
+  delete d.edgeTop;
+  delete d.edgeBottom;
+  delete d.edgeLeft;
+  delete d.edgeRight;
+}
+
+const isDesktop = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(min-width: 1024px)").matches;
 
 /**
  * The landing — the ENTIRE homepage is one pinned vertical card carousel:
@@ -375,14 +400,55 @@ function Carousel() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Page-frame edges (desktop / vertical layout): side rails are the cross-axis
+  // → always on; the top edge shows only at the very top; the bottom edge shows
+  // once the last slide has settled (active === last) and stays on through the
+  // contact reveal below. Mobile owns the frame when its breakpoint is active.
+  useEffect(() => {
+    const publish = () => {
+      if (!isDesktop()) return;
+      setEdges({
+        top: window.scrollY <= 24,
+        bottom: activeRef.current >= TOTAL - 1,
+        left: true,
+        right: true,
+      });
+    };
+    publish();
+    window.addEventListener("scroll", publish, { passive: true });
+    window.addEventListener("resize", publish, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", publish);
+      window.removeEventListener("resize", publish);
+      clearEdges();
+    };
+  }, []);
+
+  // Re-publish the bottom edge the instant the active slide changes (the scroll
+  // listener above also covers this, but active can settle without a fresh event).
+  useEffect(() => {
+    if (!isDesktop()) return;
+    document.documentElement.dataset.edgeBottom =
+      active >= TOTAL - 1 ? "on" : "off";
+  }, [active]);
+
   return (
     <section
       id="work"
       ref={ref}
-      className="relative mx-[10px] hidden min-[1024px]:block overflow-clip rounded-b-[2rem]"
+      className="relative mx-[10px] hidden min-[1024px]:block overflow-clip"
       style={{ height: `${TOTAL * 100}vh` }}
     >
-      <div className="sticky top-0 flex h-screen flex-col overflow-hidden rounded-b-[2rem] bg-panel-bg">
+      {/* Bottom corners round ONLY at the end of the surface — i.e. on the last
+          slide / during the contact reveal (same condition as the frame's bottom
+          edge). Mid-scroll they stay flat so the card bleeds straight off-screen
+          where more content continues below. */}
+      <div
+        className={cn(
+          "sticky top-0 flex h-screen flex-col overflow-hidden bg-panel-bg [transition:border-radius_0.45s_ease]",
+          active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none",
+        )}
+      >
         {/* Persistent chrome — name (links to slide 1) + progress counter.
             z above the deck (cards reach z-50) so it never gets occluded. */}
         <div className={`${PAD} relative z-[60] flex items-center justify-between pt-12 lg:pt-14`}>
@@ -615,13 +681,13 @@ function WorkStage({ item }: { item: WorkItem }) {
   };
 
   const shell =
-    "relative z-10 w-full overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]";
+    "relative z-10 w-full overflow-hidden rounded-[1rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]";
 
   const renderContent = () => {
     if (!item.image) {
       return (
         <div
-          className="flex aspect-[4/3] flex-col items-center justify-center gap-3 rounded-[1.5rem] bg-accent/10 px-8 text-center"
+          className="flex aspect-[4/3] flex-col items-center justify-center gap-3 rounded-[1rem] bg-accent/10 px-8 text-center"
         >
           <span className="font-mono text-eyebrow uppercase text-accent">
             Confidential · Flagship
@@ -643,7 +709,7 @@ function WorkStage({ item }: { item: WorkItem }) {
             : `${item.title} — case study preview`
         }
         loading="lazy"
-        className="block aspect-[4/3] w-full rounded-[1.5rem] object-cover"
+        className="block aspect-[4/3] w-full rounded-[1rem] object-cover"
       />
     );
   };
@@ -711,7 +777,7 @@ function WorkStage({ item }: { item: WorkItem }) {
 
         {/* Gloss sheen overlay */}
         <motion.div
-          className="absolute inset-0 z-20 pointer-events-none mix-blend-overlay rounded-[1.5rem]"
+          className="absolute inset-0 z-20 pointer-events-none mix-blend-overlay rounded-[1rem]"
           style={{ background: glossBackground }}
         />
 
@@ -728,7 +794,7 @@ function WorkStage({ item }: { item: WorkItem }) {
             {/* Full-card link sits above the gradient so the whole card is clickable */}
             <Link
               href={item.href!}
-              className="absolute inset-0 z-40 cursor-pointer rounded-[1.5rem]"
+              className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
               aria-label={`View ${item.title} case study`}
             />
           </>
@@ -747,10 +813,18 @@ function HorizontalCarousel({ className }: { className: string }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
 
+  // The slides now live inside the lighter "page card" wrapper (track's first
+  // child); the contact is the track's second child. The card is statically
+  // positioned, so a slide's offsetLeft is still relative to the track. The
+  // contact sits exactly one step past the last slide (card right edge + gap),
+  // so the uniform step math still resolves it as index TOTAL.
+  const firstSlideEl = (el: HTMLElement): HTMLElement | null =>
+    (el.firstElementChild?.firstElementChild as HTMLElement | null) ?? null;
+
   const goTo = (i: number) => {
     const el = trackRef.current;
     if (!el) return;
-    const firstSlide = el.firstElementChild as HTMLElement | null;
+    const firstSlide = firstSlideEl(el);
     if (!firstSlide) return;
     const slideWidth = firstSlide.offsetWidth;
     const step = slideWidth + 12; // gap-3 = 12px
@@ -762,15 +836,27 @@ function HorizontalCarousel({ className }: { className: string }) {
   const handleScroll = () => {
     const el = trackRef.current;
     if (!el) return;
-    const firstSlide = el.firstElementChild as HTMLElement | null;
+    const firstSlide = firstSlideEl(el);
     if (!firstSlide) return;
     const slideWidth = firstSlide.offsetWidth;
     const step = slideWidth + 12;
     const P = firstSlide.offsetLeft;
     const idx = Math.round((el.scrollLeft + el.clientWidth / 2 - P - slideWidth / 2) / step);
-    const clamped = Math.max(0, Math.min(idx, TOTAL - 1));
+    // Upper bound is TOTAL (the appended contact panel), not TOTAL - 1.
+    const clamped = Math.max(0, Math.min(idx, TOTAL));
     activeRef.current = clamped;
     setActive(clamped);
+    // Publish edges synchronously here (not just in useEffect) so React batching
+    // can't skip intermediate active values during fast scrolls — the frame
+    // tracks scroll position in real time.
+    if (!isDesktop()) {
+      setEdges({
+        top: true,
+        bottom: true,
+        left: clamped === 0,
+        right: clamped >= TOTAL,
+      });
+    }
   };
 
   // Keyboard: right/down → next (or contact footer at last slide), left/up → prev.
@@ -781,8 +867,8 @@ function HorizontalCarousel({ className }: { className: string }) {
       if (window.innerWidth >= 1024) return;
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
-        if (activeRef.current >= TOTAL - 1) scrollToContact();
-        else goTo(activeRef.current + 1);
+        // The contact panel (index TOTAL) is the rightmost stop on the track.
+        if (activeRef.current < TOTAL) goTo(activeRef.current + 1);
       } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         e.preventDefault();
         goTo(Math.max(activeRef.current - 1, 0));
@@ -792,9 +878,18 @@ function HorizontalCarousel({ className }: { className: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Keep root theme vars in sync with the visible slide (drives the page frame + section glow)
+  // Keep root theme vars in sync with the visible panel (drives the page frame +
+  // section glow). The appended contact panel (index TOTAL) rides the brand
+  // fuchsia on the base canvas.
   useEffect(() => {
-    const { panelBg, accent } = SLIDE_THEMES[active] ?? SLIDE_THEMES[0];
+    const isContactPanel = active >= TOTAL;
+    // The section bg is ALWAYS the accent base canvas; --panel-bg only tints the
+    // lighter "page card" that wraps the slides. On the contact the card has
+    // ended (peeking left) so it keeps the LAST project's tint, while the base
+    // canvas / accent goes brand fuchsia (mirrors the desktop reveal).
+    const { panelBg, accent } = isContactPanel
+      ? { panelBg: SLIDE_THEMES[TOTAL - 1].panelBg, accent: SITE_ACCENT }
+      : SLIDE_THEMES[active] ?? SLIDE_THEMES[0];
     document.documentElement.style.setProperty("--accent", accent);
     document.documentElement.style.setProperty("--panel-bg", panelBg);
     // rgba variant for the section radial-gradient glow (gradients can't use hex vars directly)
@@ -802,16 +897,44 @@ function HorizontalCarousel({ className }: { className: string }) {
     const g = parseInt(accent.slice(3, 5), 16);
     const b = parseInt(accent.slice(5, 7), 16);
     document.documentElement.style.setProperty("--accent-glow", `rgba(${r},${g},${b},0.18)`);
+
+    // Page-frame edges (mobile / horizontal layout): top & bottom are the
+    // cross-axis → always on; the left edge shows only on the first panel; the
+    // right edge shows only on the final (contact) panel. Desktop owns the frame
+    // when its breakpoint is active.
+    if (!isDesktop()) {
+      setEdges({
+        top: true,
+        bottom: true,
+        left: active === 0,
+        right: isContactPanel,
+      });
+    }
   }, [active]);
 
+  // Re-publish edges on resize so the mobile layout reclaims the frame when the
+  // viewport crosses below the desktop breakpoint; clear theme + edges on unmount.
   useEffect(() => {
+    const onResize = () => {
+      if (isDesktop()) return;
+      setEdges({
+        top: true,
+        bottom: true,
+        left: activeRef.current === 0,
+        right: activeRef.current >= TOTAL,
+      });
+    };
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
+      window.removeEventListener("resize", onResize);
       document.documentElement.style.removeProperty("--accent");
       document.documentElement.style.removeProperty("--panel-bg");
       document.documentElement.style.removeProperty("--accent-glow");
+      clearEdges();
     };
   }, []);
 
+  const isContact = active >= TOTAL;
   const item = SLIDES[active];
   const theme = SLIDE_THEMES[active];
   const isIntro = item?.kind === "intro";
@@ -819,51 +942,80 @@ function HorizontalCarousel({ className }: { className: string }) {
   return (
     <section
       className={cn(
-        "relative h-[100svh] overflow-hidden bg-panel-bg [transition:background-color_0.45s_ease]",
+        "relative h-[100svh] overflow-hidden bg-accent [transition:background-color_0.45s_ease]",
         className
       )}
     >
-      {/* Chrome: name/counter row + pagination */}
-      <div className="absolute inset-x-0 top-0 z-20 flex flex-col gap-5 px-8 pt-10">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-eyebrow uppercase text-foreground">
-            Justin Kirkey
-          </span>
-          <Link
-            href="/about"
-            className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
+      {/* Chrome: name/counter row + pagination — replaced by ← BACK on contact */}
+      <div className="absolute inset-x-0 top-0 z-20 flex flex-col gap-5 pt-10">
+        {isContact ? (
+          <button
+            type="button"
+            onClick={() => goTo(0)}
+            className="flex cursor-pointer items-center gap-1.5 pl-[3.25rem] font-mono text-eyebrow uppercase tracking-[0.14em] text-white/80 transition-colors duration-300 hover:text-white sm:pl-14"
           >
-            About
-          </Link>
-        </div>
-        <div className="flex items-center justify-center gap-2.5">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => goTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={cn(
-                "rounded-full transition-all duration-300",
-                i === active
-                  ? "h-1.5 w-6 bg-accent"
-                  : "h-1.5 w-1.5 bg-foreground/25",
-              )}
-            />
-          ))}
-        </div>
+            <span aria-hidden>←</span>
+            Back
+          </button>
+        ) : (
+          <>
+            <div className="flex items-center justify-between px-8">
+              {/* Name always sits over the lighter card (its peek on the contact),
+                  so it stays dark. ABOUT + dots cross over to the accent base canvas
+                  on the contact, so those adapt to white. */}
+              <button
+                type="button"
+                onClick={() => goTo(0)}
+                className="cursor-pointer font-mono text-eyebrow uppercase text-foreground transition-colors duration-300 hover:text-accent"
+              >
+                Justin Kirkey
+              </button>
+              {/* Template literal (not cn): twMerge would drop the custom
+                  `text-eyebrow` size as if it conflicted with the text color, leaving
+                  ABOUT at the 16px base size while the name stays 12px. */}
+              <Link
+                href="/about"
+                className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors duration-300 hover:text-accent"
+              >
+                About
+              </Link>
+            </div>
+            <div className="flex items-center justify-center gap-2.5 px-8">
+              {SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    i === active
+                      ? "h-1.5 w-6 bg-accent"
+                      : "h-1.5 w-1.5 bg-foreground/25",
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Image scroll track — absolute inset-0 so shadow falls freely, no strip boundary */}
       <div
         ref={trackRef}
         onScroll={handleScroll}
-        className="scrollbar-none absolute inset-0 flex snap-x snap-mandatory overflow-x-auto gap-3 px-8 pt-[5.5rem] [scroll-padding-inline:2rem]"
+        className="scrollbar-none absolute inset-0 flex snap-x snap-mandatory overflow-x-auto gap-3 p-[10px] [scroll-padding-inline:10px]"
       >
+        {/* Lighter "page card" surface — fills the viewport height (chrome rides
+            on it) and envelops intro + projects with rounded corners, ending
+            before the contact. The contact (next sibling) sits on the bare accent
+            base canvas beyond its right edge. Static position so nested slides
+            keep the track as their offsetParent (scroll math). */}
+        <div className="flex flex-shrink-0 gap-3 rounded-[16px] bg-panel-bg pl-5 pr-3 [transition:background-color_0.45s_ease]">
         {SLIDES.map((slide, i) => (
           <div
             key={slide.slug}
-            className="relative w-[calc(100vw-6rem)] flex-shrink-0 snap-center pt-3 sm:w-[calc(100vw-9rem)]"
+            className="relative w-[calc(100vw-3rem)] flex-shrink-0 snap-center pt-[6.25rem] sm:w-[calc(100vw-3.5rem)]"
           >
               {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
               <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
@@ -888,7 +1040,7 @@ function HorizontalCarousel({ className }: { className: string }) {
               {slide.kind !== "intro" && slide.href ? (
                 <Link
                   href={slide.href}
-                  className="relative block overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
+                  className="relative block overflow-hidden rounded-[1rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
                   style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -901,7 +1053,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                 </Link>
               ) : (
                 <div
-                  className="relative overflow-hidden rounded-[1.5rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
+                  className="relative overflow-hidden rounded-[1rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
                   style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
                 >
                   {slide.image ? (
@@ -929,9 +1081,69 @@ function HorizontalCarousel({ className }: { className: string }) {
               )}
           </div>
         ))}
+        </div>
+
+        {/* Contact — sits on the BASE CANVAS, beyond the lighter card's rounded
+            right edge. Transparent so it INHERITS the section's base-canvas color
+            (var(--accent)): the project accent while it peeks past the last
+            project, brand fuchsia once it's the active panel. */}
+        <div
+          key="contact"
+          className="relative w-[calc(100vw-3rem)] flex-shrink-0 snap-center pt-[6.25rem] sm:w-[calc(100vw-3.5rem)]"
+        >
+          <div
+            className="relative flex flex-col px-7 py-9"
+            style={{ height: "calc(100svh - 8.5rem)" }}
+          >
+            <Eyebrow mark={false} className="text-white/50">
+              Contact
+            </Eyebrow>
+            <h2 className="mt-4 font-serif text-display-sm font-semibold leading-[0.98] text-white">
+              Let&rsquo;s build something.
+            </h2>
+            <p className="mt-4 max-w-sm font-sans text-body text-white/70">
+              Open to Lead, Staff, and Director product-design roles — and
+              AI-first teams where designing and building live in the same person.
+            </p>
+
+            <div className="mt-7 flex flex-col items-start gap-5">
+              <a
+                href={RESUME_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-[#D7355D] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)]"
+              >
+                Résumé
+                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
+                  ↗
+                </span>
+              </a>
+              <div className="flex flex-col items-start gap-3">
+                <ArrowLink
+                  href={SITE.socials.linkedin}
+                  external
+                  className="text-white/80 hover:text-white"
+                >
+                  LinkedIn
+                </ArrowLink>
+                <EmailCopyButton
+                  email={SITE.socials.email}
+                  dark
+                />
+              </div>
+            </div>
+
+            <div className="mt-auto flex flex-col gap-1 border-t border-white/20 pt-5 font-mono text-eyebrow uppercase text-white/40">
+              <span>{SITE.name}</span>
+              <span>Built with agentic AI · {new Date().getFullYear()}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Text area — starts at card bottom, no background so shadow bleeds naturally through it */}
+      {/* Text area — starts at card bottom, no background so shadow bleeds
+          naturally through it. Hidden on the contact panel (self-contained). */}
+      {!isContact && (
       <div
         style={{ top: "calc(min(calc((100vw - 6rem) * 0.75), 52svh) + 7rem)" }}
         className="pointer-events-none absolute inset-x-0 bottom-0 z-10 overflow-hidden"
@@ -1010,6 +1222,7 @@ function HorizontalCarousel({ className }: { className: string }) {
           </motion.div>
         </AnimatePresence>
       </div>
+      )}
     </section>
   );
 }
