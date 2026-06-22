@@ -1,0 +1,407 @@
+/*
+ * TYPE LAB — @font-face for experiment candidates (local dev only).
+ * Generated; files served from /public/type-lab. Plain @font-face on purpose:
+ * sidesteps a Turbopack panic when next/font/local emits many assets at once.
+ * Unused families don't download (font-display: swap + lazy glyph matching).
+ * THROWAWAY: delete with the rest of the Type Lab once a pairing is chosen.
+ */
+
+@font-face {
+  font-family: "PP Editorial Old";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPEditorialOld-Ultralight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Editorial Old";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPEditorialOld-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Editorial Old";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPEditorialOld-Ultrabold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Editorial Old";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPEditorialOld-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fragment Serif";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPFragment-SerifLight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fragment Serif";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPFragment-SerifRegular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fragment Serif";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPFragment-SerifExtraBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fragment Serif";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPFragment-SerifRegularItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Woodland";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPWoodland-Ultralight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Woodland";
+  font-weight: 351 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPWoodland-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPangaia-Ultralight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPangaia-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPangaia-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPPangaia-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Hatton";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPHatton-Ultralight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Hatton";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPHatton-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Hatton";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPHatton-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Hatton";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPHatton-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue York";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueYork-NormalLight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue York";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueYork-NormalMedium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue York";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueYork-NormalExtrabold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue York";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPNeueYork-NormalMediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Palma";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPalma-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Palma";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPalma-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Palma";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPPalma-Heavy.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Palma";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPPalma-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 100 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPObjectSans-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 100 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPObjectSans-Slanted.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPObjectSans-Heavy.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 601 900;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPObjectSans-HeavySlanted.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontreal-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontreal-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontreal-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontreal-Semibold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal";
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontreal-Extrabold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal Mono";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontrealMono-Thin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal Mono";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontrealMono-Book.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal Mono";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontrealMono-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Neue Montreal Mono";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPNeueMontrealMono-RegularItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fraktion Mono";
+  font-weight: 100 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPFraktionMono-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fraktion Mono";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPFraktionMono-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Fraktion Mono";
+  font-weight: 100 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPFraktionMono-RegularItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Supply Mono";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPSupplyMono-Ultralight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Supply Mono";
+  font-weight: 351 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPSupplyMono-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Model Mono";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPModelMono-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Model Mono";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPModelMono-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Model Mono";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/type-lab/PPModelMono-Super.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Model Mono";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/type-lab/PPModelMono-MediumItalic.woff2") format("woff2");
+}
+
+:root {
+  --font-editorial: "PP Editorial Old";
+  --font-fragment: "PP Fragment Serif";
+  --font-woodland: "PP Woodland";
+  --font-pangaia: "PP Pangaia";
+  --font-hatton: "PP Hatton";
+  --font-neue-york: "PP Neue York";
+  --font-palma: "PP Palma";
+  --font-object: "PP Object Sans";
+  --font-montreal: "PP Neue Montreal";
+  --font-montreal-mono: "PP Neue Montreal Mono";
+  --font-fraktion-mono: "PP Fraktion Mono";
+  --font-supply-mono: "PP Supply Mono";
+  --font-model-mono: "PP Model Mono";
+}

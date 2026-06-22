@@ -4,7 +4,9 @@ import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import { PageFrame } from "@/components/PageFrame";
 import { SkipLink } from "@/components/SkipLink";
+import TypeLab from "@/components/TypeLab"; // TYPE LAB (dev) — remove when pairing chosen
 import "./globals.css";
+import "./type-lab.css"; // TYPE LAB (dev) — @font-face candidates; remove when pairing chosen
 
 // Per-page <title>/meta via the Next Metadata API (CLAUDE.md SEO build-in).
 // Pages override `title` through the template; everything else inherits.
@@ -68,6 +70,7 @@ export default function RootLayout({
         <SmoothScroll />
         <PageFrame />
         {children}
+        <TypeLab />{/* TYPE LAB (dev) — remove when pairing chosen */}
       </body>
     </html>
   );
