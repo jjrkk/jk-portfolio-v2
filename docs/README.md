@@ -77,10 +77,37 @@
   - Navigation, all via `scrollToSlideIndex()` (Lenis-aware): arrow keys, **wheel/touch
     one-card-per-gesture snapping** (capture-phase listener that blocks Lenis), pagination
     pills, the name link, and the WORK CTA.
-  - Mobile / reduced-motion → `StackedList` fallback.
+  - **Mobile = fully horizontal, no vertical scroll** (`HorizontalCarousel`, `< 1024px`):
+    the landing locks to one `100svh`. **Surface model mirrors desktop:** the section bg is the
+    **accent base canvas**; a single rounded **`bg-panel-bg` "page card" wraps the intro +
+    projects** (a flex container; slides stay individual snap targets inside it, statically
+    positioned so the scroll math keeps the track as their offsetParent). The card fills the
+    viewport height (chrome rides on it) and **ends with a rounded right edge**; the **Contact
+    is the final snap sibling, on the bare base canvas beyond that edge** (white-on-accent,
+    fixed fuchsia). So you scroll *past* the card's right edge to the contact and still see the
+    card peeking left — exactly like the desktop reveal shows the card above the footer.
+    Chrome adapts: name stays dark (always over the card peek), ABOUT + dots flip white over
+    the accent. The desktop vertical `FooterReveal`/`Contact` reveal is `hidden min-[1024px]:block`
+    in `app/page.tsx`.
+  - Reduced-motion → `StackedList` fallback.
+- **Page-surface "edge" paradigm (the border logic).** Three stacked surfaces: base
+  canvas (full-bleed `--accent`) → lighter card surface (`--panel-bg`) → content. A frame
+  edge shows on a side **only when there's no more content to scroll to in that direction**
+  (physical "keep going" cue); the scroll axis differs by layout, so the *cross-axis* rails
+  are always on:
+  - **Desktop (vertical):** top at the very top; bottom once the **last slide settles**
+    (stays on through the contact reveal); left/right rails always on.
+  - **Mobile (horizontal):** left only on the first panel; right only on the contact panel;
+    top/bottom rails always on.
+  - **Mechanism:** whichever scrolling surface is visible publishes
+    `data-edge-{top,bottom,left,right} = "on"|"off"` on `documentElement` (`setEdges`/
+    `clearEdges` in `Work.tsx`, breakpoint-guarded by `isDesktop()`); **[`PageFrame.tsx`](../components/PageFrame.tsx)**
+    is a pure consumer mapping those to its `±10px` insets. Static pages publish nothing →
+    PageFrame falls back to a vertical default (top-at-top, bottom-at-bottom, side rails on).
+    *This paradigm is meant to propagate to About + case studies later.*
 - **[`components/PageFrame.tsx`](../components/PageFrame.tsx)** — fixed box-shadow flood reading
-  `var(--accent)`; fills the viewport corners. Themed per slide, then **eases to fuchsia
-  past the carousel** (scroll listener in `Work.tsx` + `hexLerp` in [`lib/color.ts`](../lib/color.ts)).
+  `var(--accent)`; fills the viewport corners. `--accent` is themed per slide, then **eases to
+  fuchsia past the carousel** (scroll listener in `Work.tsx` + `hexLerp` in [`lib/color.ts`](../lib/color.ts)).
 - **[`components/SmoothScroll.tsx`](../components/SmoothScroll.tsx)** — Lenis; exposes `window.lenis`
   for programmatic smooth scroll; disabled under reduced-motion.
 - **Post-carousel sections** (in [`app/page.tsx`](../app/page.tsx)): `LogoWall` · `BuildThesis`

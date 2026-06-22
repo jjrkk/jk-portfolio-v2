@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 
-function ClipboardIcon({ bgFill }: { bgFill?: string }) {
+function CopyIcon({ bgFill }: { bgFill?: string }) {
   return (
-    <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden>
-      <rect x="2" y="3.5" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="4.5" y="0.5" width="4" height="4" rx="1" fill={bgFill ?? "var(--background,#f7f5f2)"} stroke="currentColor" strokeWidth="1.2" />
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
+      <rect x="3.5" y="0.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+      <rect x="0.5" y="3.5" width="9" height="9" rx="1.5" fill={bgFill ?? "var(--background,#f7f5f2)"} stroke="currentColor" strokeWidth="1.2" />
     </svg>
   );
 }
@@ -69,7 +69,7 @@ export function EmailCopyButton({
       >
         {email}
         <span className="transition-transform duration-200 group-hover:scale-110">
-          {copied ? <CheckIcon /> : <ClipboardIcon bgFill={dark ? "#D7355D" : undefined} />}
+          {copied ? <CheckIcon /> : <CopyIcon bgFill={dark ? "#D7355D" : undefined} />}
         </span>
       </button>
     </span>
