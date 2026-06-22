@@ -36,18 +36,35 @@ export function PageNav({
 
   useEffect(() => {
     if (tone !== "light") return;
-    const header = document.querySelector("main header, header");
-    if (!header) return;
+    // Prefer the explicit sentinel placed at the hero/content boundary — it fires
+    // correctly even though the hero is sticky (never leaves the viewport itself).
+    // Fall back to the hero header for any page that hasn't added the sentinel yet.
+    const target =
+      document.querySelector("[data-nav-sentinel]") ??
+      document.querySelector("main header, header");
+    if (!target) return;
     const obs = new IntersectionObserver(
-      ([entry]) => setOverHero(entry.isIntersecting),
-      { threshold: 0 },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Sentinel is visible — still in/near the hero.
+          setOverHero(true);
+        } else {
+          // isIntersecting: false means either above or below the viewport.
+          // Only flip to dark when the sentinel has been scrolled PAST (top < 0).
+          // When it's still below (top > 0, not yet reached), stay white-on-accent.
+          setOverHero(entry.boundingClientRect.top > 0);
+        }
+      },
+      // Shift the trigger 80px inward from the top so the flip happens the moment
+      // the light content surface reaches the nav bar, not when it just enters view.
+      { threshold: 0, rootMargin: "-80px 0px 0px 0px" },
     );
-    obs.observe(header);
+    obs.observe(target);
     return () => obs.disconnect();
   }, [tone]);
 
-  const showBackdrop = tone === "light" && !overHero;
-  const effectiveTone = showBackdrop ? "dark" : tone;
+  const showBackdrop = false; // backdrop removed — text colour flips but no surface fill
+  const effectiveTone = (tone === "light" && !overHero) ? "dark" : tone;
 
   const linkColor =
     effectiveTone === "light"

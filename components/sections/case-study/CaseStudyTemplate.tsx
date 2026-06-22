@@ -4,6 +4,7 @@ import { SITE } from "@/lib/site";
 import type { CaseStudy } from "@/lib/case-studies";
 import { ProjectAccent } from "./ProjectAccent";
 import { CaseHero } from "./CaseHero";
+import { CaseSectionOpener } from "./CaseSectionOpener";
 import { CaseOverview } from "./CaseOverview";
 import { CaseNarrative } from "./CaseNarrative";
 import { CaseJudgment } from "./CaseJudgment";
@@ -52,10 +53,16 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
             <CaseHero study={study} />
           </div>
 
+          {/* Sentinel for PageNav tone switch: zero-height marker at the hero/content
+              boundary. When this scrolls above the nav (rootMargin shifts the trigger
+              to the nav's own height), PageNav flips from white-on-accent to dark+backdrop. */}
+          <div aria-hidden data-nav-sentinel className="pointer-events-none h-0" />
+
           {/* Cream content — highest z-index; slides over the hero and peels to reveal footer */}
           <div className="relative z-[2]">
             {/* Rounded top corners, inset to clear the PageFrame boundary */}
-            <div className="mx-[10px] overflow-hidden rounded-t-[2rem]">
+            <div className="relative mx-[10px] overflow-hidden rounded-t-[2rem]">
+              <CaseSectionOpener />
               <CaseOverview study={study} />
               {study.body.map((block, i) => (
                 <CaseNarrative key={i} block={block} />
