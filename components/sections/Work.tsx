@@ -205,6 +205,26 @@ function Carousel() {
     document.documentElement.style.setProperty("--accent", v),
   );
 
+  // Write prev/next accent rgba vars so the directional gradient overlay can
+  // bleed the incoming colour in from the top (prev) and bottom (next) edges.
+  useMotionValueEvent(pos, "change", (v) => {
+    const root = document.documentElement;
+    const prevIdx = Math.max(0, Math.floor(v));
+    const nextIdx = Math.min(TOTAL - 1, Math.ceil(v));
+    const toRgba = (hex: string, a: number) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    };
+    // Suppress top bleed on the first slide and bottom bleed on the last —
+    // no self-echo at the page edges.
+    const prevA = prevIdx === 0 ? 0 : 0.20;
+    const nextA = nextIdx === TOTAL - 1 ? 0 : 0.20;
+    root.style.setProperty("--accent-prev-rgba", toRgba(SLIDE_THEMES[prevIdx].accent, prevA));
+    root.style.setProperty("--accent-next-rgba", toRgba(SLIDE_THEMES[nextIdx].accent, nextA));
+  });
+
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   const activeIndex = useTransform(pos, (v) => Math.round(v));
@@ -372,6 +392,8 @@ function Carousel() {
     return () => {
       root.style.removeProperty("--panel-bg");
       root.style.removeProperty("--accent");
+      root.style.removeProperty("--accent-prev-rgba");
+      root.style.removeProperty("--accent-next-rgba");
     };
   }, []);
 
@@ -449,6 +471,21 @@ function Carousel() {
           active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none",
         )}
       >
+        {/* Directional accent gradient — prev colour bleeds in from the top,
+            next colour from the bottom. Inert during a settled slide (prev ===
+            next === current accent), most visible at the midpoint of a transition.
+            Clipped by the sticky container's overflow-hidden; sits below content. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{
+            background: `
+              linear-gradient(to bottom, var(--accent-prev-rgba, transparent) 0%, transparent 32%),
+              linear-gradient(to top,    var(--accent-next-rgba, transparent) 0%, transparent 32%)
+            `,
+          }}
+        />
+
         {/* Persistent chrome — name (links to slide 1) + progress counter.
             z above the deck (cards reach z-50) so it never gets occluded. */}
         <div className={`${PAD} relative z-[60] flex items-center justify-between pt-12 lg:pt-14`}>
