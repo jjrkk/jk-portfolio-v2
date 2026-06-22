@@ -5,7 +5,7 @@ import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
 
-const RESUME_URL =
+export const RESUME_URL =
   "https://drive.google.com/open?id=1h0HfLLc7f9PIux_H52rgf-qihaPk7JNu&usp=drive_fs";
 
 /** Brand fuchsia hardcoded so the dark footer is always on-brand regardless

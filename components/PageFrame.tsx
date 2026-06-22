@@ -3,59 +3,121 @@
 import { useEffect, useState } from "react";
 
 /**
- * Accent frame around the whole viewport — colored with the live --accent.
+ * Accent frame around the whole viewport — the BASE CANVAS peeking out from
+ * behind the lighter card surface, colored with the live --accent.
  *
- * Top edge: visible only when at the top of the page.
- * Bottom edge: visible when at the very bottom of the page OR when the
- *   Contact section starts entering the viewport (i.e. on the last carousel
- *   slide / during the footer reveal). This makes the bottom corners match the
- *   top exactly — same 10px inset + 16px radius.
- * Left/right bars: always visible, creating a continuous side frame.
+ * "Page-surface paradigm": a frame edge is visible on a side only when there is
+ * no more content to scroll to in that direction. When content remains, the card
+ * bleeds off that edge (no border) as a physical "keep going" cue. The scroll
+ * axis differs by layout, so the *surface that owns scrolling* publishes its four
+ * edges to the root element as `data-edge-{top,bottom,left,right} = "on" | "off"`,
+ * and this component is a dumb consumer that maps them to the ±10px insets.
+ *
+ * Static pages (About, case studies) publish nothing — they fall back to the
+ * default below: vertical scroll, so top shows at the top, bottom shows at the
+ * bottom, and the side rails are always on.
  */
+const EDGE_ATTRS = [
+  "data-edge-top",
+  "data-edge-bottom",
+  "data-edge-left",
+  "data-edge-right",
+] as const;
+
+type Edges = { top: boolean; bottom: boolean; left: boolean; right: boolean };
+
 export function PageFrame() {
-  const [atTop, setAtTop] = useState(true);
-  const [atBottom, setAtBottom] = useState(false);
-  const [contactVisible, setContactVisible] = useState(false);
+  const [edges, setEdges] = useState<Edges>({
+    top: true,
+    bottom: false,
+    left: true,
+    right: true,
+  });
 
   useEffect(() => {
-    const check = () => {
+    const root = document.documentElement;
+
+    const apply = () => {
+      const d = root.dataset;
+      const controlled =
+        d.edgeTop != null ||
+        d.edgeBottom != null ||
+        d.edgeLeft != null ||
+        d.edgeRight != null;
+
+      if (controlled) {
+        // A scrolling surface is driving the frame — read its published edges.
+        // Missing attribute defaults to "on" for the rails, "off" for bottom.
+        setEdges({
+          top: d.edgeTop !== "off",
+          bottom: d.edgeBottom === "on",
+          left: d.edgeLeft !== "off",
+          right: d.edgeRight !== "off",
+        });
+        return;
+      }
+
+      // Default: vertical-scroll static page. Top at top, bottom at bottom,
+      // side rails always on.
       const scrollY = window.scrollY;
       const maxScroll = Math.max(
         0,
         document.documentElement.scrollHeight - window.innerHeight,
       );
-      setAtTop(scrollY <= 24);
-      setAtBottom(maxScroll <= 0 || scrollY >= maxScroll - 24);
-
-      // Show bottom frame as soon as the Contact section reaches the viewport
-      // bottom — this fires on the last carousel slide and during the reveal.
-      const contactEl = document.getElementById("contact");
-      setContactVisible(
-        contactEl
-          ? contactEl.getBoundingClientRect().top <= window.innerHeight
-          : false,
-      );
+      setEdges({
+        top: scrollY <= 24,
+        bottom: maxScroll <= 0 || scrollY >= maxScroll - 24,
+        left: true,
+        right: true,
+      });
     };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check, { passive: true });
+
+    apply();
+    window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("resize", apply, { passive: true });
+    // Picks up edge changes published outside a scroll event (e.g. the carousel
+    // settling onto its last slide, or a breakpoint hand-off on resize).
+    const mo = new MutationObserver(apply);
+    mo.observe(root, { attributes: true, attributeFilter: [...EDGE_ATTRS] });
+
     return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
+      window.removeEventListener("scroll", apply);
+      window.removeEventListener("resize", apply);
+      mo.disconnect();
     };
   }, []);
 
-  const top = atTop ? 10 : -10;
-  const bottom = atBottom || contactVisible ? 10 : -10;
+  const top = edges.top ? 10 : -10;
+  const bottom = edges.bottom ? 10 : -10;
+  const left = edges.left ? 10 : -10;
+  const right = edges.right ? 10 : -10;
+
+  // A corner rounds only when BOTH its adjacent edges are "on" (capped). If
+  // either is bleeding (off), the corner stays square so the rail runs perfectly
+  // straight. (An off edge is only pushed -10px off-screen, but the radius is
+  // 16px > 10px — a uniform radius would peek ~6px back into the viewport.)
+  const R = 16;
+  const topLeft = edges.top && edges.left ? R : 0;
+  const topRight = edges.top && edges.right ? R : 0;
+  const bottomRight = edges.bottom && edges.right ? R : 0;
+  const bottomLeft = edges.bottom && edges.left ? R : 0;
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed z-[90] rounded-[16px]"
+      className="pointer-events-none fixed z-[90]"
       style={{
-        inset: `${top}px 10px ${bottom}px 10px`,
+        top,
+        right,
+        bottom,
+        left,
+        borderTopLeftRadius: topLeft,
+        borderTopRightRadius: topRight,
+        borderBottomRightRadius: bottomRight,
+        borderBottomLeftRadius: bottomLeft,
         boxShadow: "0 0 0 100vmax var(--accent)",
-        transition: "top 0.45s ease, bottom 0.45s ease",
+        transition:
+          "top 0.45s ease, right 0.45s ease, bottom 0.45s ease, left 0.45s ease, border-radius 0.45s ease",
       }}
     />
   );

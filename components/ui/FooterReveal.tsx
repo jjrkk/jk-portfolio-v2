@@ -11,6 +11,14 @@
  * the top and bleed over this footer at the bottom. The landing carousel and the
  * case-study template both bound their sticky hero for exactly this reason.
  */
-export function FooterReveal({ children }: { children: React.ReactNode }) {
-  return <div className="sticky bottom-0 z-0">{children}</div>;
+import { cn } from "@/lib/cn";
+
+export function FooterReveal({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn("sticky bottom-0 z-0", className)}>{children}</div>;
 }

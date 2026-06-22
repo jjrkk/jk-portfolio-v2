@@ -13,7 +13,11 @@ export default function Home() {
       <div className="relative z-[1]" style={{ background: "var(--accent)" }}>
         <Work />
       </div>
-      <FooterReveal>
+      {/* Desktop only: the contact is a vertical sticky reveal below the
+          carousel. On mobile it lives as the final panel of the horizontal
+          track (see HorizontalCarousel), so the landing stays one viewport
+          tall with no vertical scroll. */}
+      <FooterReveal className="hidden min-[1024px]:block">
         <Contact dark />
       </FooterReveal>
     </main>

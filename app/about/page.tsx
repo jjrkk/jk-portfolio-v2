@@ -32,7 +32,7 @@ export default function AboutPage() {
       <AccentReset />
       <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} />
       <main id="main-content" tabIndex={-1}>
-        <div className="relative z-[1]">
+        <div className="relative z-[1] bg-background">
           <AboutHero />
           <AboutStatement />
           <AtWork />
