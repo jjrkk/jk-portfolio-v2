@@ -14,7 +14,7 @@ const PHOTOS = [
 
 export function Personality() {
   return (
-    <Section>
+    <Section tone="tinted">
       <Container>
         <Reveal>
           <Eyebrow>Off the clock</Eyebrow>

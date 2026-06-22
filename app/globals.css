@@ -17,6 +17,7 @@
   --faint: #8a8780; /* labels / tertiary — large or non-essential text only */
   --border: #e4e0d9; /* hairline structure: "borders before shadows" */
   --surface: #ffffff; /* light "stages" screenshots sit on — the brightest layer */
+  --background-tinted: #edeae6; /* one step darker than --background; section contrast rhythm */
 
   /* — Accent — site BRAND value: the violet-magenta "home" color (eyebrows,
      links, focus, the hero before you enter a project). LOCKED via Direction A

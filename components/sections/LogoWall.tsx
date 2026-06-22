@@ -29,7 +29,7 @@ const RECOGNITION = [
 
 export function LogoWall() {
   return (
-    <Section>
+    <Section tone="surface">
       <Container>
         <Reveal>
           <Eyebrow>Selected clients &amp; employers</Eyebrow>
