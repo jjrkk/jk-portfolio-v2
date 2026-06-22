@@ -14,6 +14,7 @@ export type WorkItem = {
   kind: "intro" | "project";
   eyebrow: string;
   title: string;
+  titleLines?: string[]; // if set, each string renders on its own line (desktop hero)
   blurb: string;
   image?: string; // path under /public; absent → placeholder stage
   href?: string;
@@ -27,7 +28,8 @@ export const INTRO: WorkItem = {
   slug: "intro",
   kind: "intro",
   eyebrow: "AI-Native Product Design Leader",
-  title: "I design it — then build it.",
+  title: "Design it. Build it. Ship it.",
+  titleLines: ["Design it.", "Build it.", "Ship it."],
   blurb:
     "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products.",
   image: "/personality/jk-whiteboard.png",
@@ -44,12 +46,11 @@ export const WORK: WorkItem[] = [
   {
     slug: "ff-cloud",
     kind: "project",
-    eyebrow: "AI healthtech · Design lead",
+    eyebrow: "AI healthtech · Future Fertility",
     title: "Cloud",
     blurb:
       "Modernizing a clinical AI platform — and pioneering the human-AI workflow that built it.",
     image: "/work/cloud/ff-cloud.png",
-    confidential: true,
     flagship: true,
     href: "/work/ff-cloud",
   },

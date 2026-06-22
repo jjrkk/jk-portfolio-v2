@@ -58,3 +58,6 @@ docs/Justin-Kirkey-Resume-*Reference*.pdf
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Pangram font packages (Personal-Use .otf — large binaries, not for versioning)
+assets/fonts/experiment/

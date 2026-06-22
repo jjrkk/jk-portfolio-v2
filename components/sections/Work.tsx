@@ -487,7 +487,8 @@ function Carousel() {
   );
 }
 
-/** Right-edge progress pills — a tick per slide; click to jump. */
+/** Right-edge progress pills — a tick per slide; click to jump.
+ *  Hover reveals a serif flyout label to the left for quick-nav. */
 function Pagination({
   active,
   onJump,
@@ -499,21 +500,35 @@ function Pagination({
     <div className="absolute right-6 top-1/2 z-[60] flex -translate-y-1/2 flex-col items-end gap-3 xl:right-10">
       {SLIDES.map((s, i) => {
         const isActive = i === active;
+        const flyoutLabel = s.kind === "intro" ? "Intro" : s.title;
         return (
           <button
             key={s.slug}
             type="button"
             onClick={() => onJump(i)}
-            aria-label={`Go to slide ${i + 1}`}
+            aria-label={`Go to ${flyoutLabel}`}
             aria-current={isActive ? "true" : undefined}
-            className="group flex h-4 w-8 cursor-pointer items-center justify-end"
+            className="group relative flex h-5 w-10 cursor-pointer items-center justify-end"
           >
+            {/* Flyout label — flies in from the right on per-bar hover */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute right-full mr-4 top-1/2 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
+            >
+              <span className="inline-flex items-center rounded-full border border-foreground/10 bg-panel-bg/90 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.14)] backdrop-blur-md">
+                <span className="whitespace-nowrap font-serif text-[1.6rem] font-[700] leading-none text-accent">
+                  {flyoutLabel}
+                </span>
+              </span>
+            </span>
+
+            {/* Pill — 4px height */}
             <span
               className={cn(
-                "h-px rounded-full transition-all duration-300",
+                "h-1 rounded-full transition-all duration-300",
                 isActive
-                  ? "w-7 bg-accent"
-                  : "w-3.5 bg-foreground/25 group-hover:w-5 group-hover:bg-foreground/50",
+                  ? "w-8 bg-accent"
+                  : "w-4 bg-foreground/25 group-hover:w-6 group-hover:bg-foreground/50",
               )}
             />
           </button>
@@ -575,7 +590,11 @@ function CarouselText({ item }: { item: WorkItem }) {
       </div>
 
       {isIntro ? (
-        <h1 className="mt-7 font-serif text-hero text-accent">{item.title}</h1>
+        <h1 className="mt-7 font-serif text-hero text-accent">
+          {item.titleLines
+            ? item.titleLines.map((line, i) => <span key={i} className="block">{line}</span>)
+            : item.title}
+        </h1>
       ) : (
         <h2 className="mt-7 font-serif text-hero text-accent">{item.title}</h2>
       )}
@@ -618,24 +637,43 @@ function CarouselText({ item }: { item: WorkItem }) {
                 ↓
               </span>
             </button>
-            <ArrowLink href={item.href ?? "/about"}>About</ArrowLink>
           </>
         ) : (
-          <ArrowLink href={item.href ?? "#"}>View case study</ArrowLink>
+          <ArrowLink href={item.href ?? "#"}>Case study</ArrowLink>
         )}
       </div>
     </motion.div>
   );
 }
 
+/** Specular hairline glass border — shared between desktop + mobile cards.
+ *  Bright top-left → fades → hair of dark bottom-right. Mask-exclude keeps it
+ *  strictly in the 1px border zone without touching card content. */
+function SpecularBorder() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-[25] rounded-[1rem]"
+      style={{
+        border: "1px solid transparent",
+        background:
+          "linear-gradient(135deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.04) 45%, rgba(0,0,0,0.10) 100%) border-box",
+        WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
+        WebkitMaskComposite: "destination-out",
+        maskComposite: "exclude",
+      }}
+    />
+  );
+}
+
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
 function WorkStage({ item }: { item: WorkItem }) {
-  const isClickable = item.kind !== "intro" && !!item.href;
+  const isClickable = !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Springs for 3D tilt (smooth spring physics, reset on leave)
-  const rotateX = useSpring(0, { damping: 25, stiffness: 150 });
-  const rotateY = useSpring(0, { damping: 25, stiffness: 150 });
+  // Springs for 3D tilt — damping raised for a heavier, more luxurious feel;
+  // stiffness lowered so the card lags behind the cursor instead of tracking it.
+  const rotateX = useSpring(0, { damping: 35, stiffness: 120 });
+  const rotateY = useSpring(0, { damping: 35, stiffness: 120 });
 
   // Springs for specular reflection/gloss (0% to 100% bounds)
   const glossX = useSpring(50, { damping: 25, stiffness: 150 });
@@ -658,8 +696,8 @@ function WorkStage({ item }: { item: WorkItem }) {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    // Calculate rotation: maximum 4 degrees tilt
-    const MAX_ROT = 4;
+    // Calculate rotation: maximum 2.5 degrees tilt (subtle, not carnival)
+    const MAX_ROT = 2.5;
     const rY = ((mouseX / width) - 0.5) * MAX_ROT * 2; // -4 to 4
     const rX = ((mouseY / height) - 0.5) * -MAX_ROT * 2; // -4 to 4
 
@@ -720,7 +758,9 @@ function WorkStage({ item }: { item: WorkItem }) {
       style={{ perspective: 1000 }}
     >
       {/* Morphing color burst glass blobs */}
-      <div className="absolute -inset-12 overflow-visible opacity-[0.34] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.50] group-hover:blur-[110px] group-hover:-inset-16">
+      {/* Horizontal inset is 2× vertical so the blob bleeds generously into the
+          copy area on the left and the frame edge on the right. */}
+      <div className="absolute -top-12 -bottom-12 -left-24 -right-24 overflow-visible opacity-[0.44] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.62] group-hover:blur-[110px] group-hover:-top-16 group-hover:-bottom-16 group-hover:-left-32 group-hover:-right-32">
         {/* Blob 1 - rotating clockwise (accent color) */}
         <motion.div
           className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%]"
@@ -781,17 +821,22 @@ function WorkStage({ item }: { item: WorkItem }) {
           style={{ background: glossBackground }}
         />
 
-        {/* Clickable link overlay + "View case study" hover label */}
+        {/* Specular hairline glass border */}
+        <SpecularBorder />
+
+
+        {/* Frosted glass badge + full-card link */}
         {isClickable && (
           <>
-            {/* Bottom gradient + label — fades in on hover */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-end px-6 pb-6 pt-16 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                 style={{ background: "linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 100%)" }}>
-              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/90">
-                View case study →
+            {/* Small badge bottom-left — backdrop-blur frosts the image behind it.
+                Fades + rises 4px on hover; pointer-events-none so the Link overlay
+                still owns the click. */}
+            <div className="pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/28 px-3.5 py-2 backdrop-blur-md">
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/90">{item.kind === "intro" ? "About" : "Case study"}</span>
+                <span aria-hidden className="text-white/60 transition-transform duration-200 group-hover:translate-x-0.5">→</span>
               </span>
             </div>
-            {/* Full-card link sits above the gradient so the whole card is clickable */}
             <Link
               href={item.href!}
               className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
@@ -800,6 +845,7 @@ function WorkStage({ item }: { item: WorkItem }) {
           </>
         )}
       </motion.div>
+
     </div>
   );
 }
@@ -811,6 +857,7 @@ function WorkStage({ item }: { item: WorkItem }) {
 function HorizontalCarousel({ className }: { className: string }) {
   const [active, setActive] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const activeRef = useRef(0);
 
   // The slides now live inside the lighter "page card" wrapper (track's first
@@ -878,6 +925,66 @@ function HorizontalCarousel({ className }: { className: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Vertical scroll → horizontal navigation. Lets desktop users with a small
+  // viewport (or any mouse-wheel user) scroll down/up naturally and have it
+  // advance/retreat the carousel instead of doing nothing (the section is
+  // overflow:hidden so vertical scroll would otherwise be swallowed silently).
+  //
+  // Strategy: if |deltaY| > |deltaX| the gesture is "more vertical" — translate
+  // it to a one-slide advance. Horizontal gestures fall through to native snap
+  // scroll in the track. A cooldown prevents rapid-fire multi-slide jumps from
+  // a single flick.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    let cooldown = false;
+
+    const onWheel = (e: WheelEvent) => {
+      if (window.innerWidth >= 1024) return; // desktop carousel owns this
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // horizontal gesture — let native handle
+      e.preventDefault();
+      if (cooldown) return;
+      cooldown = true;
+      setTimeout(() => { cooldown = false; }, 500);
+      if (e.deltaY > 0) {
+        if (activeRef.current < TOTAL) goTo(activeRef.current + 1);
+      } else {
+        goTo(Math.max(activeRef.current - 1, 0));
+      }
+    };
+
+    // Vertical touch swipe — complements horizontal native snap scrolling.
+    let touchStartY: number | null = null;
+    let touchStartX: number | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      if (window.innerWidth >= 1024) return;
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (window.innerWidth >= 1024 || touchStartY === null || touchStartX === null) return;
+      const dy = touchStartY - e.changedTouches[0].clientY;
+      const dx = touchStartX - e.changedTouches[0].clientX;
+      touchStartY = null; touchStartX = null;
+      // Only intercept if swipe is more vertical than horizontal, and past threshold.
+      if (Math.abs(dy) < 30 || Math.abs(dx) > Math.abs(dy)) return;
+      if (dy > 0) {
+        if (activeRef.current < TOTAL) goTo(activeRef.current + 1);
+      } else {
+        goTo(Math.max(activeRef.current - 1, 0));
+      }
+    };
+
+    section.addEventListener("wheel", onWheel, { passive: false });
+    section.addEventListener("touchstart", onTouchStart, { passive: true });
+    section.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      section.removeEventListener("wheel", onWheel);
+      section.removeEventListener("touchstart", onTouchStart);
+      section.removeEventListener("touchend", onTouchEnd);
+    };
+  }, []);
+
   // Keep root theme vars in sync with the visible panel (drives the page frame +
   // section glow). The appended contact panel (index TOTAL) rides the brand
   // fuchsia on the base canvas.
@@ -941,6 +1048,7 @@ function HorizontalCarousel({ className }: { className: string }) {
 
   return (
     <section
+      ref={sectionRef}
       className={cn(
         "relative h-[100svh] overflow-hidden bg-accent [transition:background-color_0.45s_ease]",
         className
@@ -1050,6 +1158,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                     loading="eager"
                     className="block h-full w-full object-cover"
                   />
+                  <SpecularBorder />
                 </Link>
               ) : (
                 <div
@@ -1077,6 +1186,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                       </span>
                     </div>
                   )}
+                  <SpecularBorder />
                 </div>
               )}
           </div>
@@ -1213,7 +1323,6 @@ function HorizontalCarousel({ className }: { className: string }) {
                       →
                     </span>
                   </button>
-                  <ArrowLink href={item.href ?? "/about"}>About</ArrowLink>
                 </>
               ) : (
                 <ArrowLink href={item.href ?? "#"}>Case study</ArrowLink>
@@ -1313,7 +1422,7 @@ function StackedItem({ item }: { item: WorkItem }) {
       </div>
       <div className="mt-5">
         <ArrowLink href={item.href ?? "#"}>
-          {item.flagship ? "Read the flagship case study" : "View case study"}
+          {item.flagship ? "Flagship case study" : "Case study"}
         </ArrowLink>
       </div>
       </div>

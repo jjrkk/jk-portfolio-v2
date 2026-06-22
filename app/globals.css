@@ -60,7 +60,7 @@
   --text-hero: clamp(3rem, 7.5vw, 10rem);
   --text-hero--line-height: 0.9;
   --text-hero--letter-spacing: -0.03em;
-  --text-hero--font-weight: 600;
+  --text-hero--font-weight: 700;
 
   --text-display: clamp(3.25rem, 8vw, 9rem);
   --text-display--line-height: 0.92;
@@ -70,7 +70,7 @@
   --text-display-sm: clamp(2.5rem, 5.5vw, 5rem);
   --text-display-sm--line-height: 0.98;
   --text-display-sm--letter-spacing: -0.02em;
-  --text-display-sm--font-weight: 600;
+  --text-display-sm--font-weight: 700;
 
   --text-title: clamp(1.75rem, 3vw, 2.75rem);
   --text-title--line-height: 1.05;
