@@ -192,7 +192,10 @@ function Carousel() {
   const pos = useTransform(scrollYProgress, easedPos);
   // Spring-smoothed position drives the cards so they feel weighted and physical;
   // raw pos still drives color vars and the active index so theming stays snappy.
-  const springPos = useSpring(pos, { stiffness: 100, damping: 26 });
+  // Near-critical (ratio ~0.97) + high stiffness: tracks the scroll tween tightly
+  // with no overshoot. The old 100/26 was OVERDAMPED (crit ≈ 20) → slow, trailing
+  // approach, which read as sluggish. This keeps the weight but kills the lag.
+  const springPos = useSpring(pos, { stiffness: 240, damping: 30 });
   const indices = SLIDE_THEMES.map((_, i) => i);
   const bg = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.panelBg));
   const accent = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.accent));
@@ -513,7 +516,7 @@ function Carousel() {
             </div>
             <div className="relative col-span-7 h-[66vh]">
               {SLIDES.map((item, i) => (
-                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} />
+                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} />
               ))}
             </div>
           </div>
@@ -579,11 +582,16 @@ function CarouselCard({
   item,
   index,
   pos,
+  active,
 }: {
   item: WorkItem;
   index: number;
   pos: MotionValue<number>;
+  active: number;
 }) {
+  // Only the active card and its immediate neighbors run their blob animation;
+  // distant off-screen cards hold a static glow so the compositor stays free.
+  const isNear = Math.abs(index - active) <= 1;
   const y = useTransform(pos, (p) => `${(index - p) * SPACING}%`);
   const scale = useTransform(pos, (p) =>
     Math.max(MIN_SCALE, 1 - Math.min(Math.abs(index - p), 2) * SCALE_FALLOFF),
@@ -601,7 +609,7 @@ function CarouselCard({
       className="absolute inset-0 flex items-center justify-center"
       style={{ y, scale, opacity, zIndex, pointerEvents }}
     >
-      <WorkStage item={item} />
+      <WorkStage item={item} animateBlobs={isNear} />
     </motion.div>
   );
 }
@@ -703,7 +711,7 @@ function SpecularBorder() {
 }
 
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
-function WorkStage({ item }: { item: WorkItem }) {
+function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs?: boolean }) {
   const isClickable = !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -794,49 +802,27 @@ function WorkStage({ item }: { item: WorkItem }) {
       className="group relative w-full transition-transform duration-500 hover:scale-[1.015]"
       style={{ perspective: 1000 }}
     >
-      {/* Morphing color burst glass blobs */}
+      {/* Color burst glass blobs. Transform-ONLY motion (rotate + scale) on a
+          static organic border-radius — never animate border-radius, which
+          forces a per-frame paint + re-blur on these large blurred layers and
+          competes with scroll. Only the active card + its neighbors animate
+          (animateBlobs); the rest hold a static glow. */}
       {/* Horizontal inset is 2× vertical so the blob bleeds generously into the
           copy area on the left and the frame edge on the right. */}
       <div className="absolute -top-12 -bottom-12 -left-24 -right-24 overflow-visible opacity-[0.44] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.62] group-hover:blur-[110px] group-hover:-top-16 group-hover:-bottom-16 group-hover:-left-32 group-hover:-right-32">
         {/* Blob 1 - rotating clockwise (accent color) */}
         <motion.div
-          className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%]"
+          className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] will-change-transform"
           style={{ background: "var(--accent)", opacity: 0.72 }}
-          animate={{
-            borderRadius: [
-              "40% 60% 70% 30% / 40% 50% 60% 50%",
-              "60% 40% 50% 70% / 50% 60% 40% 60%",
-              "50% 60% 60% 40% / 40% 40% 70% 60%",
-              "40% 60% 70% 30% / 40% 50% 60% 50%",
-            ],
-            rotate: [0, 90, 180, 360],
-            scale: [1, 1.12, 0.92, 1],
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          animate={animateBlobs ? { rotate: [0, 90, 180, 360], scale: [1, 1.12, 0.92, 1] } : undefined}
+          transition={animateBlobs ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
         />
         {/* Blob 2 - rotating counter-clockwise (white highlight, creating pastel blend) */}
         <motion.div
-          className="absolute -inset-4 rounded-[60%_40%_50%_70%_/_50%_60%_40%_60%]"
+          className="absolute -inset-4 rounded-[60%_40%_50%_70%_/_50%_60%_40%_60%] will-change-transform"
           style={{ background: "#ffffff", opacity: 0.58 }}
-          animate={{
-            borderRadius: [
-              "60% 40% 50% 70% / 50% 60% 40% 60%",
-              "40% 60% 70% 30% / 40% 50% 60% 50%",
-              "50% 40% 60% 50% / 60% 50% 50% 60%",
-              "60% 40% 50% 70% / 50% 60% 40% 60%",
-            ],
-            rotate: [360, 270, 180, 0],
-            scale: [1, 0.9, 1.1, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          animate={animateBlobs ? { rotate: [360, 270, 180, 0], scale: [1, 0.9, 1.1, 1] } : undefined}
+          transition={animateBlobs ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
         />
       </div>
       <motion.div
@@ -1165,19 +1151,10 @@ function HorizontalCarousel({ className }: { className: string }) {
               {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
               <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
                 <motion.div
-                  className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%]"
+                  className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] will-change-transform"
                   style={{ background: SLIDE_THEMES[i]?.accent ?? "var(--accent)", opacity: 0.65 }}
-                  animate={{
-                    borderRadius: [
-                      "40% 60% 70% 30% / 40% 50% 60% 50%",
-                      "60% 40% 50% 70% / 50% 60% 40% 60%",
-                      "50% 60% 60% 40% / 40% 40% 70% 60%",
-                      "40% 60% 70% 30% / 40% 50% 60% 50%",
-                    ],
-                    rotate: [0, 90, 180, 360],
-                    scale: [1, 1.1, 0.92, 1],
-                  }}
-                  transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+                  animate={Math.abs(i - active) <= 1 ? { rotate: [0, 90, 180, 360], scale: [1, 1.1, 0.92, 1] } : undefined}
+                  transition={Math.abs(i - active) <= 1 ? { duration: 16, repeat: Infinity, ease: "easeInOut" } : undefined}
                 />
               </div>
 

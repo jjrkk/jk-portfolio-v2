@@ -32,7 +32,7 @@ export const INTRO: WorkItem = {
   titleLines: ["Design it.", "Build it.", "Ship it."],
   blurb:
     "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products.",
-  image: "/personality/jk-whiteboard.png",
+  image: "/personality/jk-whiteboard.webp",
   href: "/about",
   chips: [
     "UX/UI",
@@ -50,7 +50,7 @@ export const WORK: WorkItem[] = [
     title: "Cloud",
     blurb:
       "Modernizing a clinical AI platform — and pioneering the human-AI workflow that built it.",
-    image: "/work/cloud/ff-cloud.png",
+    image: "/work/cloud/ff-cloud.webp",
     flagship: true,
     href: "/work/ff-cloud",
   },
@@ -61,7 +61,7 @@ export const WORK: WorkItem[] = [
     title: "Image Capture",
     blurb:
       "Rethinking the embryologist's image-capture workflow for speed, clarity, and clinical trust.",
-    image: "/work/image-capture/cap-app-after-2x.png",
+    image: "/work/image-capture/cap-app-after-2x.webp",
     href: "/work/cap-app-redesign",
   },
   {
@@ -71,7 +71,7 @@ export const WORK: WorkItem[] = [
     title: "Violet & Magenta",
     blurb:
       "Designing the egg- and embryo-quality reports clinicians use to counsel fertility patients.",
-    image: "/work/egg-reports/ff-reports-card.png",
+    image: "/work/egg-reports/ff-reports-card.webp",
     href: "/work/ff-reports",
   },
   {
@@ -81,7 +81,7 @@ export const WORK: WorkItem[] = [
     title: "Modus X",
     blurb:
       "UX for a robotic digital microscope used by surgeons in live neurosurgery.",
-    image: "/work/synaptive/modus-v-hero-image.jpg",
+    image: "/work/synaptive/modus-v-hero-image.webp",
     href: "/work/modus-v",
   },
   {
@@ -91,7 +91,7 @@ export const WORK: WorkItem[] = [
     title: "PRESTO",
     blurb:
       "Field research and service blueprinting across a transit network serving 50M+ riders.",
-    image: "/work/presto/presto-ticketing-machines.jpg",
+    image: "/work/presto/presto-ticketing-machines.webp",
     href: "/work/metrolinx-presto",
   },
   {
@@ -101,7 +101,7 @@ export const WORK: WorkItem[] = [
     title: "Impact",
     blurb:
       "A modular design-sprint simulation delivered to Fortune 100 teams worldwide.",
-    image: "/work/experiencepoint/impact.png",
+    image: "/work/experiencepoint/impact.webp",
     href: "/work/experiencepoint-impact",
   },
 ];
