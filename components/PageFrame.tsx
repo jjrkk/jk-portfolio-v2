@@ -87,16 +87,18 @@ export function PageFrame() {
     };
   }, []);
 
-  const top = edges.top ? 10 : -10;
-  const bottom = edges.bottom ? 10 : -10;
-  const left = edges.left ? 10 : -10;
-  const right = edges.right ? 10 : -10;
+  const top = edges.top ? 12 : -12;
+  const bottom = edges.bottom ? 12 : -12;
+  const left = edges.left ? 12 : -12;
+  const right = edges.right ? 12 : -12;
 
   // A corner rounds only when BOTH its adjacent edges are "on" (capped). If
   // either is bleeding (off), the corner stays square so the rail runs perfectly
-  // straight. (An off edge is only pushed -10px off-screen, but the radius is
-  // 16px > 10px — a uniform radius would peek ~6px back into the viewport.)
-  const R = 16;
+  // straight. R matches the content sections' rounded-[2rem] = 32px so the
+  // frame arc and content arc are flush — no visible gap in the corner zone.
+  // Safe at 12px inset: the condition already sets R=0 when an edge is off,
+  // so the arc never bleeds from a hidden edge back into the viewport.
+  const R = 32;
   const topLeft = edges.top && edges.left ? R : 0;
   const topRight = edges.top && edges.right ? R : 0;
   const bottomRight = edges.bottom && edges.right ? R : 0;

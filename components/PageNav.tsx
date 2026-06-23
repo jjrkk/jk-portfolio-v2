@@ -102,7 +102,7 @@ export function PageNav({
       : "text-foreground hover:text-accent";
 
   return (
-    <div className="fixed inset-x-[10px] top-0 z-[95]">
+    <div className="fixed inset-x-[12px] top-0 z-[95]">
       {/* Frosted backdrop — opacity-transitions in once the hero is gone */}
       <div
         aria-hidden

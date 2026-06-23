@@ -61,7 +61,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
           {/* Cream content — highest z-index; slides over the hero and peels to reveal footer */}
           <div className="relative z-[2]">
             {/* Rounded top corners, inset to clear the PageFrame boundary */}
-            <div className="relative mx-[10px] overflow-hidden rounded-t-[2rem]">
+            <div className="relative mx-[12px] overflow-hidden rounded-t-[2rem]">
               <CaseSectionOpener />
               <CaseOverview study={study} />
               {study.body.map((block, i) => (

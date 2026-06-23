@@ -465,7 +465,7 @@ function Carousel() {
     <section
       id="work"
       ref={ref}
-      className="relative mx-[10px] hidden min-[1024px]:block overflow-clip"
+      className="relative mx-[12px] hidden min-[1024px]:block overflow-clip"
       style={{ height: `${TOTAL * 100}vh` }}
     >
       {/* Bottom corners round ONLY at the end of the surface — i.e. on the last
@@ -1139,7 +1139,7 @@ function HorizontalCarousel({ className }: { className: string }) {
       <div
         ref={trackRef}
         onScroll={handleScroll}
-        className="scrollbar-none absolute inset-0 flex snap-x snap-mandatory overflow-x-auto gap-3 p-[10px] [scroll-padding-inline:10px]"
+        className="scrollbar-none absolute inset-0 flex snap-x snap-mandatory overflow-x-auto gap-3 p-[12px] [scroll-padding-inline:12px]"
       >
         {/* Lighter "page card" surface — fills the viewport height (chrome rides
             on it) and envelops intro + projects with rounded corners, ending
