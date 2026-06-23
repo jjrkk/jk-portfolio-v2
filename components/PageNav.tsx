@@ -9,12 +9,18 @@ import { SITE } from "@/lib/site";
 /**
  * Persistent top nav for inner pages (About, case studies).
  *
- * When tone="light" (case studies), an IntersectionObserver watches the page's
- * <header> (the accent hero). While the hero is in view: white text, transparent
- * nav. Once the hero scrolls out: text switches to dark ink + a frosted-glass
- * backdrop fades in so the nav stays legible over any content below.
+ * When tone="light" (case studies), a scroll listener watches whether the
+ * [data-nav-sentinel] marker (placed at the hero/content boundary) has been
+ * scrolled past the nav bar. While above the sentinel: white text on the
+ * accent hero. Once past it: text switches to dark ink.
  *
- * tone="dark" (About) is always ink-on-canvas — no backdrop needed.
+ * Scroll listener beats IntersectionObserver here because IO only fires on
+ * entry/exit — it misses the current state on initial mount, after client-side
+ * navigation, and at rootMargin edge cases, leading to stale overHero state.
+ * A scroll listener re-evaluates synchronously on every scroll tick and once
+ * on mount, so it's always correct regardless of how the page arrived.
+ *
+ * tone="dark" (About) is always ink-on-canvas — no listener needed.
  */
 export function PageNav({
   rightLabel,
@@ -36,31 +42,37 @@ export function PageNav({
 
   useEffect(() => {
     if (tone !== "light") return;
-    // Prefer the explicit sentinel placed at the hero/content boundary — it fires
-    // correctly even though the hero is sticky (never leaves the viewport itself).
-    // Fall back to the hero header for any page that hasn't added the sentinel yet.
-    const target =
-      document.querySelector("[data-nav-sentinel]") ??
-      document.querySelector("main header, header");
-    if (!target) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          // Sentinel is visible — still in/near the hero.
-          setOverHero(true);
-        } else {
-          // isIntersecting: false means either above or below the viewport.
-          // Only flip to dark when the sentinel has been scrolled PAST (top < 0).
-          // When it's still below (top > 0, not yet reached), stay white-on-accent.
-          setOverHero(entry.boundingClientRect.top > 0);
-        }
-      },
-      // Shift the trigger 80px inward from the top so the flip happens the moment
-      // the light content surface reaches the nav bar, not when it just enters view.
-      { threshold: 0, rootMargin: "-80px 0px 0px 0px" },
-    );
-    obs.observe(target);
-    return () => obs.disconnect();
+
+    // Lenis only fires ~1 native `scroll` event per programmatic scroll animation
+    // (it updates scrollY via RAF, not via repeated native events). So we can't
+    // rely on `window.addEventListener("scroll")` — it fires once at the start
+    // of the animation, not at the end. Instead:
+    //   1. Try Lenis's own per-frame scroll event (fires on every RAF tick).
+    //   2. Fall back to a plain RAF loop (same cadence, zero Lenis dependency).
+    // Both call check() ~60fps, React bails out when overHero value doesn't change.
+
+    const NAV_HEIGHT = 90;
+    const check = () => {
+      const sentinel =
+        document.querySelector("[data-nav-sentinel]") ??
+        document.querySelector("main header, header");
+      if (!sentinel) { setOverHero(true); return; }
+      setOverHero(sentinel.getBoundingClientRect().top > NAV_HEIGHT);
+    };
+
+    check(); // initial state before first frame
+
+    // RAF loop: runs every frame regardless of what manages scroll (Lenis,
+    // native, programmatic). Lenis and native window scroll events both fire
+    // only once per programmatic scroll call — not per animation frame — so
+    // they miss the intermediate positions during a smooth scroll animation.
+    // The RAF loop reads getBoundingClientRect() on every frame, which always
+    // has the correct scrollY. React bails out silently when overHero doesn't
+    // change, so this is cheaper than it looks.
+    let rafId: ReturnType<typeof requestAnimationFrame>;
+    const loop = () => { check(); rafId = requestAnimationFrame(loop); };
+    rafId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId);
   }, [tone]);
 
   const showBackdrop = false; // backdrop removed — text colour flips but no surface fill

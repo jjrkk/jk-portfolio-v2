@@ -210,7 +210,10 @@ function Carousel() {
 
   // Write prev/next accent rgba vars so the directional gradient overlay can
   // bleed the incoming colour in from the top (prev) and bottom (next) edges.
-  useMotionValueEvent(pos, "change", (v) => {
+  // Extracted so it can be called both on change AND on mount (useMotionValueEvent
+  // only fires on changes — pos starts at 0 and doesn't change until the user
+  // scrolls, so without the initial call the vars are never set on first load).
+  const applyEdgeGradient = (v: number) => {
     const root = document.documentElement;
     const prevIdx = Math.max(0, Math.floor(v));
     const nextIdx = Math.min(TOTAL - 1, Math.ceil(v));
@@ -220,13 +223,14 @@ function Carousel() {
       const b = parseInt(hex.slice(5, 7), 16);
       return `rgba(${r},${g},${b},${a})`;
     };
-    // Suppress top bleed on the first slide and bottom bleed on the last —
-    // no self-echo at the page edges.
-    const prevA = prevIdx === 0 ? 0 : 0.20;
-    const nextA = nextIdx === TOTAL - 1 ? 0 : 0.20;
+    const prevA = prevIdx === 0 ? 0 : 0.13;
+    const nextA = nextIdx === TOTAL - 1 ? 0 : 0.13;
     root.style.setProperty("--accent-prev-rgba", toRgba(SLIDE_THEMES[prevIdx].accent, prevA));
     root.style.setProperty("--accent-next-rgba", toRgba(SLIDE_THEMES[nextIdx].accent, nextA));
-  });
+  };
+  useMotionValueEvent(pos, "change", applyEdgeGradient);
+  // Apply once on mount so the gradient is correct before any scroll event fires.
+  useEffect(() => { applyEdgeGradient(pos.get()); }, []);
 
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);

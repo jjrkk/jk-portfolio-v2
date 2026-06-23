@@ -35,7 +35,7 @@ export function Contact({ dark }: { dark?: boolean }) {
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-[#D7355D] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_rgba(0,0,0,0.22)] active:translate-y-0 active:scale-100 active:duration-100"
+              className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_rgba(0,0,0,0.22)] active:translate-y-0 active:scale-100 active:duration-100"
             >
               Résumé
               <span aria-hidden className="transition-transform duration-300 ease-out group-hover:translate-x-0.5">
