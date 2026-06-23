@@ -39,6 +39,16 @@ export function PageNav({
   // Starts true so we render white-on-accent immediately (no flash of dark text).
   const [overHero, setOverHero] = useState(true);
   const isExternal = rightExternal ?? /^(https?:|mailto:)/.test(rightHref);
+  const isAnchor = rightHref.startsWith("#");
+
+  const handleAnchorClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const target = document.getElementById(rightHref.slice(1));
+    if (!target) return;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (t: HTMLElement, o?: { duration?: number }) => void } }).lenis;
+    if (lenis?.scrollTo) lenis.scrollTo(target, { duration: 1.1 });
+    else target.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (tone !== "light") return;
@@ -125,7 +135,21 @@ export function PageNav({
           {SITE.name}
         </Link>
 
-        {isExternal ? (
+        {isAnchor ? (
+          // Anchor: smooth-scroll to section via Lenis. Arrow points down on
+          // desktop (indicates direction), right on mobile.
+          <a
+            href={rightHref}
+            onClick={handleAnchorClick}
+            className={`group inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] transition-colors duration-300 ${linkColor}`}
+          >
+            {rightLabel}
+            <span aria-hidden className="transition-transform duration-300 group-hover:translate-y-0.5 lg:group-hover:translate-x-0 lg:group-hover:translate-y-0.5">
+              <span className="lg:hidden">→</span>
+              <span className="hidden lg:inline">↓</span>
+            </span>
+          </a>
+        ) : isExternal ? (
           <a
             href={rightHref}
             target={rightHref.startsWith("mailto:") ? undefined : "_blank"}

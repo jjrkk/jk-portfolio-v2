@@ -30,7 +30,7 @@ export default function AboutPage() {
   return (
     <>
       <AccentReset />
-      <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} />
+      <PageNav rightLabel="Contact" rightHref="#contact" />
       <main id="main-content" tabIndex={-1} style={{ background: "var(--accent)" }}>
         {/* mx-[10px] matches the PageFrame inset so the accent base canvas peeks
             on the sides; rounded-b-[2rem] gives the rounded corner as the sticky
