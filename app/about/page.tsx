@@ -31,8 +31,11 @@ export default function AboutPage() {
     <>
       <AccentReset />
       <PageNav rightLabel="Contact" rightHref={`mailto:${SITE.socials.email}`} />
-      <main id="main-content" tabIndex={-1}>
-        <div className="relative z-[1] bg-background">
+      <main id="main-content" tabIndex={-1} style={{ background: "var(--accent)" }}>
+        {/* mx-[10px] matches the PageFrame inset so the accent base canvas peeks
+            on the sides; rounded-b-[2rem] gives the rounded corner as the sticky
+            footer reveals beneath — same pattern as the case-study template. */}
+        <div className="relative z-[1] mx-[10px] overflow-hidden rounded-b-[2rem] bg-background">
           <AboutHero />
           <AboutStatement />
           <AtWork />
@@ -41,7 +44,7 @@ export default function AboutPage() {
           <Personality />
         </div>
         <FooterReveal>
-          <Contact />
+          <Contact dark />
         </FooterReveal>
       </main>
     </>
