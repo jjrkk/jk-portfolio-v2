@@ -3,6 +3,7 @@ import { AccentReset } from "@/components/AccentReset";
 import { PageNav } from "@/components/PageNav";
 import { AboutHero } from "@/components/sections/about/AboutHero";
 import { AboutStatement } from "@/components/sections/about/AboutStatement";
+import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
 import { AtWork } from "@/components/sections/about/AtWork";
 import { ExperienceTimeline } from "@/components/sections/about/ExperienceTimeline";
 import { LogoWall } from "@/components/sections/LogoWall";
@@ -30,18 +31,28 @@ export default function AboutPage() {
   return (
     <>
       <AccentReset />
-      <PageNav rightLabel="Contact" rightHref="#contact" />
+      <PageNav rightLabel="Contact" rightHref="#contact" tone="light" />
       <main id="main-content" tabIndex={-1} style={{ background: "var(--accent)" }}>
-        {/* mx-[10px] matches the PageFrame inset so the accent base canvas peeks
-            on the sides; rounded-b-[2rem] gives the rounded corner as the sticky
-            footer reveals beneath — same pattern as the case-study template. */}
-        <div className="relative z-[1] mx-[10px] overflow-hidden rounded-b-[2rem] bg-background">
-          <AboutHero />
-          <AboutStatement />
-          <LogoWall />
-          <AtWork />
-          <ExperienceTimeline />
-          <Personality />
+        {/* Same sticky-underlay pattern as the case-study template:
+            the hero is pinned on the accent canvas; the cream content slides
+            over it as the user scrolls. The sentinel triggers the nav tone
+            switch from white-on-accent to dark ink. */}
+        <div className="relative">
+          <div className="sticky top-0 z-[1]">
+            <AboutHero />
+          </div>
+
+          {/* Sentinel: nav flips from white → dark when this crosses the nav bar */}
+          <div aria-hidden data-nav-sentinel className="pointer-events-none h-0" />
+
+          <div className="relative z-[2] mx-[12px] overflow-hidden rounded-t-[2rem] rounded-b-[2rem] bg-background">
+            <CaseSectionOpener />
+            <AboutStatement />
+            <LogoWall />
+            <AtWork />
+            <ExperienceTimeline />
+            <Personality />
+          </div>
         </div>
         <FooterReveal>
           <Contact dark />

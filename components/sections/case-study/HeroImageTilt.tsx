@@ -15,15 +15,21 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
  * The <h1> stays server-rendered in CaseHero; only the image lives here.
  * Reduced-motion → static, square-on.
  */
-export function HeroImageTilt({ children }: { children: React.ReactNode }) {
+export function HeroImageTilt({
+  children,
+  scrollRange = 1150,
+  maxDeg = -42,
+}: {
+  children: React.ReactNode;
+  /** ScrollY value (px) at which `maxDeg` is reached. Defaults to case-study value. */
+  scrollRange?: number;
+  /** Maximum rotation in degrees (negative = counter-clockwise). */
+  maxDeg?: number;
+}) {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
 
-  // 0 → 1150px of scroll maps to 0 → -32° (counter-clockwise). The range spans
-  // roughly the full window the hero stays visible (it's covered by the rising
-  // cream content by ~1000px), so the card keeps rotating the whole way down
-  // rather than stopping early. Clamped beyond.
-  const rotate = useTransform(scrollY, [0, 1150], [0, -42]);
+  const rotate = useTransform(scrollY, [0, scrollRange], [0, maxDeg]);
 
   if (reduce) {
     return (
