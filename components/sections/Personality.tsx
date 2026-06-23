@@ -6,8 +6,8 @@ import { Reveal } from "@/components/ui/Reveal";
 // DRAFT copy + interim photos (the cats/music shots from the old site aren't in
 // the repo — swap in when available).
 const PHOTOS = [
-  { src: "/personality/talk.png", alt: "Justin speaking at a design talk" },
-  { src: "/personality/jk-whiteboard.png", alt: "Justin sketching at the whiteboard" },
+  { src: "/personality/talk.webp", alt: "Justin speaking at a design talk" },
+  { src: "/about/justin-jumping-off-a-cliff.webp", alt: "Justin jumping off a cliff" },
   { src: "/personality/candid-1.jpg", alt: "Candid" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
 ];

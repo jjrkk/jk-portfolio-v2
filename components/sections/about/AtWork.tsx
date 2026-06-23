@@ -61,6 +61,17 @@ export function AtWork() {
             ))}
           </ul>
         </div>
+
+        <Reveal delay={0.15} className="mt-16">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/about/justin-with-arms-outstretched.webp"
+            alt="Justin collaborating with his team"
+            width={1200}
+            height={800}
+            className="w-full rounded-2xl object-cover shadow-[0_24px_60px_-20px_rgba(0,0,0,0.22)]"
+          />
+        </Reveal>
       </Container>
     </Section>
   );

@@ -38,9 +38,9 @@ export default function AboutPage() {
         <div className="relative z-[1] mx-[10px] overflow-hidden rounded-b-[2rem] bg-background">
           <AboutHero />
           <AboutStatement />
+          <LogoWall />
           <AtWork />
           <ExperienceTimeline />
-          <LogoWall />
           <Personality />
         </div>
         <FooterReveal>

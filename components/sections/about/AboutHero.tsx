@@ -15,9 +15,9 @@ export function AboutHero() {
             <div className="overflow-hidden rounded-2xl border border-border bg-surface">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/about/portrait.jpg"
+                src="/about/portrait.webp"
                 alt="Justin Kirkey"
-                className="aspect-[4/5] w-full object-cover"
+                className="aspect-[4/5] w-full object-cover object-top"
               />
             </div>
           </Reveal>
