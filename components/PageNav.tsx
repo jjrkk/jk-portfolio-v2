@@ -45,9 +45,17 @@ export function PageNav({
     e.preventDefault();
     const target = document.getElementById(rightHref.slice(1));
     if (!target) return;
-    const lenis = (window as unknown as { lenis?: { scrollTo: (t: HTMLElement, o?: { duration?: number }) => void } }).lenis;
-    if (lenis?.scrollTo) lenis.scrollTo(target, { duration: 1.1 });
-    else target.scrollIntoView({ behavior: "smooth" });
+    // The Contact footer uses `sticky bottom-0` — its element position never
+    // changes, so scrollTo(element) barely moves. Scroll to page bottom instead
+    // so the sticky footer is fully revealed by scrolling past all content above.
+    const isSticky = getComputedStyle(target).position === "sticky"
+      || getComputedStyle(target.parentElement ?? target).position === "sticky";
+    const dest = isSticky
+      ? document.documentElement.scrollHeight - window.innerHeight
+      : target;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (t: HTMLElement | number, o?: { duration?: number }) => void } }).lenis;
+    if (lenis?.scrollTo) lenis.scrollTo(dest as number, { duration: 1.1 });
+    else window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   };
 
   useEffect(() => {
