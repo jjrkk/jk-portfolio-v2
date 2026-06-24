@@ -399,9 +399,153 @@ const IMAGE_CAPTURE: CaseStudy = {
   next: { slug: "ff-reports", title: "Violet & Magenta", eyebrow: "Clinical reporting · Future Fertility" },
 };
 
+const MODUS_X: CaseStudy = {
+  slug: "modus-v",
+  eyebrow: "Surgical navigation · Synaptive Medical",
+  title: "Modus X",
+  subtitle:
+    "Turning a million-dollar surgical robot's engineering-built interface into something a nurse could run with minimal training and a surgeon could command hands-free — held to a no-use-errors safety bar.",
+  hero: {
+    src: "/work/synaptive/modus-v-hero-image.webp",
+    alt: "Synaptive's Modus X robotic surgical microscope in use during live neurosurgery",
+  },
+
+  overview: [
+    "Synaptive Medical builds tools that help neurosurgeons see and navigate the brain — imaging, planning, and optics for some of the most delicate procedures in medicine. Modus X is its flagship: a robotic digital microscope that gives the surgical team a magnified, high-definition view of the operative field on a large monitor, controllable in several ways from across the room.",
+    "I owned the UX/UI for Modus X — first as the company's UX Research Lead, then as Manager of Product Design, leading both the software UX and industrial design teams. The work spanned the operator touchscreen, the 10-foot surgical overlay, a foot-pedal interface, and a first-of-its-kind hands-free voice control — all designed to a medical-device safety bar and validated with real surgeons and nurses.",
+  ],
+  meta: [
+    { label: "Role", value: "Manager, Product Design — led UX & Industrial Design; owned Modus X UX/UI" },
+    { label: "Users", value: "Neurosurgeons & neuroradiologists; nurses, MRI techs & clinical-apps specialists" },
+    {
+      label: "Methods",
+      value: "OR ethnography (10+ surgeries) · clinician interviews · FDA formative/summative testing · voice-UI design · spec & handoff",
+    },
+    { label: "Subject", value: "Modus X — robotic digital surgical microscope for neurosurgery" },
+    { label: "Timeframe", value: "2017 – 2018" },
+  ],
+
+  body: [
+    {
+      eyebrow: "The problem",
+      title: "A million-dollar robot that felt too complex to run",
+      figureLayout: "aside",
+      body: [
+        "Modus X is a robotic digital microscope for neurosurgery — a flagship instrument that sells for more than a million dollars and gives surgeons a magnified, 4K view of the operative field on a large monitor in front of them. The optics and robotics were extraordinary. The interface was not: it had been built by engineers, which in practice meant every control was on screen, all the time. The market's read was blunt — powerful, but too complex.",
+        "That was a real problem for a product at this price point and in this setting. New clinics needed staff who could run it with minimal training; an operating room is no place for a fiddly UI; and a million-dollar instrument should feel as premium as it costs. The mandate: dramatically streamline the experience and make it look the part — without losing anything a surgeon relied on, and without introducing any possibility of a use error.",
+      ],
+      figure: {
+        src: "/work/synaptive/surgical-overlay.png",
+        alt: "The Modus X live surgical overlay — the surgeon's 4K operative view with controls at the edges",
+        caption: "The live surgical overlay — the surgeon's 4K view, with controls kept to the edges. The job was to make a powerful instrument feel effortless at a glance.",
+        frameless: true,
+      },
+    },
+    {
+      eyebrow: "Discovery",
+      title: "Ten-plus brain surgeries, and a recruit-the-nurses test",
+      sectionTone: "tinted",
+      body: [
+        "I had built and led Synaptive's UX research practice before taking over product design, so the redesign started where it should: in the operating room. I shadowed 10+ live brain surgeries and ran dozens of interviews with neurosurgeons, nurses, and clinical-apps specialists — learning the choreography of a procedure, where attention can and can't go, and which controls actually get touched mid-surgery.",
+        "Then I pressure-tested the redesign against a deliberately high bar: we recruited external nurses — not power users — and watched whether they could run the system with minimal training. If they could, the design was working. All of it ran under FDA formative and summative testing protocol, so usability wasn't a nice-to-have; it was a documented safety requirement.",
+      ],
+      figure: {
+        src: "/work/synaptive/justin-and-team-during-fda-usability-testing.jpg",
+        alt: "The design and research team in scrubs during FDA usability testing in front of the Modus X system",
+        caption: "Usability testing under FDA protocol — including external nurses recruited to prove the 'anyone can run this with minimal training' bar.",
+        frameless: true,
+      },
+    },
+    {
+      eyebrow: "Approach",
+      title: "Make it effortless — and let the surgeon go hands-free",
+      body: [
+        "The core move mirrored the instrument's own restraint: surface what a surgeon needs in the moment, and tuck everything else into reach but out of sight. The result reads as calm and genuinely premium — controls sized and spaced to be legible across the room on the 10-foot display, a touchscreen operator UI for setup and procedure flow, and a visual language that finally matched the price tag. I designed for the whole control spectrum, too: the same machine could be driven by a physical end-effector, a foot pedal, the touchscreen, or the big-screen overlay — the surgeon's choice.",
+        "The fifth path was the differentiator: hands-free voice control. Surgeons had asked for it — if they could get the perfect view without ever fiddling with the UI, they could stay focused on the surgery. I led the UX for it end to end: defining the command set (“OK Vimo, focus here”; “OK Vimo, zoom in 20%”), selecting the microphone hardware (lavalier vs. head-mounted), and validating it in pig-lab trials with real neurosurgeons wearing it and feeding back. It shipped as a first-class modality, not a gimmick — voice that actually worked in a live surgical setting.",
+      ],
+      figure: {
+        src: "/work/synaptive/surgeon-testing-new-surgical-overlay-10-ft-ui.jpg",
+        alt: "A neurosurgeon working from the redesigned Modus X 10-foot overlay on a 4K display during surgery",
+        caption: "A neurosurgeon working from the redesigned 10-foot overlay on the 4K display — controls legible across the room, attention on the field, not the interface.",
+        wide: true,
+      },
+    },
+  ],
+
+  gallery: [
+    {
+      src: "/work/synaptive/modus-x-ui-examples.png",
+      alt: "Redesigned Modus X operator touchscreen UI — setup wizard and procedure home",
+      caption: "The redesigned operator UI — setup wizard and procedure home, with large, glanceable touch targets.",
+    },
+    {
+      src: "/work/synaptive/modus-x-voice-control-testing.png",
+      alt: "Voice-control trials — testing command recognition and microphone types",
+      caption: "Voice-control trials — testing command recognition and microphone types in a simulated surgical setting.",
+    },
+    {
+      src: "/work/synaptive/modus-ia-and-specs.png",
+      alt: "Modus X information architecture and UI specifications",
+      caption: "Information architecture and UI specs, documented to FDA submission standards for the engineering handoff.",
+    },
+  ],
+  galleryColumns: 3,
+
+  judgment: {
+    eyebrow: "Judgment",
+    title: "The decisions that mattered",
+    intro:
+      "Three calls defined the redesign — each balancing usability, premium feel, and an uncompromising safety bar.",
+    tradeoffs: [
+      {
+        decision: "Hide the controls to make a complex robot feel simple",
+        rationale:
+          "The engineering-built v1 showed everything at once — capable, but read by the market as too complex. I streamlined hard: foreground what's needed in the moment, tuck the rest within reach, and tune the whole thing to feel as premium as a million-dollar instrument should. The cost is that a power user loses always-on density; the bet — borne out in testing with nurses and surgeons — was that calm, learnable, and premium wins this market.",
+      },
+      {
+        decision: "Let the surgeon choose the modality — and make voice first-class",
+        rationale:
+          "Rather than force one input, I designed a coherent spectrum of ways to drive the same robot: end-effector, foot pedal, touchscreen, the 10-foot overlay, and voice. Five control paths is far harder to design than one, but it meets surgeons where they are and keeps them heads-down on the procedure. Voice was elevated to a market differentiator precisely because surgeons asked to interact with the robot as little as possible.",
+      },
+      {
+        decision: "Design to a safety bar, not just a usability bar",
+        rationale:
+          "Under FDA formative and summative protocol, the target isn't only ‘easy’ — it's ‘no possibility of a use error.’ Every control, state, and voice command had to be unambiguous and safe, validated through structured testing with real surgeons and nurses, including pig-lab voice trials. The constraint sharpened the work: it forced clarity, not compromise.",
+      },
+    ],
+  },
+
+  impact: {
+    eyebrow: "Impact",
+    title: "A flagship instrument that finally felt like one",
+    body: [
+      "The redesign took Modus X's interface from a capable-but-complex engineering build to a streamlined, premium operator experience — validated with external nurses and neurosurgeons under FDA testing protocol, and learnable with minimal training. Voice control shipped as a first-class, hands-free modality after pig-lab R&D with real surgeons. Modus X — with its voice and 3D enhancements — is Synaptive's flagship surgical microscope in market today.",
+    ],
+    metrics: [
+      { value: "$1M+", label: "Flagship product, rebuilt", note: "Synaptive's robotic surgical microscope — UI redesigned v1 → spec" },
+      { value: "10+", label: "Brain surgeries shadowed", note: "Plus dozens of clinician interviews, under FDA submission protocol" },
+      { value: "5 ways", label: "To control one robot", note: "End-effector, foot pedal, touchscreen, 10-ft overlay, and hands-free voice" },
+    ],
+  },
+
+  filmstrip: [
+    { src: "/work/synaptive/surgical-overlay.png",                              alt: "Modus X live surgical overlay — the surgeon's 4K operative view with edge controls" },
+    { src: "/work/synaptive/modus-x-ui-examples.png",                           alt: "Redesigned Modus X operator touchscreen UI" },
+    { src: "/work/synaptive/justin-and-team-during-fda-usability-testing.jpg",  alt: "The design and research team during FDA usability testing" },
+    { src: "/work/synaptive/surgeon-testing-3D-modus-X.jpg",                    alt: "A neurosurgeon testing Modus X's 3D visualization" },
+    { src: "/work/synaptive/synaptive-brain-tractography.jpg",                  alt: "Brain tractography — the neuro-imaging Modus X is built around" },
+    { src: "/work/synaptive/synaptive-modus-x-in-brain-surgery.jpg",           alt: "Modus X in use during live brain surgery" },
+    { src: "/work/synaptive/workflow-and-service-blueprinting.png",            alt: "Workflow and service blueprinting from the discovery phase" },
+    { src: "/work/synaptive/product-101.png",                                  alt: "Modus X product overview" },
+  ],
+
+  next: { slug: "metrolinx-presto", title: "PRESTO", eyebrow: "Transit service design · Metrolinx" },
+};
+
 export const CASE_STUDIES: Record<string, CaseStudy> = {
   [IMAGE_CAPTURE.slug]: IMAGE_CAPTURE,
   [VIOLET_MAGENTA.slug]: VIOLET_MAGENTA,
+  [MODUS_X.slug]: MODUS_X,
 };
 
 /** Slugs that have full case-study content (drives static params + sitemap). */
