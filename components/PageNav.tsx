@@ -152,8 +152,8 @@ export function PageNav({
             className={`group inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] transition-colors duration-300 ${linkColor}`}
           >
             {rightLabel}
-            <span aria-hidden className="transition-transform duration-300 group-hover:translate-y-0.5 lg:group-hover:translate-x-0 lg:group-hover:translate-y-0.5">
-              <span className="lg:hidden">→</span>
+            <span aria-hidden className="transition-transform duration-300 group-hover:translate-y-0.5">
+              <span className="lg:hidden">↓</span>
               <span className="hidden lg:inline">↓</span>
             </span>
           </a>
