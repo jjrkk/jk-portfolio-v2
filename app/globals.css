@@ -145,3 +145,64 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ── Initial-load aperture (landing, once per session) ─────────────────────
+   The accent frame is BORN: a box-shadow flood (the same mechanism as
+   PageFrame) opens from a full-bleed fuchsia viewport inward to the 12px rails,
+   revealing the page center-out, then fades out onto the real frame underneath.
+   Only renders under html.intro-play — set by a pre-paint inline script on a
+   fresh session (see IntroAperture.tsx). Repeat visits, no-JS, and
+   reduced-motion never add the class, so they see nothing (display:none). */
+.intro-aperture {
+  display: none;
+}
+html.intro-play .intro-aperture {
+  display: block;
+  position: fixed;
+  z-index: 150;
+  pointer-events: none;
+  /* transparent box; the flood is everything OUTSIDE it (= the accent frame) */
+  box-shadow: 0 0 0 100vmax var(--accent);
+  /* start collapsed at viewport center → flood covers the whole screen */
+  top: 50vh;
+  right: 50vw;
+  bottom: 50vh;
+  left: 50vw;
+  border-radius: 0;
+  animation: intro-aperture-open 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes intro-aperture-open {
+  0% {
+    top: 50vh;
+    right: 50vw;
+    bottom: 50vh;
+    left: 50vw;
+    border-radius: 0;
+    opacity: 1;
+  }
+  /* open to the rails on the expo-out curve; corners round to match content (32px) */
+  74% {
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    border-radius: 32px;
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  /* fade-out tail hands off to the real PageFrame (covers the slide-0 bottom-edge diff) */
+  100% {
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    border-radius: 32px;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.intro-play .intro-aperture {
+    display: none;
+    animation: none;
+  }
+}

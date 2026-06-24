@@ -60,6 +60,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${serif.variable} ${sans.variable} ${mono.variable} h-full`}
+      // The IntroAperture pre-paint script may add `intro-play` to <html> before
+      // hydration (once-per-session, landing only) — expected, so suppress the
+      // class-mismatch warning here (standard theme-script pattern).
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <script
@@ -67,6 +71,16 @@ export default function RootLayout({
           // Static, build-time constant — no user input, safe to inline.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        {/* Pre-paint gate for the landing's initial aperture animation.
+            Sets html.intro-play synchronously during parse on a fresh session
+            (reduced-motion-gated). Must be a blocking inline script so the
+            aperture covers the viewport before first paint — no async approach
+            can guarantee this. React logs a dev-only __DEV__ warning about
+            script tags in component trees; this does not appear in the
+            production static export. Same tradeoff as every Next.js theme
+            script (dark-mode, etc.). */}
+        {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var k='jk-intro-played';var seen=sessionStorage.getItem(k);var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!seen&&!reduce){document.documentElement.classList.add('intro-play');}sessionStorage.setItem(k,'1');}catch(e){}})();` }} />
         <SkipLink />
         <SmoothScroll />
         <PageFrame />
