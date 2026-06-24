@@ -542,10 +542,152 @@ const MODUS_X: CaseStudy = {
   next: { slug: "metrolinx-presto", title: "PRESTO", eyebrow: "Transit service design · Metrolinx" },
 };
 
+const PRESTO: CaseStudy = {
+  slug: "metrolinx-presto",
+  eyebrow: "Transit service design · Metrolinx",
+  title: "PRESTO",
+  subtitle:
+    "Leading the field research and service blueprinting behind a coherent way to pay for transit across Ontario — card, tap, mobile, and paper — now used by 50M+ riders a month.",
+  hero: {
+    src: "/work/presto/presto-ticketing-machines.webp",
+    alt: "PRESTO fare and ticketing machines in a Metrolinx transit station",
+  },
+
+  overview: [
+    "PRESTO is the fare-payment system for public transit across Ontario — the way riders pay on the TTC, GO Transit, UP Express, and the municipal systems in between. By 2019, how people actually paid had fragmented: a PRESTO card on one system, tap-to-pay on another, paper tickets, monthly passes, mobile — each its own experience, none designed as a whole. Metrolinx brought in Fjord (part of Accenture) to fix that holistically and design the future of how Ontario pays to ride.",
+    "I co-led the engagement and was the lead for its foundation: the ethnographic field research and the ticketing service design and blueprinting. The mandate was system-thinking, not screen-polishing — give the entire rider journey, across every payment form and every operator, first-class design attention. The work the team delivered was implemented by Metrolinx and now shapes how 50M+ riders pay every month.",
+  ],
+  meta: [
+    { label: "Role", value: "Service & Interaction Design Lead — project co-lead; lead for field research & ticketing service blueprinting" },
+    { label: "Client", value: "Metrolinx / PRESTO (via Fjord, part of Accenture)" },
+    { label: "Users", value: "Transit riders across provincial & municipal Ontario" },
+    {
+      label: "Methods",
+      value: "Ethnographic field research · qual + quant discovery · synthesis · service blueprinting · concept testing · workflow mapping",
+    },
+    { label: "Subject", value: "The future-state PRESTO payment & ticketing experience" },
+    { label: "Timeframe", value: "2019" },
+  ],
+
+  body: [
+    {
+      eyebrow: "The problem",
+      title: "One network, a dozen ways to pay — and no single experience",
+      figureLayout: "aside",
+      body: [
+        "Paying to ride across Ontario meant navigating a patchwork. A PRESTO card on one system, tap-to-pay on another, paper tickets, monthly passes, mobile — fare media that had each accreted on its own, across a network of provincial and municipal operators that riders nonetheless experience as a single trip. Metrolinx knew the payment experience had fallen behind the system's ambition.",
+        "Their ask was deliberately holistic: don't optimize a single channel — design the whole journey. Make paying to ride coherent no matter how a person chooses to do it, or which operators a trip crosses. That's a service-design problem before it's a UI one — which is why Metrolinx brought in Fjord to do the field research and systems thinking the brief demanded.",
+      ],
+      figure: {
+        src: "/work/presto/03-ethnography-immersion.png",
+        alt: "A board of fare media collected from transit operators across Ontario during field research",
+        caption: "Fare media collected from across the network — a single rider's trip can cross many operators, each with its own way to pay. The fragmentation, made tangible.",
+      },
+    },
+    {
+      eyebrow: "Discovery",
+      title: "Research earned in the field, not the boardroom",
+      sectionTone: "tinted",
+      body: [
+        "As the research lead, I put the team where the answers were: on the actual network. We rode lines, intercepted riders at fare machines across operators — Brampton, the TTC, Durham, York, GO — and ran qualitative and quantitative discovery to understand how people really pay, where they hesitate, and what they've quietly normalized. Field ethnography costs more than a survey; it's what surfaced the fragmentation riders had stopped noticing.",
+        "That ground truth became the foundation everything else stood on. We synthesized hundreds of observations into the themes and opportunity areas that would steer the design — not a list of channel fixes, but a read on the whole rider relationship with paying to ride.",
+      ],
+      figure: {
+        src: "/work/presto/04-user-research.png",
+        alt: "Field research in transit stations — intercepting riders at PRESTO machines, with a board of research locations across operators",
+        caption: "Field research across the network — riders intercepted at machines from Brampton to the TTC to Durham, observations logged location by location.",
+      },
+    },
+    {
+      eyebrow: "Approach",
+      title: "Blueprint the whole service, not just the screens",
+      body: [
+        "The design had to hold across every way to pay and every operator a trip touches — so the core deliverable was a service blueprint, not a set of mockups. I led the ticketing service design: mapping the future-state rider journey end to end, the supporting service moments behind it, and the workflows that make it real, so a coherent experience held together whether someone tapped a card, used their phone, or bought a paper ticket.",
+        "Because this was an agency deliverable a government client would implement, the work had to survive handoff. The blueprints and workflow maps encoded intent unambiguously — a future-state vision robust enough to build a province-wide, 50M-rider experience from, long after the engagement ended.",
+      ],
+      figure: {
+        src: "/work/presto/08-blueprint-artifact-showcase.png",
+        alt: "The Future State Vision for PRESTO Ticketing service blueprint",
+        caption: "The future-state service blueprint for PRESTO ticketing — the rider journey, the service moments behind it, and the workflows that make it coherent across every fare type.",
+        wide: true,
+      },
+    },
+  ],
+
+  gallery: [
+    {
+      src: "/work/presto/05-research-findings-showcase.png",
+      alt: "Showcase of the PRESTO discovery research findings",
+      caption: "Discovery findings — the themes and opportunity areas synthesized from the field research.",
+    },
+    {
+      src: "/work/presto/07-concept-posters.png",
+      alt: "Concept posters from the PRESTO future-experience work",
+      caption: "Concept posters — future-experience directions made tangible for stakeholders and testing.",
+    },
+    {
+      src: "/work/presto/10-concept-testing-for-validation.png",
+      alt: "Concept testing sessions validating the PRESTO future-experience directions",
+      caption: "Concept testing — validating the directions with riders before they moved toward implementation.",
+    },
+  ],
+  galleryColumns: 3,
+
+  judgment: {
+    eyebrow: "Judgment",
+    title: "The decisions that mattered",
+    intro:
+      "Three calls defined the work — each a service-design choice over an easier, narrower one.",
+    tradeoffs: [
+      {
+        decision: "Design the whole journey, not a single fare channel",
+        rationale:
+          "The easy brief would have been a polished PRESTO-card flow. The right one was holistic: a coherent experience across card, tap-to-pay, mobile, and paper, across every operator a rider crosses. System-thinking over screen-thinking is harder and slower — but it's the only way the result holds together across a fragmented network, and it's exactly what Metrolinx hired Fjord to do.",
+      },
+      {
+        decision: "Earn the insight in the field, not from a survey",
+        rationale:
+          "As research lead, I committed the team to real ethnographic fieldwork — riding the network, intercepting riders at machines across operators, collecting actual fare media — rather than desk research or a quick poll. It costs more time and effort up front; the payoff was ground truth about the fragmentation riders had normalized, which gave every downstream design decision something solid to stand on.",
+      },
+      {
+        decision: "Blueprint for a system someone else will build",
+        rationale:
+          "This was an agency deliverable for a government client who would implement it at provincial scale. So the output couldn't just be beautiful concepts — it had to be service blueprints and workflow maps that encoded intent clearly enough to survive handoff and build from. Designing for implementation by others, not just for the pitch, is why the work is still in riders' hands today.",
+      },
+    ],
+  },
+
+  impact: {
+    eyebrow: "Impact",
+    title: "A field-grounded vision, now in 50M+ hands a month",
+    body: [
+      "Metrolinx got what it asked for: a holistic, field-grounded vision for how Ontario pays to ride — one coherent rider experience across PRESTO card, tap-to-pay, mobile, and paper, spanning provincial and municipal operators. The service blueprints and concepts the team delivered were implemented by PRESTO and Metrolinx, and now shape how more than 50 million riders pay every month.",
+    ],
+    metrics: [
+      { value: "50M+", label: "Monthly riders served", note: "The team's designs were implemented and now shape fare payment across Ontario" },
+      { value: "1 journey", label: "Across every fare type", note: "PRESTO card, tap-to-pay, mobile, and paper ticketing — designed as one coherent experience" },
+      { value: "Network-wide", label: "Ethnographic field research", note: "Across Ontario's transit operators — the TTC, GO, UP Express, and municipal systems" },
+    ],
+  },
+
+  filmstrip: [
+    { src: "/work/presto/01-service-and-project-context.png",                  alt: "PRESTO service and project context" },
+    { src: "/work/presto/02-project-management-war-room.png",                   alt: "The project war room — managing a large, complex service-design engagement" },
+    { src: "/work/presto/presto-service-design-affinity-diagramming.png",       alt: "Affinity diagramming the field research" },
+    { src: "/work/presto/06-synthesis.png",                                     alt: "Synthesizing field research into themes and opportunities" },
+    { src: "/work/presto/09-backlog-development-and-prioritization.png",        alt: "Backlog development and prioritization" },
+    { src: "/work/presto/11-workflow-mapping-deliverable.png",                  alt: "Workflow mapping deliverable for the PRESTO ticketing experience" },
+    { src: "/work/presto/05-research-findings-showcase.png",                    alt: "PRESTO discovery research findings" },
+  ],
+
+  next: { slug: "experiencepoint-impact", title: "Impact", eyebrow: "Learning platform · ExperiencePoint" },
+};
+
 export const CASE_STUDIES: Record<string, CaseStudy> = {
   [IMAGE_CAPTURE.slug]: IMAGE_CAPTURE,
   [VIOLET_MAGENTA.slug]: VIOLET_MAGENTA,
   [MODUS_X.slug]: MODUS_X,
+  [PRESTO.slug]: PRESTO,
 };
 
 /** Slugs that have full case-study content (drives static params + sitemap). */
