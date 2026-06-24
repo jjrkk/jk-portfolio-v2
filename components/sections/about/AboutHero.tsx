@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
 import { HeroImageTilt } from "@/components/sections/case-study/HeroImageTilt";
+import { RESUME_URL } from "@/components/sections/Contact";
 
 /**
  * About hero — portrait + serif greeting + intro + socials.
@@ -69,7 +70,9 @@ export function AboutHero() {
                   Email
                 </a>
                 <a
-                  href="/resume.pdf"
+                  href={RESUME_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="transition-opacity hover:opacity-100"
                   style={{ color: "var(--accent-contrast)", opacity: 0.7 }}
                 >

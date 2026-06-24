@@ -5,8 +5,12 @@ import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
 
+// Single source of truth for the résumé link (used by Contact, Work, AboutHero).
+// TODO(polish): add UTM tags here — and to SITE.socials (LinkedIn/email) in
+// lib/site.ts — so outbound clicks are attributable. Do all external links in
+// one pass; consider centralizing them in lib/site.ts at that time.
 export const RESUME_URL =
-  "https://drive.google.com/open?id=1h0HfLLc7f9PIux_H52rgf-qihaPk7JNu&usp=drive_fs";
+  "https://drive.google.com/file/d/1h0HfLLc7f9PIux_H52rgf-qihaPk7JNu/view";
 
 /** Brand fuchsia hardcoded so the dark footer is always on-brand regardless
  *  of where the scroll-driven --accent is sitting at the time it's revealed. */
