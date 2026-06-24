@@ -159,7 +159,7 @@ export function MorphProvider({ children }: { children: React.ReactNode }) {
                 }
           }
           // Expo-out: travels fast then settles into place. Premium, not bouncy.
-          transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.78, ease: [0.16, 1, 0.3, 1] }}
           onAnimationComplete={() => {
             if (target) finish();
           }}
