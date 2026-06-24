@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AccentReset } from "@/components/AccentReset";
 import { PageNav } from "@/components/PageNav";
+import { PageTransition } from "@/components/PageTransition";
 import { AboutHero } from "@/components/sections/about/AboutHero";
 import { AboutStatement } from "@/components/sections/about/AboutStatement";
 import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
@@ -33,30 +34,32 @@ export default function AboutPage() {
       <AccentReset />
       <PageNav rightLabel="Contact" rightHref="#contact" tone="light" />
       <main id="main-content" tabIndex={-1} style={{ background: "var(--accent)" }}>
-        {/* Same sticky-underlay pattern as the case-study template:
-            the hero is pinned on the accent canvas; the cream content slides
-            over it as the user scrolls. The sentinel triggers the nav tone
-            switch from white-on-accent to dark ink. */}
-        <div className="relative">
-          <div className="sticky top-0 z-[1]">
-            <AboutHero />
-          </div>
+        <PageTransition>
+          {/* Same sticky-underlay pattern as the case-study template:
+              the hero is pinned on the accent canvas; the cream content slides
+              over it as the user scrolls. The sentinel triggers the nav tone
+              switch from white-on-accent to dark ink. */}
+          <div className="relative">
+            <div className="sticky top-0 z-[1]">
+              <AboutHero />
+            </div>
 
-          {/* Sentinel: nav flips from white → dark when this crosses the nav bar */}
-          <div aria-hidden data-nav-sentinel className="pointer-events-none h-0" />
+            {/* Sentinel: nav flips from white → dark when this crosses the nav bar */}
+            <div aria-hidden data-nav-sentinel className="pointer-events-none h-0" />
 
-          <div className="relative z-[2] mx-[12px] overflow-hidden rounded-t-[2rem] rounded-b-[2rem] bg-background">
-            <CaseSectionOpener />
-            <AboutStatement />
-            <LogoWall />
-            <AtWork />
-            <ExperienceTimeline />
-            <Personality />
+            <div className="relative z-[2] mx-[12px] overflow-hidden rounded-t-[2rem] rounded-b-[2rem] bg-background">
+              <CaseSectionOpener />
+              <AboutStatement />
+              <LogoWall />
+              <AtWork />
+              <ExperienceTimeline />
+              <Personality />
+            </div>
           </div>
-        </div>
-        <FooterReveal>
-          <Contact dark />
-        </FooterReveal>
+          <FooterReveal>
+            <Contact dark />
+          </FooterReveal>
+        </PageTransition>
       </main>
     </>
   );
