@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 
@@ -12,6 +13,9 @@ import "lenis/dist/lenis.css";
  * Renders nothing; it just drives the scroll loop for the lifetime of the app.
  */
 export default function SmoothScroll() {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -19,6 +23,7 @@ export default function SmoothScroll() {
     if (prefersReduced) return;
 
     const lenis = new Lenis();
+    lenisRef.current = lenis;
     // Expose for in-page smooth-scroll CTAs (e.g. the intro "WORK ↓" jump),
     // so they animate through Lenis rather than fighting it.
     (window as unknown as { lenis?: Lenis }).lenis = lenis;
@@ -33,9 +38,16 @@ export default function SmoothScroll() {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      lenisRef.current = null;
       delete (window as unknown as { lenis?: Lenis }).lenis;
     };
   }, []);
+
+  // Reset to top on every route change so Lenis's virtual scroll position
+  // doesn't bleed into the incoming page.
+  useEffect(() => {
+    lenisRef.current?.scrollTo(0, { immediate: true });
+  }, [pathname]);
 
   return null;
 }
