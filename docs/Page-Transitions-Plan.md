@@ -58,34 +58,43 @@ Shipped in commit `6ec0a37`. A reusable cross-route shared-element system:
 
 ## NEXT — to do (in priority order)
 
-### 1. Verify + polish the case-study morph (small)
-- Confirm the dev hang is gone in production (see above).
-- Tune to taste in-browser: duration (currently 620ms), ease, whether to add a
-  faint **accent flood** (user chose "restrained / present-on-land" for v1; the
-  more theatrical option is the magenta canvas wiping in *during* the morph).
-- The background currently hard-cuts landing-pink → case-study-magenta at the
-  nav instant (under the flying clone). Acceptable (both in-family), but a cross
-  -dissolve of the two surfaces would be the next level if it feels abrupt.
+> **Status (2026-06-24):** items 1–3 below are **DONE and deployed** (commits
+> `6b2b9bf` morph timing, `595836e` About fade, `3509c82` initial-load aperture).
+> Only item 4's **back-transition** remains, and it's **deliberately deferred**
+> until more case studies exist. Kept below for the rationale/history.
 
-### 2. About page — surface transition (no hero-image conduit)
-- About is reached via the nav **"ABOUT"** link, so there's **no source image**
-  to morph. Use a **surface transition** instead, consistent with the frame
-  paradigm: the incoming accent (fuchsia) hero canvas wipes/expands in, or a
-  clean cross-dissolve with the accent colour as the bridge. Lighter than the
-  case-study morph. Reduced-motion → instant.
-- About already has the accent-canvas sticky hero + `CaseSectionOpener` blush +
-  `HeroImageTilt` on the portrait (commit `0f09610`), so the structure is ready;
-  this is purely the *enter* animation.
+### 1. ✅ DONE — Verify + polish the case-study morph
+- Verified on the prod build (dev hang gone). Morph duration tuned **620ms →
+  780ms** (`6b2b9bf`). Kept the restrained / present-on-land accent (no flood).
+- *Still optional, deferred:* the background hard-cuts landing-pink →
+  case-study-magenta at the nav instant; a cross-dissolve of the two surfaces
+  would be the next level if it ever feels abrupt. Both in-family, so low priority.
+
+### 2. ✅ DONE — About page surface transition (`595836e`)
+- Shipped as a **pure-opacity surface-enter fade**: a reusable
+  [`PageTransition`](../components/PageTransition.tsx) wraps the content inside
+  `<main>`, so the fuchsia accent canvas shows instantly (continuous from the
+  landing) while the content blooms in (500ms expo-out). Pure opacity (no
+  y-translate) to avoid any transform/sticky interaction. Reduced-motion → instant.
 - Note: the landing intro card ("Justin 101") links to `/about` and is
   deliberately **excluded** from the morph (`kind === "project"` gate). If we
   ever want the portrait to be a conduit from somewhere, the primitive supports
   it — just give a source a matching `useMorphTarget` id.
 
-### 3. Initial page load (the landing)
-- A brief, skippable intro that sets the tone: e.g. the **accent frame "irises"
-  in** (the ±12px `PageFrame` rails draw from the corners), the hero card scales
-  up a hair from a fade, the title runs its existing reveal. < 1s, reduced-motion
-  → instant. Keep it tasteful, not a loader.
+### 3. ✅ DONE — Initial page load aperture (`3509c82`)
+- Shipped: the accent frame opens from **full-bleed fuchsia → the 12px rails**
+  center-out on first paint, reusing PageFrame's box-shadow-flood mechanism
+  ([`IntroAperture`](../components/IntroAperture.tsx) + `@keyframes
+  intro-aperture-open` in `globals.css`). **Once per session** (sessionStorage
+  gate via a pre-paint inline script in `layout.tsx`), landing-only, 0.95s
+  expo-out, reduced-motion → instant.
+- *Tuning levers if revisited:* the expo-out is very front-loaded (the full-
+  fuchsia beat is a brief flash) — add a tiny `0%`/`~8%` hold to dwell longer; and
+  the card/title "bloom on the tail" (a mount-stagger on the intro slide) was left
+  out of v1 since the aperture reveal is already the entrance.
+- *Dev note:* React logs a `__DEV__`-only "script tag in component tree" warning
+  for the blocking pre-paint script (same as any Next.js theme script). **Absent
+  from the production static export** — verified clean.
 
 ### 4. Canonize / propagate
 - The morph primitive already generalises to **all six case studies** (matched

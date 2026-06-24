@@ -5,7 +5,7 @@
 > Keep it updated as the build progresses. A fresh Claude Code session should
 > read this first.
 
-## Quick status (updated 2026-06-17)
+## Quick status (updated 2026-06-24)
 
 - **Phases 0, 1, 2: DONE.** The landing (homepage) is fully built.
 - **About page (`/about`): DONE.** Split hero → big statement → "At work"
@@ -22,8 +22,20 @@
   carousel + contact footer. Everything biographical (how-I-work thesis, logo
   wall, about teaser, personality) **moved to `/about`**. This supersedes the
   multi-section landing in `/CLAUDE.md`'s IA (CLAUDE.md updated to match).
-- **Next: Phase 4 — FF Cloud flagship** (template + "How I worked with AI"
-  section + dual-thread diagram), then Phase 5 ports the remaining 4 studies.
+- **Page-transition microanimations: DONE (2026-06-24, deployed).** Three pieces:
+  the **conduit morph** (landing card → case-study hero shared-element FLIP,
+  780ms expo-out), the **About surface-enter fade**, and a once-per-session
+  **initial-load aperture** (the accent frame opens from full-bleed to the rails
+  on first paint). All reduced-motion-gated. Back-transition (case study →
+  landing) deliberately **deferred** until more studies exist. Details:
+  [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md).
+- **Next: port the remaining case studies, MVP-first** — build each to a
+  launch-able "decent" bar, then iterate. **Revised order (2026-06-24):
+  Image Capture → Modus X → (PRESTO, Impact) → FF Cloud LAST.** FF Cloud is the
+  flagship but the most asset-/content-blocked (needs the "How I worked with AI"
+  section + dual-thread diagram + bespoke assets), so it's saved for last when
+  the template is battle-tested. Its asset checklist is pre-staged in
+  [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md).
 - **Stack:** Next.js 16 static export · Tailwind v4 · Lenis · Framer Motion ·
   Fraunces + Geist. Target host: Cloudflare Pages.
 - **Repo:** [github.com/jjrkk/jk-portfolio-v2](https://github.com/jjrkk/jk-portfolio-v2) (public). Branch → preview URL; merge to `main` → auto-deploys.
@@ -45,7 +57,8 @@
 | [`Case-Study-Asset-Spec_JK_2026-06-17.md`](./Case-Study-Asset-Spec_JK_2026-06-17.md) | Light-stage asset spec — export targets, lighting rule, V&M shot list. |
 | [`FF-Cloud-Case-Study-Outline_JK_2026-06-14.md`](./FF-Cloud-Case-Study-Outline_JK_2026-06-14.md) | Flagship case-study plan (Phase 4). |
 | [`FF-Cloud-Context-Pack-12-June-2026.md`](./FF-Cloud-Context-Pack-12-June-2026.md) + PRD | Flagship source — abstract per confidentiality rules. |
-| [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md) | **Active effort** — premium page-transition microanimations. Conduit morph (landing→case study) DONE; next: verify prod, About surface-transition, initial load. |
+| [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md) | Page-transition microanimations. Morph + About fade + initial-load aperture **DONE** (deployed 2026-06-24); back-transition deferred. |
+| [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md) | Asset-creation checklist for the FF Cloud flagship (built last). Justin's background Figma task. |
 
 > ⚠️ **FF Cloud confidentiality:** no real colleague names; soften roadmap /
 > dev-hours / internal financials; NDA pill on UI; frame to *delivered/approved*,
@@ -150,30 +163,50 @@
 
 ## Asset & content TODO (needs Justin)
 
-- **Logo wall:** export brand wordmark **SVGs** (it's typographic now). Confirm the
-  client list + recognition items (`components/sections/LogoWall.tsx`).
-- **FF Cloud:** real flagship hero assets (Phase 4); the current sign-in PNG is interim.
-- **Case-study imagery:** re-export to **4:3** on light stages (old assets sit on dark
-  bg). Define the spec in Phase 3.
-- **Personality:** cats/music photos from the old site if wanted (interim photos in
-  place; the last candid is the cats — matches the copy).
-- **Résumé:** add `public/resume.pdf` (Contact links to it; 404 until added).
-- **Copy** across intro / thesis / about / personality / contact is **DRAFT** — wordsmith.
+> **Philosophy (2026-06-24):** build each case study to a launch-able **MVP /
+> "decent"** bar first, then iterate. Content/asset debt is *expected* to grow as
+> studies are fleshed out — this list is the running tally. **Keep it updated.**
+
+- **Real metrics** — replace placeholders with hard/directional numbers: V&M's NPS
+  (`+18`, flagged `placeholder` in `lib/case-studies.ts`), plus PRESTO and Modus X /
+  Synaptive figures (the CLAUDE.md per-study mining task).
+- **Case-study imagery** — re-export per
+  [`Case-Study-Asset-Spec`](./Case-Study-Asset-Spec_JK_2026-06-17.md): light/white
+  stages, retina, ≤~400KB each. V&M still uses an interim duplicate. Raw exports are
+  already staged under `public/work/<study>/`.
+- **FF Cloud assets** — the flagship's bespoke set; checklist pre-staged in
+  [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md) (background Figma task).
+- **Logo wall** — export brand wordmark **SVGs** (typographic now); confirm the client
+  list + recognition items (`components/sections/LogoWall.tsx`).
+- **Personality** — cats/music photos from the old site if wanted (interim in place;
+  the last candid is the cats — matches the copy).
+- **Copy** across intro / thesis / about / personality / contact **and every case
+  study** is **DRAFT** — wordsmith.
+- **Résumé:** ✅ resolved — all résumé links point to the Google Drive PDF (`RESUME_URL`
+  in [`Contact.tsx`](../components/sections/Contact.tsx), shared by Contact / Work / AboutHero).
+- **Links polish (later):** add **UTM tags** to all outbound links (résumé, LinkedIn,
+  email) for attribution; consider centralizing them in `lib/site.ts` at that time.
 
 ## Build sequence — remaining
 
 - **Phase 3 — case-study template** ✅ DONE: repeatable template built + Violet & Magenta
   ported as the reference. Asset spec written →
   [`Case-Study-Asset-Spec_JK_2026-06-17.md`](./Case-Study-Asset-Spec_JK_2026-06-17.md).
-  **Still open (needs Justin):** re-export V&M imagery per the spec (source already in
-  `assets/case-studies/ff-reports/`, incl. real before/afters); real NPS figure; copy refinement.
-- **Phase 4 — FF Cloud flagship** [NEXT]: template + the "How I worked with AI" section +
-  dual-thread diagram. Confidentiality rules. Opus.
-- **Phase 5 — About page** (`/about`) + a global nav + port the remaining case studies.
-- **Phase 6 — signature motion** spike (optional; the card tilt/blobs already lean signature).
-- **Phase 7 — polish**: responsive/mobile, a11y/contrast, **perf (images are large PNGs)**,
-  motion-restraint, copy proofing, OG/SEO finalize (sitemap/robots/JSON-LD done; OG art),
-  analytics, base-canvas tone exploration, DNS cutover.
+- **About page** ✅ DONE (`/about`) + persistent nav.
+- **Page transitions** ✅ DONE (conduit morph + About fade + initial-load aperture);
+  back-transition deferred. See [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md).
+- **Case studies — port the rest, MVP-first** [NEXT]. Revised order (2026-06-24):
+  **Image Capture → Modus X → (PRESTO, Impact) → FF Cloud (LAST)**. For each: wire
+  `lib/case-studies.ts` content + light-stage assets to a launch-able bar, then iterate.
+  FF Cloud additionally needs the "How I worked with AI" section + dual-thread diagram
+  (confidentiality rules; see [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md)). Opus
+  for FF Cloud / judgment work; Sonnet for the deterministic ports.
+- **Phase 6 — signature motion** spike (optional; the card tilt/blobs + the transition
+  system already lean signature).
+- **Phase 7 — polish**: responsive/mobile, a11y/contrast, **perf (images are large PNGs →
+  WebP/AVIF)**, motion-restraint, copy proofing, OG/SEO finalize (sitemap/robots/JSON-LD
+  done; OG art), **UTM tags on outbound links**, analytics, base-canvas tone exploration,
+  DNS cutover.
 - **Infra: DONE** — repo live at github.com/jjrkk/jk-portfolio-v2; Cloudflare Pages at jk-portfolio-v2.pages.dev. DNS cutover (justinkirkey.com → Cloudflare) happens in Phase 7.
 
 ## Model plan (per phase)
