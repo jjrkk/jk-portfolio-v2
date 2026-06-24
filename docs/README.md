@@ -45,6 +45,7 @@
 | [`Case-Study-Asset-Spec_JK_2026-06-17.md`](./Case-Study-Asset-Spec_JK_2026-06-17.md) | Light-stage asset spec — export targets, lighting rule, V&M shot list. |
 | [`FF-Cloud-Case-Study-Outline_JK_2026-06-14.md`](./FF-Cloud-Case-Study-Outline_JK_2026-06-14.md) | Flagship case-study plan (Phase 4). |
 | [`FF-Cloud-Context-Pack-12-June-2026.md`](./FF-Cloud-Context-Pack-12-June-2026.md) + PRD | Flagship source — abstract per confidentiality rules. |
+| [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md) | **Active effort** — premium page-transition microanimations. Conduit morph (landing→case study) DONE; next: verify prod, About surface-transition, initial load. |
 
 > ⚠️ **FF Cloud confidentiality:** no real colleague names; soften roadmap /
 > dev-hours / internal financials; NDA pill on UI; frame to *delivered/approved*,
