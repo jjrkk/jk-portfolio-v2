@@ -3,6 +3,7 @@ import { serif, sans, mono } from "./fonts";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import { PageFrame } from "@/components/PageFrame";
+import { MorphProvider } from "@/components/morph/MorphProvider";
 import { SkipLink } from "@/components/SkipLink";
 import TypeLab from "@/components/TypeLab"; // TYPE LAB (dev) — remove when pairing chosen
 import "./globals.css";
@@ -69,7 +70,7 @@ export default function RootLayout({
         <SkipLink />
         <SmoothScroll />
         <PageFrame />
-        {children}
+        <MorphProvider>{children}</MorphProvider>
         <TypeLab />{/* TYPE LAB (dev) — remove when pairing chosen */}
       </body>
     </html>

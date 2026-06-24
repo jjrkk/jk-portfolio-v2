@@ -22,6 +22,7 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { RESUME_URL } from "@/components/sections/Contact";
+import { useMorphBegin } from "@/components/morph/MorphProvider";
 
 /** Publish the four page-frame edges to the root element. Whichever scrolling
  *  surface is visible owns this; PageFrame consumes it. See PageFrame.tsx. */
@@ -718,6 +719,25 @@ function SpecularBorder() {
 function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs?: boolean }) {
   const isClickable = !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const beginMorph = useMorphBegin();
+
+  // Conduit transition: capture the card image's live rect and morph it into
+  // the case-study hero on the destination route (forward only). Modifier-clicks
+  // fall through to default (open-in-new-tab); reduced-motion → plain nav.
+  const handleMorphClick = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    if (!imgRef.current || !item.href) return;
+    e.preventDefault();
+    const r = imgRef.current.getBoundingClientRect();
+    beginMorph({
+      id: item.slug,
+      src: item.image ?? "",
+      from: { top: r.top, left: r.left, width: r.width, height: r.height },
+      fromRadius: 16,
+      href: item.href,
+    });
+  };
 
   // Springs for 3D tilt — damping raised for a heavier, more luxurious feel;
   // stiffness lowered so the card lags behind the cursor instead of tracking it.
@@ -789,6 +809,7 @@ function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs
     return (
       /* eslint-disable-next-line @next/next/no-img-element */
       <img
+        ref={imgRef}
         src={item.image}
         alt={
           item.kind === "intro"
@@ -866,6 +887,7 @@ function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs
             </div>
             <Link
               href={item.href!}
+              onClick={item.kind === "project" ? handleMorphClick : undefined}
               className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
               aria-label={`View ${item.title} case study`}
             />
