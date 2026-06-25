@@ -3,16 +3,9 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
-import { HeroImageTilt } from "@/components/sections/case-study/HeroImageTilt";
 import { RESUME_URL } from "@/components/sections/Contact";
+import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 
-/**
- * About hero — portrait + serif greeting + intro + socials.
- * Sits on the accent base canvas (fuchsia) as a sticky underlay, with the
- * cream content sections scrolling over it. Mirrors the case-study hero
- * pattern: white text on accent, portrait wrapped in HeroImageTilt for the
- * scroll-rotation parallax.
- */
 export function AboutHero() {
   return (
     <header
@@ -21,16 +14,15 @@ export function AboutHero() {
     >
       <Container>
         <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Portrait with scroll-rotation parallax */}
           <Reveal className="lg:col-span-5">
-            <HeroImageTilt scrollRange={800} maxDeg={-20}>
+            <div className="overflow-hidden rounded-2xl shadow-[0_30px_70px_-40px_rgba(0,0,0,0.5)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/about/portrait.webp"
                 alt="Justin Kirkey"
                 className="aspect-[4/5] w-full object-cover object-top"
               />
-            </HeroImageTilt>
+            </div>
           </Reveal>
 
           <div className="lg:col-span-7">
@@ -57,27 +49,23 @@ export function AboutHero() {
                   href={SITE.socials.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-100"
-                  style={{ color: "var(--accent-contrast)", opacity: 0.7 }}
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   LinkedIn
-                </a>
-                <a
-                  href={`mailto:${SITE.socials.email}`}
-                  className="transition-opacity hover:opacity-100"
-                  style={{ color: "var(--accent-contrast)", opacity: 0.7 }}
-                >
-                  Email
                 </a>
                 <a
                   href={RESUME_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-100"
-                  style={{ color: "var(--accent-contrast)", opacity: 0.7 }}
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Résumé
                 </a>
+                <EmailCopyButton
+                  email={SITE.socials.email}
+                  dark
+                  className="font-mono text-eyebrow tracking-[0.14em] text-white/70 hover:text-white"
+                />
               </div>
             </Reveal>
           </div>
