@@ -61,6 +61,54 @@ export type CaseMetric = {
   placeholder?: boolean;
 };
 
+/**
+ * "How I worked with AI" — the flagship-only differentiator section. The
+ * dual-thread diagram is rendered live (CaseAIWorkflow); this is its content.
+ */
+export type AIThread = {
+  label: string; // "Strategy & Judgment"
+  tool: string; // "Claude.ai"
+  blurb: string; // what this thread is for
+  model: string; // model-selection tag, e.g. "Opus · judgment under ambiguity"
+};
+
+export type CaseAIWorkflow = {
+  eyebrow: string;
+  title: string;
+  intro: string[];
+  /** [strategy thread, implementation thread] — drives the two diagram lanes. */
+  threads: [AIThread, AIThread];
+  /** The human-in-the-loop cycle, e.g. ["You decide", "AI executes", "You evaluate"]. */
+  loop: string[];
+  /** Supporting principle callouts (model selection, iteration-vs-spec, output). */
+  notes: { title: string; body: string }[];
+};
+
+/**
+ * The design-system showcase — rendered live from real tokens (CaseDesignSystem)
+ * rather than a static export, so the case study demonstrates the system itself.
+ */
+export type CaseColorTier = {
+  tier: string; // "Platform" / "Product" / "Semantic"
+  rule: string; // one-line governing rule
+  swatches: { name: string; hex: string; sub?: string }[];
+};
+
+export type CaseStatusChip = {
+  label: string;
+  hex: string; // the status's treatment colour
+  gating: string; // what the state allows/blocks
+};
+
+export type CaseDesignSystem = {
+  eyebrow: string;
+  title: string;
+  intro: string[];
+  principles: string[];
+  colorTiers: CaseColorTier[];
+  statuses: CaseStatusChip[];
+};
+
 export type CaseStudy = {
   slug: string;
   eyebrow: string;
@@ -76,6 +124,18 @@ export type CaseStudy = {
 
   /** Narrative beats, each an eyebrow + title + body with optional figure. */
   body: CaseNarrativeBlock[];
+
+  /**
+   * Flagship-only: the "How I worked with AI" section (dual-thread diagram) and
+   * the live design-system showcase. Rendered after the body beats, before the
+   * gallery. Both optional — only FF Cloud uses them.
+   */
+  aiWorkflow?: CaseAIWorkflow;
+  designSystem?: CaseDesignSystem;
+
+  /** Optional external CTA (e.g. the live prototype) — the "is it real?" proof.
+   *  Rendered in the AI workflow section when present. */
+  liveLink?: { label: string; href: string };
 
   /**
    * Optional image grid rendered between the narrative body and Judgment.
@@ -734,9 +794,9 @@ const IMPACT: CaseStudy = {
         "And we earned it by prototyping the workshop on ourselves and on external test groups, fast — running it, watching where energy dipped, and re-cutting the timing and mechanics until the virtual version had its own pace and pull. In the early, intense months of the pandemic, designing, testing, and optimizing a live virtual sprint was itself a design sprint.",
       ],
       figure: {
-        src: "/work/experiencepoint/03-experience-example.png",
-        alt: "Examples of the designed Impact experience — structured activity templates, interview plans, and play-by-play guides",
-        caption: "The designed experience, made concrete — activity structures, interview plans, and play-by-plays that hold the session's pace and quality together.",
+        src: "/work/experiencepoint/02-modular-delivery.png",
+        alt: "The modular delivery architecture for Impact — sprint stages that flex to different durations and client needs",
+        caption: "The modular architecture — one consistent, high-quality core that flexes by duration and client need, and across in-person, virtual, and self-directed delivery.",
       },
     },
     {
@@ -746,9 +806,9 @@ const IMPACT: CaseStudy = {
         "To sell and scale, Impact had to deliver the same excellent learning every time, run by facilitators who weren't me. So I designed a modular learning architecture — a consistent, high-quality core that flexes from a single session to a multi-day program, and adapts across in-person, virtual, and self-directed delivery — and built the product plans around it with each Fortune 100 client. Underneath sat the full machine: master talking points and a train-the-trainer program so any facilitator could deliver it, plus the production-manager role that handles the live logistics so the facilitator can focus on the room. Digital credentials and prep guides closed the loop into a sellable, end-to-end experience.",
       ],
       figure: {
-        src: "/work/experiencepoint/02-modular-delivery.png",
-        alt: "The modular delivery architecture for Impact — sprint stages that flex to different durations and client needs",
-        caption: "The modular architecture — one consistent, high-quality core that flexes by duration and client need, and across in-person, virtual, and self-directed delivery.",
+        src: "/work/experiencepoint/03-experience-example.png",
+        alt: "Examples of the designed Impact experience — structured activity templates, interview plans, and play-by-play guides",
+        caption: "The designed experience, made concrete — activity structures, interview plans, and play-by-plays that hold the session's pace and quality together.",
         wide: true,
       },
     },
@@ -813,10 +873,271 @@ const IMPACT: CaseStudy = {
     { src: "/work/experiencepoint/04-digital-credentials.png",                 alt: "Impact digital credentials and post-workshop flow" },
   ],
 
+  next: { slug: "ff-cloud", title: "Cloud", eyebrow: "AI healthtech · Future Fertility" },
+};
+
+const FF_CLOUD: CaseStudy = {
+  slug: "ff-cloud",
+  eyebrow: "AI healthtech · Future Fertility",
+  title: "Cloud",
+  subtitle:
+    "Leading the redesign of the platform embryologists and lab directors run on daily — and building the production-grade prototype myself, with agentic AI, as the design system's source of truth.",
+  hero: {
+    src: "/work/cloud/ff-cloud-hero.webp",
+    alt: "The redesigned Future Fertility Cloud platform — a warm-clinical sign-in screen for an AI fertility intelligence platform",
+  },
+  confidential: true,
+
+  overview: [
+    "Future Fertility uses AI to assess egg and embryo quality from microscope images taken in IVF and egg-freezing labs, generating the predictive reports clinicians use to counsel patients. FF Cloud is the company's primary web platform — where embryologists and lab directors spend their day reviewing image QC, approving and generating those reports, and sharing them with clinics. It worked, and labs relied on it, but it had grown the way internal tools do: feature by feature, screen by screen, until it read like a dense spreadsheet wrapper, visually a decade behind the AI sophistication it was meant to express.",
+    "This wasn't a cosmetic refresh. The company was evolving from a per-report point solution into a sticky, multi-role SaaS intelligence platform — and the dated surface was the thing standing between that ambition and the people who'd adopt it. I led the redesign end to end: design direction, design-system architecture, and the hands-on build of a high-fidelity, genuinely interactive prototype — made with agentic AI — that served as the source of truth and the handoff vehicle for engineering. It was approved at the leadership level for rollout.",
+  ],
+  meta: [
+    { label: "Role", value: "Product Design Lead — design direction, design-system architecture & hands-on prototype build" },
+    { label: "Users", value: "Embryologists, lab directors, clinicians & internal admin roles" },
+    {
+      label: "Methods",
+      value: "Design-system architecture · research synthesis · high-fidelity prototyping · human-AI build workflow · design-to-dev handoff",
+    },
+    { label: "Subject", value: "FF Cloud — clinical SaaS platform for an AI fertility company" },
+    { label: "Timeframe", value: "2025 – 2026" },
+  ],
+
+  body: [
+    {
+      eyebrow: "The problem",
+      title: "A clinical tool that had fallen behind its own science",
+      figureLayout: "aside",
+      body: [
+        "FF Cloud is where the lab's day happens — reviewing image QC, approving and generating the predictive reports, sharing them with clinics. The product was functional and trusted. But it had accreted: dialog by dialog, table by table, until the screen was a dense list wrapper that looked far older than the AI it expressed. The thing meant to make the science feel credible was quietly undercutting it.",
+        "The clutter wasn't only cosmetic. This is dense, high-frequency professional work in a regulated context, where clinical credibility is non-negotiable — and the platform's dated surface was the friction between the company's platform ambition and the embryologists and lab directors who'd have to adopt it.",
+      ],
+      figure: {
+        src: "/work/cloud/ff-cloud-dashboard-before.webp",
+        alt: "The original FF Cloud dashboard — a dense, dated list view with low information hierarchy",
+        caption: "Before — the original platform: functional and trusted, but accreted feature-by-feature into a dense, dated list. Confidential UI shown under NDA.",
+        frameless: true,
+      },
+    },
+    {
+      eyebrow: "Approach",
+      title: "Modernize with a scalpel — and protect what quietly worked",
+      sectionTone: "tinted",
+      body: [
+        "I started from the evidence, not a blank canvas: synthesizing years of existing qualitative research into themes and a set of decisions I could defend. I also named the real confidence gap honestly — much of the platform insight was internally proxied, and the navigation defaults still needed validation with external users. I designed around that limitation deliberately rather than papering over it.",
+        "Before removing anything, I catalogued the platform's quiet strengths — the things satisfied users never file tickets about: the cumulative multi-cycle reporting patients rely on across appointments, the at-a-glance product colour-badges, the home-page filters that double as a quality-control tool, the three-panel detail layout trainers use to orient new clinics. Those were protected. What came out was the density-without-hierarchy, the dated chrome, and the real friction — like the absence of a quick download from the list view.",
+      ],
+      figure: {
+        src: "/work/cloud/ff-cloud-dashboard-after.webp",
+        alt: "The redesigned FF Cloud dashboard — a calm, scannable, role-aware overview with a clinic snapshot rail",
+        caption: "After — the redesign: a calm, scannable, role-aware overview. The density stays (it's a feature for high-frequency professional use); the hierarchy and the chrome are what changed.",
+        wide: true,
+      },
+    },
+    {
+      eyebrow: "Selected surfaces",
+      title: "The assessment view, modernized without moving the furniture",
+      body: [
+        "The assessment detail is where an embryologist reviews QC, reads the AI's prediction, and shares the report. The redesign kept the three-panel structure trainers depend on — patient & cycle, quality control, share report — and modernized the density, the typography, and the per-image quality read inside it. Download stays the dominant action, matching how reports actually get delivered: download-then-send, not the underused patient portal.",
+        "Across the suite, product identity stays meaningful — VIOLET, MAGENTA, and ROSE are reserved as semantic markers, never generic accents — while the platform chrome holds to a single neutral-first blue. Light and dark are hand-tuned in parallel, never auto-inverted.",
+      ],
+      figure: {
+        src: "/work/cloud/ff-cloud-assessment-after.webp",
+        alt: "The redesigned MAGENTA assessment detail view — preserved three-panel layout with modernized density and per-oocyte quality control",
+        caption: "The redesigned MAGENTA assessment — the preserved three-panel anchor, modernized density, and per-oocyte quality control. Confidential UI shown under NDA.",
+        wide: true,
+      },
+    },
+  ],
+
+  aiWorkflow: {
+    eyebrow: "How I worked with AI",
+    title: "I didn't just design it — I built it, with a deliberate human-AI workflow",
+    intro: [
+      "The redesign's source of truth wasn't a static design file. It was a high-fidelity, genuinely interactive React prototype I built myself with agentic AI — the artifact engineering translates into production. To build at that fidelity and speed without surrendering design judgment, I ran a deliberate two-thread workflow.",
+      "One thread holds the thinking; the other holds the hands. I stay the spine of every decision — the AI is the implementation muscle, never the author.",
+    ],
+    threads: [
+      {
+        label: "Strategy & Judgment thread",
+        tool: "Claude.ai",
+        blurb:
+          "Design reasoning, context preservation, prompt drafting, triage, and A/B framing — where the thinking happens before any code is touched.",
+        model: "Opus · judgment under ambiguity",
+      },
+      {
+        label: "Implementation thread",
+        tool: "Claude Code",
+        blurb:
+          "Actual prototype edits in working React — fed by prompts from the strategy thread, with results brought back for assessment before the next step is greenlit.",
+        model: "Sonnet · resolved execution",
+      },
+    ],
+    loop: ["You decide", "AI executes", "You evaluate", "Greenlight next"],
+    notes: [
+      {
+        title: "Model-selection discipline",
+        body: "A lighter, faster model for execution-heavy work with decisions already resolved; a heavier reasoning model for judgment under ambiguity, reframing, and visual-judgment passes with multiple A/Bs — escalating mid-session the moment a tension needs reframing.",
+      },
+      {
+        title: "Iteration vs. spec calibration",
+        body: "When feedback arrived mid-build, I separated “the spec was wrong” (amend and implement together) from “this is a new direction arriving after codification” (a separate pass against the baseline). Codification lands first, so the system stays coherent.",
+      },
+      {
+        title: "The prototype as handoff",
+        body: "Design intent lives in working code, not throwaway mockups. Production runs a different stack and translates that intent rather than copying the prototype — so the handoff carries behaviour and state, not just pixels.",
+      },
+    ],
+  },
+
+  liveLink: {
+    label: "View the live prototype",
+    href: "https://ff-cloud-prototype-v2.pages.dev/home",
+  },
+
+  designSystem: {
+    eyebrow: "The design system",
+    title: "An AI-readable design system, not a screen reskin",
+    intro: [
+      "Underneath the surfaces is a framework-agnostic design system — tokens and rules documented so both humans and AI agents could build against them consistently. Making the system legible to the tools building it is itself the 2026-forward move: it's what let the prototype stay coherent across dozens of screens, at speed.",
+      "Two pieces carry most of the weight: a three-tier colour model that keeps product meaning meaningful while the chrome stays neutral, and a small, honest status vocabulary where every state defines what it allows and what it blocks.",
+    ],
+    principles: [
+      "Calm Precision",
+      "Premium Restraint",
+      "Dense Clarity",
+      "Borders Before Shadows",
+      "System Over One-Offs",
+      "Parallel Theming, Not Inversion",
+      "AI-Readable by Design",
+      "Build Through Validation",
+    ],
+    colorTiers: [
+      {
+        tier: "Platform",
+        rule: "One neutral-first accent carries all chrome, surfaces, and interactive emphasis.",
+        swatches: [
+          { name: "Future Blue", hex: "#40539E", sub: "platform accent" },
+          { name: "Companion", hex: "#5A6FBE", sub: "lighter" },
+        ],
+      },
+      {
+        tier: "Product",
+        rule: "Product identity markers only — reserved, never generic accents.",
+        swatches: [
+          { name: "VIOLET", hex: "#767AC1", sub: "egg freezing" },
+          { name: "MAGENTA", hex: "#C05698", sub: "IVF" },
+          { name: "ROSE", hex: "#C43B62", sub: "egg donation" },
+        ],
+      },
+      {
+        tier: "Semantic",
+        rule: "Status only — always paired with a non-colour cue.",
+        swatches: [
+          { name: "Ready", hex: "#008254" },
+          { name: "In Review", hex: "#D4960A" },
+          { name: "Needs Attention", hex: "#B91C1C" },
+        ],
+      },
+    ],
+    statuses: [
+      { label: "Needs Attention", hex: "#B91C1C", gating: "A QC issue needs action; report actions are locked until it's resolved." },
+      { label: "In Review", hex: "#D4960A", gating: "Under manual review; report actions blocked until it clears." },
+      { label: "Ready", hex: "#008254", gating: "Predictions ready — download and sharing are available." },
+      { label: "Delivered", hex: "#5A6FBE", gating: "Report shared or downloaded; a calm completion state." },
+    ],
+  },
+
+  gallery: [
+    {
+      src: "/work/cloud/ff-cloud-insights.webp",
+      alt: "The FF Cloud Clinic Insights dashboard — clinically meaningful KPIs like quality, age, and blast rates",
+      caption: "Clinic Insights — the KPI dashboard lab directors wanted, built on clinically meaningful metrics (quality, maturation, blast rates) rather than vanity volume counts.",
+    },
+    {
+      src: "/work/cloud/ff-cloud-home-dark.webp",
+      alt: "The FF Cloud dashboard in dark mode — hand-tuned parallel theming",
+      caption: "The parallel dark theme — hand-tuned alongside light, never an auto-inversion.",
+    },
+    {
+      src: "/work/cloud/ff-cloud-download-dialog.webp",
+      alt: "The FF Cloud download report dialog — the source-of-truth modal",
+      caption: "The download dialog — report delivery made the primary action, matching how clinics actually share results.",
+    },
+    {
+      src: "/work/cloud/ff-cloud-violet.webp",
+      alt: "A VIOLET egg-freezing assessment in FF Cloud",
+      caption: "VIOLET — egg-freezing assessment, with product identity carried as a semantic marker.",
+    },
+    {
+      src: "/work/cloud/ff-cloud-rose.webp",
+      alt: "A ROSE egg-donation assessment in FF Cloud",
+      caption: "ROSE — egg-donation assessment, the same system extended to a different product line.",
+    },
+    {
+      src: "/work/cloud/ff-cloud-new-assessment.webp",
+      alt: "The FF Cloud new-assessment intake flow",
+      caption: "New assessment — structured intake, regrouped so setup is fast and legible.",
+    },
+  ],
+  galleryColumns: 3,
+
+  judgment: {
+    eyebrow: "Judgment",
+    title: "The decisions that mattered",
+    intro:
+      "Modernizing a trusted clinical tool came down to a few deliberate calls — each a trade-off named honestly, including its open edge.",
+    tradeoffs: [
+      {
+        decision: "Density is a feature — don't design it away",
+        rationale:
+          "The instinct with a tool people call 'cluttered' is to strip it down. But for embryologists scanning dozens of assessments under time pressure, density is the point. I kept the information density and fixed what was actually wrong — the hierarchy, the chrome, and the missing quick-actions — rather than trading professional power for a cleaner-looking screenshot.",
+      },
+      {
+        decision: "A dual default-view model — with its open question named",
+        rationale:
+          "The most load-bearing IA decision was an assessment-first default for embryologists with a patient-first toggle for clinicians. I shipped it as the design direction while flagging, openly, that the patient-first concept had not been validated with external users — the single biggest confidence gap, and the first thing I'd put in front of real clinicians before launch. 'Designed' is not the same as 'proven,' and saying so is part of the work.",
+      },
+      {
+        decision: "Frame the AI as decision-support, never autonomous",
+        rationale:
+          "In a regulated clinical product, how the AI positions itself is a trust and safety surface. The platform frames its predictions as support for a clinician's judgment — reinforced in copy and empty states — never as an autonomous verdict. It's the honest framing, and it's what the research said clinicians and patients actually trust.",
+      },
+    ],
+  },
+
+  impact: {
+    eyebrow: "Impact",
+    title: "Approved for rollout — and a system that de-risks what's next",
+    body: [
+      "Because the redesign hadn't reached end users on my watch, the honest impact is what I delivered and de-risked — not adoption numbers I can't claim. I delivered a validated, high-fidelity prototype and a codified design system, approved at the leadership level for rollout. The design made the platform strategy tangible: it reframed the product from a point solution toward a multi-role SaaS platform, in something stakeholders could click through rather than imagine.",
+      "It also left a reusable, AI-readable design-system foundation that de-risks every downstream build, and a repeatable human-AI build workflow documented for the team. What I'd validate next is the question I flagged from the start: the navigation defaults, with external clinicians, before the rollout flips on.",
+    ],
+    metrics: [
+      { value: "~30 screens", label: "Redesigned & systematized", note: "Login, dashboard, assessment, clinic insights and the long tail — under one coherent system." },
+      { value: "Approved", label: "For rollout at leadership level", note: "A validated high-fidelity prototype + codified design system, greenlit as the platform's direction." },
+      { value: "Built with AI", label: "Prototype as source of truth", note: "A production-grade interactive prototype I built myself via a two-thread human-AI workflow." },
+    ],
+  },
+
+  filmstrip: [
+    { src: "/work/cloud/ff-cloud-dashboard-after.webp", alt: "The redesigned FF Cloud dashboard" },
+    { src: "/work/cloud/ff-cloud-insights.webp",        alt: "FF Cloud Clinic Insights — KPI dashboard" },
+    { src: "/work/cloud/ff-cloud-assessment-after.webp",alt: "FF Cloud redesigned MAGENTA assessment detail" },
+    { src: "/work/cloud/ff-cloud-violet.webp",          alt: "FF Cloud VIOLET egg-freezing assessment" },
+    { src: "/work/cloud/ff-cloud-rose.webp",            alt: "FF Cloud ROSE egg-donation assessment" },
+    { src: "/work/cloud/ff-cloud-home-dark.webp",       alt: "FF Cloud dashboard in dark mode" },
+    { src: "/work/cloud/ff-cloud-insights-dark.webp",   alt: "FF Cloud Clinic Insights in dark mode" },
+    { src: "/work/cloud/ff-cloud-endometrium-dark.webp",alt: "FF Cloud endometrium assessment in dark mode" },
+    { src: "/work/cloud/ff-cloud-orders.webp",          alt: "FF Cloud orders list" },
+    { src: "/work/cloud/ff-cloud-patients.webp",        alt: "FF Cloud patients list" },
+  ],
+
   next: { slug: "cap-app-redesign", title: "Image Capture", eyebrow: "Clinical imaging · Future Fertility" },
 };
 
 export const CASE_STUDIES: Record<string, CaseStudy> = {
+  [FF_CLOUD.slug]: FF_CLOUD,
   [IMAGE_CAPTURE.slug]: IMAGE_CAPTURE,
   [VIOLET_MAGENTA.slug]: VIOLET_MAGENTA,
   [MODUS_X.slug]: MODUS_X,

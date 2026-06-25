@@ -23,6 +23,10 @@ export type ProjectTheme = {
   accent: string; // full-strength accent
   panelBg: string; // light tint for the section panel background
   panelFg: string; // readable ink on the panel
+  /** Text/icon colour rendered on the accent fill. Defaults to near-white
+   *  (globals.css --accent-contrast). Set to dark ink for light-value accents
+   *  (e.g. bright yellows) that can't hold white text at WCAG 3:1+. */
+  accentContrast?: string;
 };
 
 /** The site's brand "home" accent (not tied to any one project). */
@@ -34,7 +38,7 @@ export const PROJECT_THEMES: ProjectTheme[] = [
   { slug: "ff-reports", label: "Violet & Magenta", accent: "#b1309a", panelBg: "#f6e7f3", panelFg: "#15130f" },
   { slug: "modus-v", label: "Modus X", accent: "#0e8c9c", panelBg: "#e2f2f4", panelFg: "#15130f" },
   { slug: "metrolinx-presto", label: "PRESTO", accent: "#3e8e57", panelBg: "#e8f2eb", panelFg: "#15130f" },
-  { slug: "experiencepoint-impact", label: "Impact", accent: "#c8860e", panelBg: "#f8efdd", panelFg: "#15130f" },
+  { slug: "experiencepoint-impact", label: "Impact", accent: "#F2CA3F", panelBg: "#fdf6d8", panelFg: "#15130f", accentContrast: "#15130f" },
 ];
 
 /** Look up a project's theme by slug (falls back to undefined). */

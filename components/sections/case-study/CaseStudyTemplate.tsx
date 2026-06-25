@@ -7,6 +7,8 @@ import { CaseHero } from "./CaseHero";
 import { CaseSectionOpener } from "./CaseSectionOpener";
 import { CaseOverview } from "./CaseOverview";
 import { CaseNarrative } from "./CaseNarrative";
+import { CaseAIWorkflow } from "./CaseAIWorkflow";
+import { CaseDesignSystem } from "./CaseDesignSystem";
 import { CaseJudgment } from "./CaseJudgment";
 import { CaseImpact } from "./CaseImpact";
 import { CaseGallery } from "./CaseGallery";
@@ -33,11 +35,12 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
         {
           "--accent": theme?.accent,
           "--panel-bg": theme?.panelBg,
+          ...(theme?.accentContrast && { "--accent-contrast": theme.accentContrast }),
           background: "var(--accent)",
         } as React.CSSProperties
       }
     >
-      {theme && <ProjectAccent accent={theme.accent} />}
+      {theme && <ProjectAccent accent={theme.accent} accentContrast={theme.accentContrast} />}
       <PageNav rightLabel="Contact" rightHref="#contact" tone="light" />
 
       <main id="main-content" tabIndex={-1}>
@@ -67,6 +70,12 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
               {study.body.map((block, i) => (
                 <CaseNarrative key={i} block={block} />
               ))}
+              {/* Flagship-only sections (FF Cloud): the AI workflow + live design
+                  system, rendered between the narrative beats and the gallery. */}
+              {study.aiWorkflow && (
+                <CaseAIWorkflow data={study.aiWorkflow} liveLink={study.liveLink} />
+              )}
+              {study.designSystem && <CaseDesignSystem data={study.designSystem} />}
               {study.gallery && study.gallery.length > 0 && (
                 <CaseGallery items={study.gallery} columns={study.galleryColumns} />
               )}

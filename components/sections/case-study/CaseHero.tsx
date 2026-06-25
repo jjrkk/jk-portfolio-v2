@@ -34,7 +34,7 @@ export function CaseHero({ study }: { study: CaseStudy }) {
         </div>
 
         <h1
-          className="mt-8 font-serif text-display-sm font-semibold lg:text-hero"
+          className="mt-8 font-serif text-display-sm lg:text-hero"
           style={{ color: "var(--accent-contrast)" }}
         >
           {title}

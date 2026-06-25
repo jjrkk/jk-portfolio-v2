@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   motion,
@@ -235,6 +235,9 @@ function Carousel() {
 
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
+  // Shared morph trigger: the active WorkStage registers its triggerMorph here
+  // so CarouselText's "Case study" link can fire the same conduit transition.
+  const activeMorphRef = useRef<(() => void) | null>(null);
   const activeIndex = useTransform(pos, (v) => Math.round(v));
   useMotionValueEvent(activeIndex, "change", (v) => {
     setActive(v);
@@ -543,12 +546,12 @@ function Carousel() {
           <div className="grid w-full grid-cols-12 items-center gap-x-12">
             <div className="relative col-span-5 min-h-[520px]">
               <AnimatePresence mode="wait">
-                <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} />
+                <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} />
               </AnimatePresence>
             </div>
             <div className="relative col-span-7 h-[66vh]">
               {SLIDES.map((item, i) => (
-                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} />
+                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} activeMorphRef={activeMorphRef} />
               ))}
             </div>
           </div>
@@ -615,11 +618,13 @@ function CarouselCard({
   index,
   pos,
   active,
+  activeMorphRef,
 }: {
   item: WorkItem;
   index: number;
   pos: MotionValue<number>;
   active: number;
+  activeMorphRef: React.MutableRefObject<(() => void) | null>;
 }) {
   // Only the active card and its immediate neighbors run their blob animation;
   // distant off-screen cards hold a static glow so the compositor stays free.
@@ -651,12 +656,13 @@ function CarouselCard({
         animateBlobs={isNear}
         isActive={isActive}
         onRequestFocus={() => scrollToSlideIndex(index)}
+        activeMorphRef={activeMorphRef}
       />
     </motion.div>
   );
 }
 
-function CarouselText({ item }: { item: WorkItem }) {
+function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef?: React.MutableRefObject<(() => void) | null> }) {
   const isIntro = item.kind === "intro";
 
   return (
@@ -726,7 +732,18 @@ function CarouselText({ item }: { item: WorkItem }) {
             </button>
           </>
         ) : (
-          <ArrowLink href={item.href ?? "#"}>Case study</ArrowLink>
+          <Link
+            href={item.href ?? "#"}
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              const trigger = activeMorphRef?.current;
+              if (trigger) { e.preventDefault(); trigger(); }
+            }}
+            className="group inline-flex cursor-pointer items-center gap-2 font-sans text-caption font-medium uppercase tracking-[0.12em] text-foreground transition-colors hover:text-accent"
+          >
+            Case study
+            <span aria-hidden className="transition-transform duration-300 ease-out group-hover:translate-x-1">→</span>
+          </Link>
         )}
       </div>
     </motion.div>
@@ -753,19 +770,16 @@ function SpecularBorder() {
 }
 
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
-function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus }: { item: WorkItem; animateBlobs?: boolean; isActive?: boolean; onRequestFocus?: () => void }) {
+function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus, activeMorphRef }: { item: WorkItem; animateBlobs?: boolean; isActive?: boolean; onRequestFocus?: () => void; activeMorphRef?: React.MutableRefObject<(() => void) | null> }) {
   const isClickable = !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const beginMorph = useMorphBegin();
 
-  // Conduit transition: capture the card image's live rect and morph it into
-  // the case-study hero on the destination route (forward only). Modifier-clicks
-  // fall through to default (open-in-new-tab); reduced-motion → plain nav.
-  const handleMorphClick = (e: React.MouseEvent) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  // Core morph logic, separated from the click event so CarouselText's
+  // "Case study" link can fire the same conduit transition.
+  const triggerMorph = useCallback(() => {
     if (!imgRef.current || !item.href) return;
-    e.preventDefault();
     const r = imgRef.current.getBoundingClientRect();
     beginMorph({
       id: item.slug,
@@ -774,6 +788,21 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus 
       fromRadius: 16,
       href: item.href,
     });
+  }, [item, beginMorph]);
+
+  // Register this card's trigger in the shared ref when active so the sibling
+  // CarouselText can fire the same morph without needing imgRef directly.
+  useEffect(() => {
+    if (!activeMorphRef || !isActive || item.kind !== "project") return;
+    activeMorphRef.current = triggerMorph;
+    return () => { if (activeMorphRef.current === triggerMorph) activeMorphRef.current = null; };
+  }, [isActive, triggerMorph, activeMorphRef, item.kind]);
+
+  // Conduit transition: modifier-clicks fall through to default (open-in-new-tab).
+  const handleMorphClick = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    e.preventDefault();
+    triggerMorph();
   };
 
   // Springs for 3D tilt — damping raised for a heavier, more luxurious feel;

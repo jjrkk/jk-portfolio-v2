@@ -10,13 +10,17 @@ import { SITE_ACCENT } from "@/lib/theme";
  * brand accent on the way out. Page *content* is themed via an inline style on
  * the page wrapper (SSR-correct, no flash); this only handles the fixed frame.
  */
-export function ProjectAccent({ accent }: { accent: string }) {
+const DEFAULT_ACCENT_CONTRAST = "#fdfcfb";
+
+export function ProjectAccent({ accent, accentContrast }: { accent: string; accentContrast?: string }) {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--accent", accent);
+    if (accentContrast) root.style.setProperty("--accent-contrast", accentContrast);
     return () => {
       root.style.setProperty("--accent", SITE_ACCENT);
+      root.style.setProperty("--accent-contrast", DEFAULT_ACCENT_CONTRAST);
     };
-  }, [accent]);
+  }, [accent, accentContrast]);
   return null;
 }
