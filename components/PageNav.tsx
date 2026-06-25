@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { SITE } from "@/lib/site";
 
@@ -35,7 +34,6 @@ export function PageNav({
    *  hero (case studies); auto-switches to dark + backdrop once hero scrolls out. */
   tone?: "dark" | "light";
 }) {
-  const [hovered, setHovered] = useState(false);
   // Starts true so we render white-on-accent immediately (no flash of dark text).
   const [overHero, setOverHero] = useState(true);
   const isExternal = rightExternal ?? /^(https?:|mailto:)/.test(rightHref);
@@ -121,26 +119,15 @@ export function PageNav({
       <div className="relative flex items-center justify-between px-6 pb-5 pt-12 sm:px-10 lg:px-16 lg:pt-14 xl:px-24">
         <Link
           href="/"
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          className={`relative font-mono text-eyebrow uppercase transition-colors duration-300 ${linkColor}`}
+          onClick={() => {
+            try { sessionStorage.setItem("jk-return-slide", "1"); } catch {}
+          }}
+          className={`group relative font-mono text-eyebrow uppercase transition-colors duration-300 ${linkColor}`}
         >
-          <AnimatePresence>
-            {hovered && (
-              <motion.span
-                key="back-arrow"
-                aria-hidden
-                className="pointer-events-none absolute right-full pr-2"
-                initial={{ x: -14, opacity: 0, scale: 0.5 }}
-                animate={{ x: 0, opacity: 1, scale: 1 }}
-                exit={{ x: -10, opacity: 0, transition: { duration: 0.14, ease: "easeIn" } }}
-                transition={{ type: "spring", stiffness: 380, damping: 18 }}
-              >
-                ←
-              </motion.span>
-            )}
-          </AnimatePresence>
-          {SITE.name}
+          <span aria-hidden className="pointer-events-none absolute right-full pr-2 transition-transform duration-300 group-hover:-translate-x-0.5">
+            ←
+          </span>
+          ALL PROJECTS
         </Link>
 
         {isAnchor ? (

@@ -462,6 +462,33 @@ function Carousel() {
       active >= TOTAL - 1 ? "on" : "off";
   }, [active]);
 
+  // On return from an inner page ("ALL PROJECTS" nav link), smooth-scroll to
+  // the slide flagged in sessionStorage before navigation.
+  //
+  // The flag is consumed INSIDE the timeout, not in the effect body. Under
+  // React StrictMode (dev) effects run twice (run → cleanup → run); consuming
+  // it in the body would let the first run remove it + the cleanup clear the
+  // timeout, leaving the second run with nothing to do — so the scroll never
+  // fired. Reading in the body but removing in the timeout keeps it robust.
+  //
+  // We also pre-set activeRef + active to the destination so the snap-on-
+  // scroll-end machine reinforces the target instead of the (lagging) origin.
+  useEffect(() => {
+    let flag: string | null = null;
+    try { flag = sessionStorage.getItem("jk-return-slide"); } catch {}
+    if (!flag) return;
+    const idx = parseInt(flag, 10);
+    if (!Number.isFinite(idx) || idx <= 0) return;
+    // Wait for the carousel layout + Lenis to be ready, then scroll.
+    const t = setTimeout(() => {
+      try { sessionStorage.removeItem("jk-return-slide"); } catch {}
+      activeRef.current = idx;
+      setActive(idx);
+      scrollToSlideIndex(idx, 1.0);
+    }, 250);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <section
       id="work"
@@ -605,16 +632,26 @@ function CarouselCard({
     Math.max(0, Math.min(1, 1.5 - Math.abs(index - p))),
   );
   const zIndex = useTransform(pos, (p) => Math.round(50 - Math.abs(index - p) * 10));
+  // Peeking cards (within 1.5 positions) are hittable so clicking them focuses
+  // the card. The focus-vs-navigate decision is made in WorkStage's Link
+  // onClick (gated by isActive) — see there.
   const pointerEvents = useTransform(pos, (p) =>
-    Math.abs(index - p) < 0.5 ? "auto" : "none",
+    Math.abs(index - p) < 1.5 ? "auto" : "none",
   );
+
+  const isActive = Math.abs(index - active) < 0.5;
 
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center"
       style={{ y, scale, opacity, zIndex, pointerEvents }}
     >
-      <WorkStage item={item} animateBlobs={isNear} />
+      <WorkStage
+        item={item}
+        animateBlobs={isNear}
+        isActive={isActive}
+        onRequestFocus={() => scrollToSlideIndex(index)}
+      />
     </motion.div>
   );
 }
@@ -716,7 +753,7 @@ function SpecularBorder() {
 }
 
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
-function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs?: boolean }) {
+function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus }: { item: WorkItem; animateBlobs?: boolean; isActive?: boolean; onRequestFocus?: () => void }) {
   const isClickable = !!item.href;
   const cardRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -856,7 +893,6 @@ function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs
         style={{
           rotateX,
           rotateY,
-          transformStyle: "preserve-3d",
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -876,10 +912,10 @@ function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs
         {/* Frosted glass badge + full-card link */}
         {isClickable && (
           <>
-            {/* Small badge bottom-left — backdrop-blur frosts the image behind it.
-                Fades + rises 4px on hover; pointer-events-none so the Link overlay
-                still owns the click. */}
-            <div className="pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+            {/* Small badge bottom-left — only shown on the active (focused) card.
+                Peeking cards suppress it so the affordance is "click to focus",
+                not "click to navigate". Fades + rises 4px on hover. */}
+            <div className={cn("pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out", isActive && "group-hover:translate-y-0 group-hover:opacity-100")}>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/28 px-3.5 py-2 backdrop-blur-md">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/90">{item.kind === "intro" ? "About" : "Case study"}</span>
                 <span aria-hidden className="text-white/60 transition-transform duration-200 group-hover:translate-x-0.5">→</span>
@@ -887,7 +923,17 @@ function WorkStage({ item, animateBlobs = true }: { item: WorkItem; animateBlobs
             </div>
             <Link
               href={item.href!}
-              onClick={item.kind === "project" ? handleMorphClick : undefined}
+              onClick={(e) => {
+                // Peeking (not focused) card → don't navigate; bring it into
+                // focus first. preventDefault is honored by Next's <Link>.
+                if (!isActive) {
+                  e.preventDefault();
+                  onRequestFocus?.();
+                  return;
+                }
+                // Focused card → navigate (morph for projects).
+                if (item.kind === "project") handleMorphClick(e);
+              }}
               className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
               aria-label={`View ${item.title} case study`}
             />
