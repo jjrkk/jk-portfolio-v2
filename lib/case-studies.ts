@@ -683,11 +683,145 @@ const PRESTO: CaseStudy = {
   next: { slug: "experiencepoint-impact", title: "Impact", eyebrow: "Learning platform · ExperiencePoint" },
 };
 
+const IMPACT: CaseStudy = {
+  slug: "experiencepoint-impact",
+  eyebrow: "Learning platform · ExperiencePoint",
+  title: "Impact",
+  subtitle:
+    "When the pandemic ended in-person workshops overnight, I led the 0→1 design of the virtual-first design sprint ExperiencePoint didn't have — and it scaled to Fortune 100 teams across 8 countries.",
+  hero: {
+    src: "/work/experiencepoint/impact-hero.webp",
+    alt: "A participant in an Impact by ExperiencePoint virtual design sprint, working on a shared digital whiteboard with a facilitator on video",
+  },
+
+  overview: [
+    "ExperiencePoint built its reputation on world-class, in-person innovation workshops — an IDEO training partner whose whole craft was the energy of a room full of people solving problems together. I was hired to productize their workforce-transformation offering. Two or three months in, the pandemic hit and the room disappeared overnight.",
+    "So the team pivoted hard: in a sprint of its own, we built Impact — a virtual-first design sprint the company didn't yet have. I was the design lead, working in a small SWAT-style team, owning the end-to-end experience: the attendee's learning journey and activities, the virtual-whiteboard design, the facilitator's train-the-trainer playbook, and the production-manager role that keeps a live session running. It became a genuine product — one that carried the company through the pandemic, scaled to 4,000+ participants across 8 countries, earned $1.8M+, and sold first to Google. I was promoted to Director of Product on the back of it.",
+  ],
+  meta: [
+    { label: "Role", value: "Design Lead — 0→1 product & experience design (later Director, Product)" },
+    { label: "Users", value: "Workshop attendees (primary) · facilitators & production managers (secondary)" },
+    { label: "Clients", value: "Fortune 100 teams — Google, Ford, Coca-Cola, QVC, Ping Identity & more" },
+    {
+      label: "Methods",
+      value: "0→1 product design · virtual workshop & experience design · rapid prototyping · live testing with external groups · train-the-trainer",
+    },
+    { label: "Subject", value: "Impact — a modular, virtual-first design-sprint product" },
+    { label: "Timeframe", value: "2020 – 2024 (Impact built 0→1 from 2020)" },
+  ],
+
+  body: [
+    {
+      eyebrow: "The problem",
+      title: "When the room disappeared overnight",
+      figureLayout: "aside",
+      body: [
+        "ExperiencePoint's value was the magic of an in-person workshop — the pace, the energy, the feeling of a team breaking through a hard problem together. That was the product, and it was renowned. When COVID closed the doors in early 2020, the entire delivery model stopped working at once. There was no virtual equivalent to fall back on.",
+        "I'd been hired to productize the workforce-transformation offering; that work paused, and the team sprinted instead to build something new under real pressure. The question wasn't \"can we run a workshop on Zoom\" — it was whether the thing that made ExperiencePoint special could survive being moved to a screen at all.",
+      ],
+      figure: {
+        src: "/work/experiencepoint/01-overview.png",
+        alt: "Impact by ExperiencePoint product overview — a virtual, expert-guided design sprint using human-centered design",
+        caption: "Impact — a live, expert-guided virtual design sprint. The brief: keep what made the in-person workshops great, in a form that works over video.",
+      },
+    },
+    {
+      eyebrow: "Approach",
+      title: "Recreate the magic — don't just digitize the deck",
+      sectionTone: "tinted",
+      body: [
+        "The easy path was porting slides to a video call. The right one was redesigning the experience for the medium: re-timing every activity, re-pacing the content, choreographing when people work in plenary versus breakout, and engineering the moments of contribution so attendees stayed engaged and exhilarated rather than drifting on mute. I designed the whole attendee journey — the learning plan, the activities, the slides, the ways people contribute — and the virtual whiteboards (MURAL, Miro, FigJam) where the real work happens.",
+        "And we earned it by prototyping the workshop on ourselves and on external test groups, fast — running it, watching where energy dipped, and re-cutting the timing and mechanics until the virtual version had its own pace and pull. In the early, intense months of the pandemic, designing, testing, and optimizing a live virtual sprint was itself a design sprint.",
+      ],
+      figure: {
+        src: "/work/experiencepoint/03-experience-example.png",
+        alt: "Examples of the designed Impact experience — structured activity templates, interview plans, and play-by-play guides",
+        caption: "The designed experience, made concrete — activity structures, interview plans, and play-by-plays that hold the session's pace and quality together.",
+      },
+    },
+    {
+      eyebrow: "Productizing it",
+      title: "A repeatable product, not a one-off workshop",
+      body: [
+        "To sell and scale, Impact had to deliver the same excellent learning every time, run by facilitators who weren't me. So I designed a modular learning architecture — a consistent, high-quality core that flexes from a single session to a multi-day program, and adapts across in-person, virtual, and self-directed delivery — and built the product plans around it with each Fortune 100 client. Underneath sat the full machine: master talking points and a train-the-trainer program so any facilitator could deliver it, plus the production-manager role that handles the live logistics so the facilitator can focus on the room. Digital credentials and prep guides closed the loop into a sellable, end-to-end experience.",
+      ],
+      figure: {
+        src: "/work/experiencepoint/02-modular-delivery.png",
+        alt: "The modular delivery architecture for Impact — sprint stages that flex to different durations and client needs",
+        caption: "The modular architecture — one consistent, high-quality core that flexes by duration and client need, and across in-person, virtual, and self-directed delivery.",
+        wide: true,
+      },
+    },
+  ],
+
+  gallery: [
+    {
+      src: "/work/experiencepoint/04-digital-credentials.png",
+      alt: "Digital badges and certificates for Impact, plus the post-workshop webpage flow",
+      caption: "Digital credentials and a post-workshop webpage — extending the experience past the session and giving attendees something to take with them.",
+    },
+    {
+      src: "/work/experiencepoint/05-getting-ready-guide.png",
+      alt: "The Impact Getting Ready Guide — preparation materials for participants and facilitators",
+      caption: "The Getting Ready Guide — prep that sets up both attendees and facilitators for a session that runs smoothly from the first minute.",
+    },
+  ],
+
+  judgment: {
+    eyebrow: "Judgment",
+    title: "The decisions that mattered",
+    intro:
+      "Translating a beloved in-person product to a screen came down to a few deliberate calls.",
+    tradeoffs: [
+      {
+        decision: "Recreate the experience, not just digitize the deck",
+        rationale:
+          "The fast, cheap move was to run the existing workshop over Zoom. It would have felt flat — in-person energy doesn't survive a straight port. So I redesigned for the medium: activity timing, content pacing, when breaks land, and how people contribute in plenary versus breakout, all re-engineered so the virtual version stayed fast-paced and exhilarating on its own terms. Harder and slower to build; it's the whole reason it worked.",
+      },
+      {
+        decision: "Optimize for the attendee first, the facilitator second",
+        rationale:
+          "The facilitator had to be set up for success — and a real train-the-trainer program and a production-manager role made sure they were. But the primary user is always the attendee: their experience and their rating are what the product is ultimately judged on. Every trade-off resolved toward the attendee's engagement, with the facilitator scaffolding built to serve that, not compete with it.",
+      },
+      {
+        decision: "Build a modular product, not a bespoke workshop each time",
+        rationale:
+          "Custom-building every engagement would have been unscalable and inconsistent. A modular learning architecture meant Impact could deliver the same high quality every time while still flexing to each Fortune 100 client's needs — and across in-person, virtual, and self-directed modes. Repeatability plus customization is what made it sellable, trainable, and able to scale past me.",
+      },
+    ],
+  },
+
+  impact: {
+    eyebrow: "Impact",
+    title: "A pandemic pivot that became a flagship product",
+    body: [
+      "The bet paid off. Impact went from a forced pivot to a successful, repeatable product that helped carry ExperiencePoint through the pandemic — delivered to 4,000+ participants across 8 countries, earning $1.8M+, with the first official sprint sold to Google and later clients including Ford, Coca-Cola, QVC, and Ping Identity. On the strength of it, I was promoted to Director of Product, where I led the product team and portfolio — owning roadmap, backlog, and strategic direction, and scaling the dual-track agile system that shipped 200+ releases across 10+ products serving 25,000+ users a year.",
+    ],
+    metrics: [
+      { value: "$1.8M+", label: "Revenue generated", note: "From a virtual-first design sprint built 0→1 in the early months of the pandemic." },
+      { value: "4,000+", label: "Participants across 8 countries", note: "First sprint sold to Google; later delivered to Ford, Coca-Cola, QVC, Ping Identity and more." },
+      { value: "25,000+", label: "Users served per year", note: "Promoted to Director of Product — led the team and 10+-product portfolio, scaling dual-track agile to 200+ releases." },
+    ],
+  },
+
+  filmstrip: [
+    { src: "/work/experiencepoint/Screen Shot 2020-12-17 at 12.51.45 PM.png", alt: "The ExperiencePoint product team on a video call during the pandemic build" },
+    { src: "/work/experiencepoint/03-experience-example.png",                  alt: "Designed Impact experience artifacts — activity templates and play-by-plays" },
+    { src: "/work/experiencepoint/EP Product Team - 3-May-2022.jpg",           alt: "The ExperiencePoint product team" },
+    { src: "/work/experiencepoint/05-getting-ready-guide.png",                 alt: "The Impact Getting Ready Guide" },
+    { src: "/work/experiencepoint/79931CAD-0BB0-4047-8F09-A5629327EF7E.jpg",   alt: "The ExperiencePoint team back together in person" },
+    { src: "/work/experiencepoint/04-digital-credentials.png",                 alt: "Impact digital credentials and post-workshop flow" },
+  ],
+
+  next: { slug: "cap-app-redesign", title: "Image Capture", eyebrow: "Clinical imaging · Future Fertility" },
+};
+
 export const CASE_STUDIES: Record<string, CaseStudy> = {
   [IMAGE_CAPTURE.slug]: IMAGE_CAPTURE,
   [VIOLET_MAGENTA.slug]: VIOLET_MAGENTA,
   [MODUS_X.slug]: MODUS_X,
   [PRESTO.slug]: PRESTO,
+  [IMPACT.slug]: IMPACT,
 };
 
 /** Slugs that have full case-study content (drives static params + sitemap). */
