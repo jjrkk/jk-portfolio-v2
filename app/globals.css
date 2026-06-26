@@ -10,6 +10,17 @@
    ============================================================================ */
 
 :root {
+  /* — Frame top inset — 12px on mobile, 28px on desktop (1024px+). Used by
+     PageFrame (via JS matchMedia) and the intro-aperture animation. */
+  --frame-top-inset: 12px;
+}
+@media (min-width: 1024px) {
+  :root {
+    --frame-top-inset: 28px;
+  }
+}
+
+:root {
   /* — Canvas & ink — */
   --background: #f7f5f2; /* warm off-white: calm, premium, not clinical white */
   --foreground: #15130f; /* near-black ink: high contrast (fixes old-site sin) */
@@ -182,7 +193,7 @@ html.intro-play .intro-aperture {
   }
   /* open to the rails on the expo-out curve; corners round to match content (32px) */
   74% {
-    top: 12px;
+    top: var(--frame-top-inset, 12px);
     right: 12px;
     bottom: 12px;
     left: 12px;
@@ -192,7 +203,7 @@ html.intro-play .intro-aperture {
   }
   /* fade-out tail hands off to the real PageFrame (covers the slide-0 bottom-edge diff) */
   100% {
-    top: 12px;
+    top: var(--frame-top-inset, 12px);
     right: 12px;
     bottom: 12px;
     left: 12px;

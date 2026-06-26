@@ -35,9 +35,10 @@ export const INTRO: WorkItem = {
   image: "/personality/jk-whiteboard.webp",
   href: "/about",
   chips: [
-    "UX/UI",
+    "AI",
     "Product",
-    "Health tech",
+    "UX/UI",
+    "Med tech",
     "Consumer tech",
   ],
 };

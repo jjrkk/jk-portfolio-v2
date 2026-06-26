@@ -34,6 +34,18 @@ export function PageFrame() {
     right: true,
   });
 
+  // Top inset is larger on desktop (28px) to give the landing intro strip more
+  // breathing room. Mobile uses the standard 12px rail to keep the nav tight.
+  // Start at 12 to match SSR output; useEffect corrects to 28 on desktop after hydration.
+  const [topInset, setTopInset] = useState(12);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setTopInset(mq.matches ? 28 : 12);
+    const handler = (e: MediaQueryListEvent) => setTopInset(e.matches ? 28 : 12);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   useEffect(() => {
     const root = document.documentElement;
 
@@ -87,7 +99,7 @@ export function PageFrame() {
     };
   }, []);
 
-  const top = edges.top ? 12 : -12;
+  const top = edges.top ? topInset : -topInset;
   const bottom = edges.bottom ? 12 : -12;
   const left = edges.left ? 12 : -12;
   const right = edges.right ? 12 : -12;

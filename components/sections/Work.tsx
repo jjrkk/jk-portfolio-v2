@@ -92,20 +92,16 @@ function chipStyle(chip: string) {
 /** Scroll past the carousel to the Contact section below it. */
 function scrollToContact() {
   if (typeof window === "undefined") return;
-  const el = document.getElementById("contact");
   const lenis = (
     window as unknown as {
-      lenis?: { scrollTo: (t: HTMLElement | number, o?: { duration?: number }) => void };
+      lenis?: { scrollTo: (t: number, o?: { duration?: number }) => void };
     }
   ).lenis;
-  if (el) {
-    if (lenis?.scrollTo) lenis.scrollTo(el, { duration: 0.85 });
-    else el.scrollIntoView({ behavior: "smooth" });
-  } else {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if (lenis?.scrollTo) lenis.scrollTo(maxScroll, { duration: 0.85 });
-    else window.scrollTo({ top: maxScroll, behavior: "smooth" });
-  }
+  // The footer is a sticky-bottom reveal — its offsetTop doesn't resolve to the
+  // page bottom. Always scroll to maxScroll to fully uncover it.
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  if (lenis?.scrollTo) lenis.scrollTo(maxScroll, { duration: 0.85 });
+  else window.scrollTo({ top: maxScroll, behavior: "smooth" });
 }
 
 /** Smooth-scroll the carousel to a given slide index (clamped, Lenis-aware).
@@ -152,7 +148,7 @@ export function Work() {
   );
 }
 
-/** "Justin Kirkey" chrome button with a 🍁 that bounces in from the left on hover. */
+/** "Justin Kirkey" chrome button with a maple leaf SVG that bounces in from the left on hover. */
 function NameButton() {
   const [hovered, setHovered] = useState(false);
   return (
@@ -168,13 +164,15 @@ function NameButton() {
           <motion.span
             key="flag"
             aria-hidden
-            className="pointer-events-none absolute right-full pr-2"
+            className="pointer-events-none absolute right-full flex items-center pr-1.5"
             initial={{ x: -14, opacity: 0, scale: 0.5 }}
             animate={{ x: 0, opacity: 1, scale: 1 }}
             exit={{ x: -10, opacity: 0, transition: { duration: 0.14, ease: "easeIn" } }}
             transition={{ type: "spring", stiffness: 380, damping: 18 }}
           >
-            🍁
+            <svg aria-hidden width="88" height="96" viewBox="0 0 88 96" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-auto -translate-y-0.5">
+              <path d="M87.2076 48.3938L83.606 46.9954C80.5044 44.597 84.8052 35.7964 85.5044 30.3934C85.5044 30.3934 73.4024 34.6942 72.4024 32.2918L69.3008 26.3934L58.1018 38.4954C56.9026 38.6946 56.4026 38.4954 56.2034 37.2962L61.4026 11.8982L53.301 16.3982C52.6018 16.5974 51.9026 16.3982 51.6018 15.699L43.801 0L35.6994 16.398C35.0002 16.898 34.5002 17.0972 34.0002 16.5972L26.1994 12.2964L30.8986 37.4954C30.3986 38.3939 29.6994 38.6946 28.5002 38.1946L17.8012 26.0926C16.4028 28.1942 15.4028 31.991 13.5004 32.6942C11.602 33.3935 5.3988 31.2958 1.3984 30.2958C2.7968 35.2958 7.0976 43.7958 4.5 46.6938L0 48.0922L20.898 66.5922C22.5972 71.2914 20.398 72.7914 18.9996 75.0922L41.8006 72.2914L41.3006 95.0924H45.9998L45.1014 72.2914L67.9024 74.893C66.504 71.7914 65.3008 70.393 66.504 65.5922L87.402 48.2912H86.902L87.2076 48.3938Z" fill="var(--nav-leaf-color, currentColor)"/>
+            </svg>
           </motion.span>
         )}
       </AnimatePresence>
@@ -200,29 +198,39 @@ function Carousel() {
   const indices = SLIDE_THEMES.map((_, i) => i);
   const bg = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.panelBg));
   const accent = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.accent));
-  // Write theme vars to the ROOT element so both the section content AND the
-  // page frame (a fixed sibling) follow the scroll.
+  // --accent goes on :root so the fixed PageFrame sibling can read it.
+  // --panel-bg is only consumed inside the carousel section, so scope it to
+  // ref.current to limit the CSS cascade to that subtree (cheaper style recalc).
   useMotionValueEvent(bg, "change", (v) =>
-    document.documentElement.style.setProperty("--panel-bg", v),
+    ref.current?.style.setProperty("--panel-bg", v),
   );
   useMotionValueEvent(accent, "change", (v) =>
     document.documentElement.style.setProperty("--accent", v),
   );
 
-  // Intro-only top strip: the light card sits ~120px below the top at the very
+  // Intro-only top strip: the light card sits ~136px below the top at the very
   // top of the page so the nav rides directly on the accent. As you scroll off
   // the intro the card rises flush (translateY 120→0) like the rest of the deck,
   // and the nav ink crosses from on-accent white to on-card dark ink. Both are
   // tied to the first slide segment [0 → 1/(TOTAL-1)] so they complete exactly as
   // slide 1 settles. (Only the intro is ever dropped — and the intro has no top
   // peek — so the deck can never spill onto the strip.)
-  const STRIP = 120;
+  const STRIP = 136;
   const firstSeg = 1 / (TOTAL - 1);
-  const stripY = useTransform(scrollYProgress, [0, firstSeg], [STRIP, 0], { clamp: true });
+  // Animate past 0 to -40 so the rounded top corners slide above the sticky
+  // container's overflow-hidden clip instead of morphing to flat.
+  const stripY = useTransform(springPos, [0, 1], [STRIP, -40], { clamp: true });
   const navInk = useTransform(
     scrollYProgress,
     [0, firstSeg * 0.6],
     ["#fdfcfb", "#15130f"],
+    { clamp: true },
+  );
+  // Leaf icon gets its own colour: white on accent, fuchsia on card.
+  const navLeafColor = useTransform(
+    scrollYProgress,
+    [0, firstSeg * 0.6],
+    ["#fdfcfb", "#D7355D"],
     { clamp: true },
   );
 
@@ -232,7 +240,9 @@ function Carousel() {
   // only fires on changes — pos starts at 0 and doesn't change until the user
   // scrolls, so without the initial call the vars are never set on first load).
   const applyEdgeGradient = (v: number) => {
-    const root = document.documentElement;
+    // Scope to the carousel section element — only consumed inside it.
+    const el = ref.current;
+    if (!el) return;
     const prevIdx = Math.max(0, Math.floor(v));
     const nextIdx = Math.min(TOTAL - 1, Math.ceil(v));
     const toRgba = (hex: string, a: number) => {
@@ -243,8 +253,8 @@ function Carousel() {
     };
     const prevA = prevIdx === 0 ? 0 : 0.13;
     const nextA = nextIdx === TOTAL - 1 ? 0 : 0.13;
-    root.style.setProperty("--accent-prev-rgba", toRgba(SLIDE_THEMES[prevIdx].accent, prevA));
-    root.style.setProperty("--accent-next-rgba", toRgba(SLIDE_THEMES[nextIdx].accent, nextA));
+    el.style.setProperty("--accent-prev-rgba", toRgba(SLIDE_THEMES[prevIdx].accent, prevA));
+    el.style.setProperty("--accent-next-rgba", toRgba(SLIDE_THEMES[nextIdx].accent, nextA));
   };
   useMotionValueEvent(pos, "change", applyEdgeGradient);
   // Apply once on mount so the gradient is correct before any scroll event fires.
@@ -413,15 +423,12 @@ function Carousel() {
     };
   }, []);
 
-  // Hand the root theme vars back to their defaults on unmount (so a later
-  // route doesn't inherit the last slide's accent).
+  // On unmount: remove --accent from root (PageFrame needs it cleaned up so
+  // later routes don't inherit the last slide's colour). --panel-bg and the
+  // prev/next-rgba vars are on ref.current which is removed from DOM automatically.
   useEffect(() => {
-    const root = document.documentElement;
     return () => {
-      root.style.removeProperty("--panel-bg");
-      root.style.removeProperty("--accent");
-      root.style.removeProperty("--accent-prev-rgba");
-      root.style.removeProperty("--accent-next-rgba");
+      document.documentElement.style.removeProperty("--accent");
     };
   }, []);
 
@@ -443,7 +450,7 @@ function Carousel() {
       if (beyond <= 0) return; // inside the carousel — its theming handles it
       const t = Math.min(1, beyond / (window.innerHeight * 0.4));
       root.style.setProperty("--accent", hexLerp(last.accent, SITE_ACCENT, t));
-      root.style.setProperty("--panel-bg", hexLerp(last.panelBg, "#f7f5f2", t));
+      el.style.setProperty("--panel-bg", hexLerp(last.panelBg, "#f7f5f2", t));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -526,19 +533,17 @@ function Carousel() {
           crosses from on-accent white to on-card dark — the same parallax the rest
           of the deck uses. */}
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Light card surface — the per-slide --panel-bg tint. Its TOP edge is
-            driven by the intro strip (stripY: 120→0): it sits ~120px below the top
-            at the very top of the page (nav rides the accent above it), then rises
-            flush as you scroll — content stays centred in the visible region since
-            the top edge (not a transform) moves. Rounded top while the strip is
-            open (intro); square + flush for the rest of the deck (mirrors the old
-            bleed-to-edge behaviour). Bottom corners round only at the end of the
-            deck (last slide / contact). */}
+        {/* Light card surface — the per-slide --panel-bg tint. Driven by
+            stripY (136 → -40) via transform: translateY (compositor-only, no
+            layout reflow per frame). The card is calc(100%+40px) tall so its
+            bottom stays flush with the container even at full -40px shift;
+            the extra 40px is clipped by overflow-hidden when unshifted.
+            Bottom corners round only at the end of the deck (last slide). */}
         <motion.div
-          style={{ top: stripY }}
+          style={{ y: stripY, height: "calc(100% + 40px)" }}
           className={cn(
-            "absolute inset-x-0 bottom-0 flex flex-col overflow-hidden bg-panel-bg [transition:border-radius_0.45s_ease]",
-            active === 0 ? "rounded-t-[2rem]" : "rounded-t-none",
+            "absolute top-0 inset-x-0 flex flex-col overflow-hidden bg-panel-bg will-change-transform [transition:border-radius_0.45s_ease]",
+            "rounded-t-[2rem]",
             active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none",
           )}
         >
@@ -557,17 +562,20 @@ function Carousel() {
             }}
           />
 
-          <Pagination active={active} onJump={scrollToSlideIndex} />
+          {/* Pagination moved to sticky container sibling — see below */}
 
-          {/* Centered stage — card gets the larger share; tight gap to the copy */}
-          <div className={`${PAD} flex flex-1 items-center`}>
+          {/* Centered stage — card gets the larger share; tight gap to the copy.
+              pb-[176px] on the intro (= STRIP 136 + STRIP_OVER 40) compensates for
+              the card being taller than its visible area, re-centering the content
+              within the actual visible strip. Transitions away on slide change. */}
+          <div className={cn(`${PAD} flex flex-1 items-center [transition:padding-bottom_0.45s_ease]`, active === 0 && "pb-[176px]")}>
             <div className="grid w-full grid-cols-12 items-center gap-x-12">
               <div className="relative col-span-5 min-h-[520px]">
                 <AnimatePresence mode="wait">
                   <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} />
                 </AnimatePresence>
               </div>
-              <div className="relative col-span-7 h-[66vh]">
+              <div className={cn("relative col-span-7 h-[66vh] [transition:margin-top_0.45s_ease]", active === 0 && "-mt-[68px]")}>
                 {SLIDES.map((item, i) => (
                   <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} activeMorphRef={activeMorphRef} />
                 ))}
@@ -576,13 +584,18 @@ function Carousel() {
           </div>
         </motion.div>
 
+        {/* Pagination lives here (not inside the card) so top-1/2 references
+            the h-screen sticky container — keeping it at true viewport center
+            regardless of the card's y-transform. */}
+        <Pagination active={active} onJump={scrollToSlideIndex} />
+
         {/* Persistent nav — fixed top bar, above the card (z-60). Its colour
             crosses white→dark (navInk) as the card rises under it: on the accent
             at the very top, on the card thereafter. The card's overflow-hidden
             clips the deck off the top edge once flush, so the deck never reaches
             the nav. */}
         <motion.div
-          style={{ color: navInk }}
+          style={{ color: navInk, "--nav-leaf-color": navLeafColor } as unknown as React.CSSProperties}
           className={`${PAD} pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between pt-14`}
         >
           <div className="pointer-events-auto">
@@ -1152,6 +1165,9 @@ function HorizontalCarousel({ className }: { className: string }) {
   // section glow). The appended contact panel (index TOTAL) rides the brand
   // fuchsia on the base canvas.
   useEffect(() => {
+    // Desktop Carousel manages these vars itself (scoped to its section element
+    // for --panel-bg). Skip on desktop to avoid conflicting writes.
+    if (isDesktop()) return;
     const isContactPanel = active >= TOTAL;
     // The section bg is ALWAYS the accent base canvas; --panel-bg only tints the
     // lighter "page card" that wraps the slides. On the contact the card has
