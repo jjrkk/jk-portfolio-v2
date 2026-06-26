@@ -24,9 +24,9 @@ export function ExperienceTimeline() {
                     {role.period}
                   </span>
                 </div>
-                <div className="flex items-stretch gap-6 sm:col-span-9">
+                <div className="flex flex-col gap-4 sm:col-span-9 sm:flex-row sm:items-stretch sm:gap-6">
                   {role.photo && (
-                    <div className="h-36 w-48 shrink-0 overflow-hidden rounded-xl">
+                    <div className="h-48 w-full overflow-hidden rounded-xl sm:h-36 sm:w-48 sm:shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={role.photo}

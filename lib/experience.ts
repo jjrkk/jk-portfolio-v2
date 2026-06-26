@@ -83,5 +83,6 @@ export const EDUCATION: EducationEntry[] = [
   {
     school: "Product School",
     detail: "Product Management Certificate",
+    photo: "/experience/product-school-logo.png",
   },
 ];

@@ -1,24 +1,25 @@
+import { cn } from "@/lib/cn";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 
-// Typographic interim (no logo SVGs in the repo yet). Swap each name for a
-// brand wordmark SVG when Justin exports them. Names are from the prior site's
-// logo wall — DRAFT, confirm before launch.
-const CLIENTS = [
-  "Future Fertility",
-  "Synaptive Medical",
-  "Metrolinx",
-  "ExperiencePoint",
-  "Accenture",
-  "Ford",
-  "Medtronic",
-  "TD",
-  "Movember",
-  "UHN",
-  "Jeep",
-  "Publicis Sapient",
+type Client = { name: string; src: string; multiply?: boolean };
+
+const CLIENTS: Client[] = [
+  { name: "Future Fertility",         src: "/experience/logos/ff-wordmark.svg" },
+  { name: "Synaptive Medical",        src: "/experience/logos/synaptive-logo.png" },
+  { name: "Healthcare Human Factors", src: "/experience/logos/hhf-logo-blue.svg" },
+  { name: "ExperiencePoint",          src: "/experience/logos/experiencepoint-logo.svg" },
+  { name: "Accenture",               src: "/experience/logos/accenture-logo.svg" },
+  { name: "Metrolinx",               src: "/experience/logos/metrolinx-logo.svg" },
+  { name: "Ford",                    src: "/experience/logos/ford-logo.svg" },
+  { name: "Medtronic",               src: "/experience/logos/medtronic-logo.svg" },
+  { name: "TD",                      src: "/experience/logos/td-bank-logo.svg" },
+  { name: "Movember",                src: "/experience/logos/movember-logo-black.jpg", multiply: true },
+  { name: "UHN",                     src: "/experience/logos/UHN-logo.png" },
+  { name: "Jeep",                    src: "/experience/logos/jeep-logo.svg" },
+  { name: "Publicis Sapient",        src: "/experience/logos/publicis-sapient-logo.svg" },
 ];
 
 const RECOGNITION = [
@@ -35,13 +36,21 @@ export function LogoWall() {
           <Eyebrow>Selected clients &amp; employers</Eyebrow>
         </Reveal>
         <Reveal delay={0.05}>
-          <ul className="mt-12 grid grid-cols-2 gap-x-10 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
+          <ul className="mt-12 grid grid-cols-2 gap-x-10 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
             {CLIENTS.map((c) => (
-              <li
-                key={c}
-                className="font-serif text-heading text-foreground/70"
-              >
-                {c}
+              <li key={c.name} className="flex items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={c.src}
+                  alt={c.name}
+                  loading="lazy"
+                  className={cn(
+                    "h-8 w-auto max-w-full object-contain",
+                    "grayscale opacity-50 transition-all duration-500",
+                    "hover:grayscale-0 hover:opacity-100",
+                    c.multiply && "mix-blend-multiply",
+                  )}
+                />
               </li>
             ))}
           </ul>

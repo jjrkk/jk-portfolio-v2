@@ -161,7 +161,7 @@ function NameButton() {
       onClick={() => scrollToSlideIndex(0)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative cursor-pointer font-mono text-eyebrow uppercase text-foreground transition-colors hover:text-accent"
+      className="relative cursor-pointer font-mono text-eyebrow uppercase text-[color:inherit] transition-opacity hover:opacity-70"
     >
       <AnimatePresence>
         {hovered && (
@@ -207,6 +207,23 @@ function Carousel() {
   );
   useMotionValueEvent(accent, "change", (v) =>
     document.documentElement.style.setProperty("--accent", v),
+  );
+
+  // Intro-only top strip: the light card sits ~120px below the top at the very
+  // top of the page so the nav rides directly on the accent. As you scroll off
+  // the intro the card rises flush (translateY 120→0) like the rest of the deck,
+  // and the nav ink crosses from on-accent white to on-card dark ink. Both are
+  // tied to the first slide segment [0 → 1/(TOTAL-1)] so they complete exactly as
+  // slide 1 settles. (Only the intro is ever dropped — and the intro has no top
+  // peek — so the deck can never spill onto the strip.)
+  const STRIP = 120;
+  const firstSeg = 1 / (TOTAL - 1);
+  const stripY = useTransform(scrollYProgress, [0, firstSeg], [STRIP, 0], { clamp: true });
+  const navInk = useTransform(
+    scrollYProgress,
+    [0, firstSeg * 0.6],
+    ["#fdfcfb", "#15130f"],
+    { clamp: true },
   );
 
   // Write prev/next accent rgba vars so the directional gradient overlay can
@@ -441,7 +458,10 @@ function Carousel() {
     const publish = () => {
       if (!isDesktop()) return;
       setEdges({
-        top: window.scrollY <= 24,
+        // Top edge stays off: the accent nav strip is the landing's top
+        // treatment now, so the 12px top rail would be a redundant accent-on-
+        // accent seam. Side rails frame the card; bottom shows on the last slide.
+        top: false,
         bottom: activeRef.current >= TOTAL - 1,
         left: true,
         right: true,
@@ -499,64 +519,85 @@ function Carousel() {
       className="relative mx-[12px] hidden min-[1024px]:block overflow-clip"
       style={{ height: `${TOTAL * 100}vh` }}
     >
-      {/* Bottom corners round ONLY at the end of the surface — i.e. on the last
-          slide / during the contact reveal (same condition as the frame's bottom
-          edge). Mid-scroll they stay flat so the card bleeds straight off-screen
-          where more content continues below. */}
-      <div
-        className={cn(
-          "sticky top-0 flex h-screen flex-col overflow-hidden bg-panel-bg [transition:border-radius_0.45s_ease]",
-          active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none",
-        )}
-      >
-        {/* Directional accent gradient — prev colour bleeds in from the top,
-            next colour from the bottom. Inert during a settled slide (prev ===
-            next === current accent), most visible at the midpoint of a transition.
-            Clipped by the sticky container's overflow-hidden; sits below content. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            background: `
-              linear-gradient(to bottom, var(--accent-prev-rgba, transparent) 0%, transparent 32%),
-              linear-gradient(to top,    var(--accent-next-rgba, transparent) 0%, transparent 32%)
-            `,
-          }}
-        />
+      {/* Pinned chrome + card group. The OUTER sticky is transparent so the
+          accent base canvas (page.tsx) shows through the top nav strip — at the
+          very top of the page the nav rides directly on the accent. Scrolling off
+          the intro slides the card up flush (the strip closes), and the nav ink
+          crosses from on-accent white to on-card dark — the same parallax the rest
+          of the deck uses. */}
+      <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Light card surface — the per-slide --panel-bg tint. Its TOP edge is
+            driven by the intro strip (stripY: 120→0): it sits ~120px below the top
+            at the very top of the page (nav rides the accent above it), then rises
+            flush as you scroll — content stays centred in the visible region since
+            the top edge (not a transform) moves. Rounded top while the strip is
+            open (intro); square + flush for the rest of the deck (mirrors the old
+            bleed-to-edge behaviour). Bottom corners round only at the end of the
+            deck (last slide / contact). */}
+        <motion.div
+          style={{ top: stripY }}
+          className={cn(
+            "absolute inset-x-0 bottom-0 flex flex-col overflow-hidden bg-panel-bg [transition:border-radius_0.45s_ease]",
+            active === 0 ? "rounded-t-[2rem]" : "rounded-t-none",
+            active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none",
+          )}
+        >
+          {/* Directional accent gradient — prev colour bleeds in from the top,
+              next colour from the bottom. Inert during a settled slide (prev ===
+              next === current accent), most visible at the midpoint of a transition.
+              Clipped by the card's overflow-hidden; sits below content. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{
+              background: `
+                linear-gradient(to bottom, var(--accent-prev-rgba, transparent) 0%, transparent 32%),
+                linear-gradient(to top,    var(--accent-next-rgba, transparent) 0%, transparent 32%)
+              `,
+            }}
+          />
 
-        {/* Persistent chrome — name (links to slide 1) + progress counter.
-            z above the deck (cards reach z-50) so it never gets occluded. */}
-        <div className={`${PAD} relative z-[60] flex items-center justify-between pt-12 lg:pt-14`}>
-          <NameButton />
+          <Pagination active={active} onJump={scrollToSlideIndex} />
+
+          {/* Centered stage — card gets the larger share; tight gap to the copy */}
+          <div className={`${PAD} flex flex-1 items-center`}>
+            <div className="grid w-full grid-cols-12 items-center gap-x-12">
+              <div className="relative col-span-5 min-h-[520px]">
+                <AnimatePresence mode="wait">
+                  <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} />
+                </AnimatePresence>
+              </div>
+              <div className="relative col-span-7 h-[66vh]">
+                {SLIDES.map((item, i) => (
+                  <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} activeMorphRef={activeMorphRef} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Persistent nav — fixed top bar, above the card (z-60). Its colour
+            crosses white→dark (navInk) as the card rises under it: on the accent
+            at the very top, on the card thereafter. The card's overflow-hidden
+            clips the deck off the top edge once flush, so the deck never reaches
+            the nav. */}
+        <motion.div
+          style={{ color: navInk }}
+          className={`${PAD} pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between pt-14`}
+        >
+          <div className="pointer-events-auto">
+            <NameButton />
+          </div>
           <Link
             href="/about"
-            className="group inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
+            className="group pointer-events-auto inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] transition-opacity hover:opacity-70"
           >
             About
             <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
               →
             </span>
           </Link>
-        </div>
-
-        <Pagination active={active} onJump={scrollToSlideIndex} />
-
-        {/* Centered stage — card gets the larger share; tight gap to the copy */}
-        <div className={`${PAD} flex flex-1 items-center`}>
-          <div className="grid w-full grid-cols-12 items-center gap-x-12">
-            <div className="relative col-span-5 min-h-[520px]">
-              <AnimatePresence mode="wait">
-                <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} />
-              </AnimatePresence>
-            </div>
-            <div className="relative col-span-7 h-[66vh]">
-              {SLIDES.map((item, i) => (
-                <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} activeMorphRef={activeMorphRef} />
-              ))}
-            </div>
-          </div>
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );
@@ -585,14 +626,17 @@ function Pagination({
             aria-current={isActive ? "true" : undefined}
             className="group relative flex h-5 w-10 cursor-pointer items-center justify-end"
           >
-            {/* Flyout label — flies in from the right on per-bar hover */}
+            {/* Flyout tooltip — flies in from the right on per-bar hover */}
             <span
               aria-hidden
               className="pointer-events-none absolute right-full mr-4 top-1/2 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
             >
-              <span className="inline-flex items-center rounded-full border border-foreground/10 bg-panel-bg/90 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.14)] backdrop-blur-md">
+              <span className="inline-flex flex-col items-start gap-1.5 rounded-2xl border border-foreground/10 bg-panel-bg/90 px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.14)] backdrop-blur-md">
                 <span className="whitespace-nowrap font-serif text-[1.6rem] font-[700] leading-none text-accent">
                   {flyoutLabel}
+                </span>
+                <span className="whitespace-nowrap font-mono text-[0.7rem] uppercase tracking-[0.14em] leading-none text-foreground/50">
+                  {s.eyebrow}
                 </span>
               </span>
             </span>
@@ -675,11 +719,6 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
     >
       <div className="flex flex-wrap items-center gap-3">
         <Eyebrow>{item.eyebrow}</Eyebrow>
-        {item.confidential && (
-          <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
-            Confidential
-          </span>
-        )}
       </div>
 
       {isIntro ? (
@@ -1260,7 +1299,7 @@ function HorizontalCarousel({ className }: { className: string }) {
               </div>
 
               {/* Card shell */}
-              {slide.kind !== "intro" && slide.href ? (
+              {slide.href ? (
                 <Link
                   href={slide.href}
                   className="relative block overflow-hidden rounded-[1rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
@@ -1269,7 +1308,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={slide.image ?? ""}
-                    alt={`${slide.title} — case study`}
+                    alt={slide.kind === "intro" ? "Justin Kirkey at the whiteboard" : `${slide.title} — case study`}
                     loading="eager"
                     className="block h-full w-full object-cover"
                   />
@@ -1385,11 +1424,6 @@ function HorizontalCarousel({ className }: { className: string }) {
           >
             <div className="flex flex-wrap items-center gap-2">
               <Eyebrow mark={false}>{item.eyebrow}</Eyebrow>
-              {item.confidential && (
-                <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
-                  Confidential
-                </span>
-              )}
             </div>
 
             {isIntro ? (
@@ -1524,11 +1558,6 @@ function StackedItem({ item }: { item: WorkItem }) {
       >
       <div className="flex flex-wrap items-center gap-3">
         <Eyebrow>{item.eyebrow}</Eyebrow>
-        {item.confidential && (
-          <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-mono text-eyebrow uppercase text-accent">
-            Confidential
-          </span>
-        )}
       </div>
       <h2 className="mt-4 font-serif text-title text-accent">{item.title}</h2>
       <p className="mt-3 font-sans text-body text-foreground/75">{item.blurb}</p>

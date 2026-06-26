@@ -8,7 +8,7 @@ import { Reveal } from "@/components/ui/Reveal";
 const PHOTOS = [
   { src: "/personality/talk.webp", alt: "Justin speaking at a design talk" },
   { src: "/about/justin-jumping-off-a-cliff.webp", alt: "Justin jumping off a cliff" },
-  { src: "/personality/candid-1.jpg", alt: "Candid" },
+  { src: "/about/justin-during-movember.jpg", alt: "Justin during Movember" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
 ];
 

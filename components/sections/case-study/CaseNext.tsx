@@ -13,7 +13,7 @@ export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
   const theme = getProjectTheme(next.slug);
   return (
     <section
-      className="mx-[12px] overflow-hidden rounded-b-[2rem] bg-accent"
+      className="mx-[12px] overflow-hidden rounded-b-[2rem] bg-white"
       style={theme ? ({ "--accent": theme.accent } as React.CSSProperties) : undefined}
     >
       <Container>
@@ -21,27 +21,27 @@ export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
           href={`/work/${next.slug}`}
           className="group flex flex-col gap-4 py-20 sm:py-28"
         >
-          <Eyebrow mark={false} className="text-[color:var(--accent-contrast)]/70">
+          <Eyebrow mark={false} className="text-accent/70">
             Next case study
           </Eyebrow>
           <div className="flex items-end justify-between gap-8">
             <span
               className="font-serif text-display-sm font-semibold leading-none transition-opacity duration-300 group-hover:opacity-75"
-              style={{ color: "var(--accent-contrast)" }}
+              style={{ color: "var(--accent)" }}
             >
               {next.title}
             </span>
             <span
               aria-hidden
               className="shrink-0 font-serif text-display-sm font-semibold transition-transform duration-300 ease-out group-hover:translate-x-3"
-              style={{ color: "var(--accent-contrast)" }}
+              style={{ color: "var(--accent)" }}
             >
               →
             </span>
           </div>
           <span
             className="font-mono text-eyebrow uppercase tracking-[0.14em] opacity-70"
-            style={{ color: "var(--accent-contrast)" }}
+            style={{ color: "var(--accent)" }}
           >
             {next.eyebrow}
           </span>

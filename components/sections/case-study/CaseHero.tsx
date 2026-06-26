@@ -26,11 +26,6 @@ export function CaseHero({ study }: { study: CaseStudy }) {
           <Eyebrow mark={false} className="text-[color:var(--accent-contrast)]/80">
             {eyebrow}
           </Eyebrow>
-          {confidential && (
-            <span className="inline-flex items-center rounded-full border border-[color:var(--accent-contrast)]/40 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[color:var(--accent-contrast)]/80">
-              Confidential
-            </span>
-          )}
         </div>
 
         <h1

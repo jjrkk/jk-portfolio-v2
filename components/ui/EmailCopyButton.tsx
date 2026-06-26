@@ -63,7 +63,7 @@ export function EmailCopyButton({
         onClick={handleCopy}
         className={cn(
           "group inline-flex cursor-pointer items-center gap-2 font-sans text-caption font-medium uppercase tracking-[0.12em] transition-colors",
-          dark ? "text-white/90 hover:text-white" : "text-foreground hover:text-accent",
+          dark ? "text-white/80 hover:text-white" : "text-foreground hover:text-accent",
           className,
         )}
       >
