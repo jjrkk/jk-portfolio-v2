@@ -30,6 +30,16 @@ export async function generateMetadata({
       url: `${SITE.url}/work/${slug}`,
       title,
       description,
+      // Next doesn't inherit the root openGraph.images once a child sets its
+      // own openGraph block, so restate the site card here. (Per-study art can
+      // override this later once those assets exist.)
+      images: [{ url: SITE.ogImage, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [SITE.ogImage],
     },
   };
 }
