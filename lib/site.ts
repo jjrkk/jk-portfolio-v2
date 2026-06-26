@@ -12,8 +12,9 @@ export const SITE = {
   // First-breath proof: design leadership AND hands-on building with agentic AI.
   description:
     "AI-native Product Design Leader who builds. 15+ years across healthcare and regulated products — and ships production-grade work with agentic AI, not just designs for it.",
-  // Used for OG/Twitter cards; replaced with the finalized art in Phase 7.
-  ogImage: "/og-image.png",
+  // Site-wide OG/Twitter card (1200×630). Per-study cards live in /public/social
+  // and are wired via each CaseStudy's `social` field.
+  ogImage: "/social/og-image.png",
   // TODO(phase-7): confirm exact handles before launch; feeds JSON-LD `sameAs`.
   socials: {
     linkedin: "https://www.linkedin.com/in/justinkirkey/",

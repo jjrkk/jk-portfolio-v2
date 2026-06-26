@@ -117,6 +117,10 @@ export type CaseStudy = {
   hero: CaseFigure;
   confidential?: boolean;
 
+  /** Per-study social/OG card (1200×630) under /public/social. Falls back to
+   *  the site card (SITE.ogImage) when unset. Used by generateMetadata. */
+  social?: string;
+
   /** Left column of the overview — the narrative paragraphs. */
   overview: string[];
   /** Right aside of the overview — Role / Users / Methods / Subject / Timeframe. */
@@ -172,6 +176,7 @@ export type CaseStudy = {
 
 const VIOLET_MAGENTA: CaseStudy = {
   slug: "ff-reports",
+  social: "/social/violet-and-magenta-social-image.png",
   eyebrow: "Clinical reporting · Future Fertility",
   title: "Violet & Magenta",
   subtitle:
@@ -318,6 +323,7 @@ const VIOLET_MAGENTA: CaseStudy = {
 
 const IMAGE_CAPTURE: CaseStudy = {
   slug: "cap-app-redesign",
+  social: "/social/image-capture-social-image.png",
   eyebrow: "Clinical imaging · Future Fertility",
   title: "Image Capture",
   subtitle:
@@ -461,6 +467,7 @@ const IMAGE_CAPTURE: CaseStudy = {
 
 const MODUS_X: CaseStudy = {
   slug: "modus-v",
+  social: "/social/modus-x-social-image.png",
   eyebrow: "Surgical navigation · Synaptive Medical",
   title: "Modus X",
   subtitle:
@@ -604,6 +611,7 @@ const MODUS_X: CaseStudy = {
 
 const PRESTO: CaseStudy = {
   slug: "metrolinx-presto",
+  social: "/social/presto-social-image.png",
   eyebrow: "Transit service design · Metrolinx",
   title: "PRESTO",
   subtitle:
@@ -745,6 +753,7 @@ const PRESTO: CaseStudy = {
 
 const IMPACT: CaseStudy = {
   slug: "experiencepoint-impact",
+  social: "/social/impact-social-image.png",
   eyebrow: "Learning platform · ExperiencePoint",
   title: "Impact",
   subtitle:
@@ -878,6 +887,7 @@ const IMPACT: CaseStudy = {
 
 const FF_CLOUD: CaseStudy = {
   slug: "ff-cloud",
+  social: "/social/cloud-social-image.png",
   eyebrow: "AI healthtech · Future Fertility",
   title: "Cloud",
   subtitle:

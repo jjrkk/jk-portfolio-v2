@@ -21,6 +21,7 @@ export async function generateMetadata({
 
   const title = `${study.title} — ${study.eyebrow.split(" · ").pop() ?? "Case study"}`;
   const description = study.subtitle;
+  const ogImage = study.social ?? SITE.ogImage;
   return {
     title: study.title,
     description,
@@ -31,15 +32,14 @@ export async function generateMetadata({
       title,
       description,
       // Next doesn't inherit the root openGraph.images once a child sets its
-      // own openGraph block, so restate the site card here. (Per-study art can
-      // override this later once those assets exist.)
-      images: [{ url: SITE.ogImage, width: 1200, height: 630, alt: title }],
+      // own openGraph block, so restate the per-study card here.
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [SITE.ogImage],
+      images: [ogImage],
     },
   };
 }
