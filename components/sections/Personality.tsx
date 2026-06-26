@@ -7,9 +7,9 @@ import { Reveal } from "@/components/ui/Reveal";
 // the repo — swap in when available).
 const PHOTOS = [
   { src: "/personality/talk.webp", alt: "Justin speaking at a design talk" },
-  { src: "/about/justin-jumping-off-a-cliff.webp", alt: "Justin jumping off a cliff" },
-  { src: "/about/justin-during-movember.jpg", alt: "Justin during Movember" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
+  { src: "/about/justin-during-movember.jpg", alt: "Justin during Movember" },
+  { src: "/about/justin-jumping-off-a-cliff.webp", alt: "Justin jumping off a cliff" },
 ];
 
 export function Personality() {
