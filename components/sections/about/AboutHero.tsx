@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
 import { RESUME_URL } from "@/components/sections/Contact";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
+import { track } from "@/lib/analytics";
 
 export function AboutHero() {
   return (
@@ -49,6 +50,7 @@ export function AboutHero() {
                   href={SITE.socials.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track("linkedin_click", { location: "about_hero" })}
                   className="text-white/70 transition-colors hover:text-white"
                 >
                   LinkedIn
@@ -57,6 +59,7 @@ export function AboutHero() {
                   href={RESUME_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track("resume_click", { location: "about_hero" })}
                   className="text-white/70 transition-colors hover:text-white"
                 >
                   Résumé
@@ -64,6 +67,7 @@ export function AboutHero() {
                 <EmailCopyButton
                   email={SITE.socials.email}
                   dark
+                  location="about_hero"
                   className="font-mono text-eyebrow tracking-[0.14em] text-white/70 hover:text-white"
                 />
               </div>

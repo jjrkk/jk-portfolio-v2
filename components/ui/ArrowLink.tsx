@@ -64,7 +64,7 @@ export function ArrowLink({
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+      <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={classes}>
         {children}
         {arrow}
       </a>

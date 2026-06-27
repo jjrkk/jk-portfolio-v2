@@ -1,9 +1,12 @@
+"use client";
+
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
+import { track } from "@/lib/analytics";
 
 // Single source of truth for the résumé link (used by Contact, Work, AboutHero).
 // TODO(polish): add UTM tags here — and to SITE.socials (LinkedIn/email) in
@@ -39,6 +42,7 @@ export function Contact({ dark }: { dark?: boolean }) {
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track("resume_click", { location: "contact_footer" })}
               className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_rgba(0,0,0,0.22)] active:translate-y-0 active:scale-100 active:duration-100"
             >
               Résumé
@@ -50,6 +54,7 @@ export function Contact({ dark }: { dark?: boolean }) {
             <ArrowLink
               href={SITE.socials.linkedin}
               external
+              onClick={() => track("linkedin_click", { location: "contact_footer" })}
               className="text-white/80 hover:text-white"
             >
               LinkedIn
@@ -92,6 +97,7 @@ export function Contact({ dark }: { dark?: boolean }) {
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track("resume_click", { location: "contact_footer" })}
               className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_var(--accent)] active:translate-y-0 active:scale-100 active:duration-100"
             >
               Résumé
@@ -100,7 +106,7 @@ export function Contact({ dark }: { dark?: boolean }) {
               </span>
             </a>
 
-            <ArrowLink href={SITE.socials.linkedin} external>LinkedIn</ArrowLink>
+            <ArrowLink href={SITE.socials.linkedin} external onClick={() => track("linkedin_click", { location: "contact_footer" })}>LinkedIn</ArrowLink>
 
             <EmailCopyButton email={SITE.socials.email} />
           </div>

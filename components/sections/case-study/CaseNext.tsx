@@ -1,15 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { getProjectTheme } from "@/lib/theme";
 import type { CaseStudy } from "@/lib/case-studies";
+import { track } from "@/lib/analytics";
 
 /**
  * Closing "next case study" link — keeps the reader moving through the work.
  * The section floods with the *next* project's accent so it previews where it
  * leads and gives the page a strong visual close before Contact.
  */
-export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
+export function CaseNext({ next, currentSlug }: { next: NonNullable<CaseStudy["next"]>; currentSlug: string }) {
   const theme = getProjectTheme(next.slug);
   return (
     <section
@@ -19,6 +22,10 @@ export function CaseNext({ next }: { next: NonNullable<CaseStudy["next"]> }) {
       <Container>
         <Link
           href={`/work/${next.slug}`}
+          onClick={() => {
+            track("case_next_click", { from_slug: currentSlug, to_slug: next.slug });
+            track("case_study_open", { slug: next.slug, source: "case_next" });
+          }}
           className="group flex flex-col gap-4 py-20 sm:py-28"
         >
           <Eyebrow mark={false} className="text-accent/70">

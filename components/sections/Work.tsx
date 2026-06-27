@@ -23,6 +23,7 @@ import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { RESUME_URL } from "@/components/sections/Contact";
 import { useMorphBegin } from "@/components/morph/MorphProvider";
+import { track } from "@/lib/analytics";
 
 /** Publish the four page-frame edges to the root element. Whichever scrolling
  *  surface is visible owns this; PageFrame consumes it. See PageFrame.tsx. */
@@ -269,6 +270,10 @@ function Carousel() {
   useMotionValueEvent(activeIndex, "change", (v) => {
     setActive(v);
     activeRef.current = v;
+    // Slide came into view — fire for case study slides only (skip intro at 0).
+    if (v > 0 && v < SLIDES.length) {
+      track("carousel_slide_view", { slug: SLIDES[v].slug, index: v });
+    }
   });
 
   // Keyboard control: down/right → next slide (or contact footer at last slide),
@@ -771,7 +776,7 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
           <>
             <button
               type="button"
-              onClick={() => scrollToSlideIndex(1)}
+              onClick={() => { track("work_cta_click", {}); scrollToSlideIndex(1); }}
               className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-12px_var(--accent)] active:translate-y-0 active:scale-100 active:duration-100"
             >
               Work
@@ -788,6 +793,7 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
             href={item.href ?? "#"}
             onClick={(e) => {
               if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              track("case_study_open", { slug: item.slug, source: "carousel" });
               const trigger = activeMorphRef?.current;
               if (trigger) { e.preventDefault(); trigger(); }
             }}
@@ -1391,6 +1397,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                 href={RESUME_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => track("resume_click", { location: "work_intro" })}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-[#D7355D] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)]"
               >
                 Résumé

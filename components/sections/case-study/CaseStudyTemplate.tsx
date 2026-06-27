@@ -73,7 +73,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
               {/* Flagship-only sections (FF Cloud): the AI workflow + live design
                   system, rendered between the narrative beats and the gallery. */}
               {study.aiWorkflow && (
-                <CaseAIWorkflow data={study.aiWorkflow} liveLink={study.liveLink} />
+                <CaseAIWorkflow data={study.aiWorkflow} liveLink={study.liveLink} slug={study.slug} />
               )}
               {study.designSystem && <CaseDesignSystem data={study.designSystem} />}
               {study.gallery && study.gallery.length > 0 && (
@@ -85,7 +85,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
                 <CaseFilmstrip images={study.filmstrip} />
               )}
             </div>
-            {study.next && <CaseNext next={study.next} />}
+            {study.next && <CaseNext next={study.next} currentSlug={study.slug} />}
           </div>
         </div>
 

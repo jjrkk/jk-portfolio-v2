@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { PageFrame } from "@/components/PageFrame";
 import { MorphProvider } from "@/components/morph/MorphProvider";
 import { SkipLink } from "@/components/SkipLink";
+import { GoogleAnalytics } from "@next/third-parties/google";
 // import TypeLab from "@/components/TypeLab"; // TYPE LAB — uncomment to bring back the font-pairing picker
 import "./globals.css";
 // import "./type-lab.css"; // TYPE LAB — uncomment alongside TypeLab above
@@ -87,6 +88,10 @@ export default function RootLayout({
         <MorphProvider>{children}</MorphProvider>
         {/* <TypeLab /> */}{/* TYPE LAB — uncomment to bring back the font-pairing picker */}
       </body>
+      {/* GA4 — production only; no-op in dev so local clicks stay clean */}
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId="G-GS9ZLY8SC8" />
+      )}
     </html>
   );
 }

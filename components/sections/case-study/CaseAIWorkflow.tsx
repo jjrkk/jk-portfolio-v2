@@ -1,8 +1,11 @@
+"use client";
+
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import type { CaseAIWorkflow as CaseAIWorkflowData, AIThread } from "@/lib/case-studies";
+import { track } from "@/lib/analytics";
 
 /**
  * Flagship-only: "How I worked with AI" — the uncopyable section. A bespoke,
@@ -13,9 +16,11 @@ import type { CaseAIWorkflow as CaseAIWorkflowData, AIThread } from "@/lib/case-
 export function CaseAIWorkflow({
   data,
   liveLink,
+  slug,
 }: {
   data: CaseAIWorkflowData;
   liveLink?: { label: string; href: string };
+  slug?: string;
 }) {
   const { eyebrow, title, intro, threads, loop, notes } = data;
   const [strategy, implementation] = threads;
@@ -94,7 +99,11 @@ export function CaseAIWorkflow({
               <p className="max-w-xl font-sans text-body text-muted">
                 The prototype is live and interactive — the same artifact the build was handed off from.
               </p>
-              <ArrowLink href={liveLink.href} external>
+              <ArrowLink
+                href={liveLink.href}
+                external
+                onClick={() => track("live_prototype_click", { slug: slug ?? "unknown" })}
+              >
                 {liveLink.label}
               </ArrowLink>
             </div>

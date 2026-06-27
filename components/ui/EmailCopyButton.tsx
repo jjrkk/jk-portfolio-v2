@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { track } from "@/lib/analytics";
 
 function CopyIcon({ bgFill }: { bgFill?: string }) {
   return (
@@ -23,15 +24,18 @@ function CheckIcon() {
 export function EmailCopyButton({
   email,
   dark,
+  location = "contact_footer",
   className,
 }: {
   email: string;
   dark?: boolean;
+  location?: "contact_footer" | "about_hero";
   className?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
+    track("email_copy", { location });
     try {
       await navigator.clipboard.writeText(email);
     } catch {
