@@ -21,7 +21,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
-import { RESUME_URL } from "@/components/sections/Contact";
+import { RESUME_URL, Contact } from "@/components/sections/Contact";
 import { useMorphBegin } from "@/components/morph/MorphProvider";
 import { track } from "@/lib/analytics";
 
@@ -1514,7 +1514,11 @@ function HorizontalCarousel({ className }: { className: string }) {
 
 function StackedList({ className }: { className: string }) {
   return (
-    <section id="work" className={className}>
+    // Reduced-motion fallback (replaces the carousel). app/page.tsx wraps <Work/>
+    // in an accent-coloured div for the carousel's corner cutouts; this section
+    // is otherwise transparent, so it needs its own light surface or it inherits
+    // that fuchsia and the accent-coloured headings render invisibly on it.
+    <section id="work" className={cn("relative bg-background", className)}>
       <div className="mx-auto w-full max-w-3xl px-6 py-20 sm:px-10">
         <div className="mb-16 flex items-center justify-between">
           <span className="font-mono text-eyebrow uppercase text-foreground">
@@ -1535,6 +1539,10 @@ function StackedList({ className }: { className: string }) {
           ),
         )}
       </div>
+      {/* The carousel hosts Contact as its final panel; the StackedList fallback
+          has no such panel, so render it here or reduced-motion users (esp. on
+          mobile, where the desktop FooterReveal is hidden) get no contact/résumé. */}
+      <Contact dark />
     </section>
   );
 }
