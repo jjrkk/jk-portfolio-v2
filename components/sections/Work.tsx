@@ -787,6 +787,12 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
                 ↓
               </span>
             </button>
+            <ArrowLink
+              onClick={() => { track("contact_cta_click", { surface: "desktop" }); scrollToContact(); }}
+              direction="down"
+            >
+              Get in touch
+            </ArrowLink>
           </>
         ) : (
           <Link
@@ -1495,6 +1501,11 @@ function HorizontalCarousel({ className }: { className: string }) {
                       →
                     </span>
                   </button>
+                  <ArrowLink
+                    onClick={() => { track("contact_cta_click", { surface: "mobile" }); goTo(TOTAL); }}
+                  >
+                    Get in touch
+                  </ArrowLink>
                 </>
               ) : (
                 <ArrowLink href={item.href ?? "#"}>Case study</ArrowLink>

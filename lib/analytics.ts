@@ -31,6 +31,8 @@ type EngagementEvents = {
   case_study_open: { slug: string; source: "carousel" | "case_next" };
   /** WORK ↓ CTA on the intro slide clicked. */
   work_cta_click: Record<string, never>;
+  /** "GET IN TOUCH" secondary CTA on the intro slide clicked. */
+  contact_cta_click: { surface: "desktop" | "mobile" };
   /** Bottom "Next case study" panel clicked. */
   case_next_click: { from_slug: string; to_slug: string };
 };
