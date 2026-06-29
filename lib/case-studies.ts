@@ -182,7 +182,7 @@ const VIOLET_MAGENTA: CaseStudy = {
   subtitle:
     "Reframing a clinical AI report around the question patients actually ask — so clinicians could hand it across the table, not narrate around it.",
   hero: {
-    src: "/work/egg-reports/ff-reports-hero.png",
+    src: "/work/egg-reports/ff-reports-hero.webp",
     alt: "VIOLET and MAGENTA predictive fertility reports, redesigned",
   },
 
@@ -211,7 +211,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "The downstream signal was hard to ignore. Clinicians were softening, narrating around, or quietly setting aside the report rather than handing it to a patient. A tool built to build confidence in the science was instead creating a moment of dread — and the workaround was the clinician's voice, not the design.",
       ],
       figure: {
-        src: "/work/egg-reports/ff-reports-before.png",
+        src: "/work/egg-reports/ff-reports-before.webp",
         alt: "The original VIOLET report — dense comparative layout with buried headline number",
         caption: "The original VIOLET report. Comparative framing, buried live-birth probability, language that required clinician narration to soften.",
         frameless: true,
@@ -226,7 +226,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "Both had the same root: the reports were organised around what the AI knew, not around what a clinician needed to say. Before removing anything, I mapped what was working quietly — the things users never filed tickets about: a cumulative multi-cycle view patients had come to rely on across appointments, and the VIOLET/MAGENTA colour signal that gave specialists an at-a-glance read. The redesign would protect both.",
       ],
       figure: {
-        src: "/work/egg-reports/sketches.png",
+        src: "/work/egg-reports/sketches.webp",
         alt: "Synthesis of clinician feedback and redesign ideas from the discovery audit",
         caption: "Synthesised feedback from clinicians, framing failures identified in the audit, and the core redesign principles that followed.",
         frameless: true,
@@ -240,7 +240,7 @@ const VIOLET_MAGENTA: CaseStudy = {
         "Tone was a live design surface. In a regulated clinical product, the words are as much the interface as the layout — so every sentence went through the same clinical review cycle as the visual structure. What emerged was a report a clinician could hand across the table. The cumulative view and the VIOLET/MAGENTA signal stayed intact; the comparative framing and chart-junk that made the reports feel dated were stripped.",
       ],
       figure: {
-        src: "/work/egg-reports/ff-reports-hero-2x.png",
+        src: "/work/egg-reports/ff-reports-hero-2x.webp",
         alt: "Redesigned VIOLET and MAGENTA report layouts on a light stage",
         caption:
           "The redesigned report system — VIOLET and MAGENTA unified under one patient-first layout.",
@@ -290,17 +290,17 @@ const VIOLET_MAGENTA: CaseStudy = {
   // Next swap-ins: oocyte AI imagery, localization spread, A/B iteration concepts.
   gallery: [
     {
-      src: "/work/egg-reports/ff-reports-violet.png",
+      src: "/work/egg-reports/ff-reports-violet.webp",
       alt: "Redesigned VIOLET report — egg-freezing counselling layout",
       caption: "VIOLET™ — Egg Freezing Insights. Patient-first layout for egg-freezing counselling.",
     },
     {
-      src: "/work/egg-reports/ff-reports-magenta.png",
+      src: "/work/egg-reports/ff-reports-magenta.webp",
       alt: "Redesigned MAGENTA report — IVF embryo-selection layout",
       caption: "MAGENTA™ — IVF Insights. The parallel redesign for embryo-selection decisions.",
     },
     {
-      src: "/work/egg-reports/ff-reports-rose.png",
+      src: "/work/egg-reports/ff-reports-rose.webp",
       alt: "ROSE donor lot report — egg donation clinics, Spanish localization",
       caption: "ROSE™ — Egg Donation Insights. The design system extended to donor oocyte assessment, with built-in localization.",
     },
@@ -308,14 +308,14 @@ const VIOLET_MAGENTA: CaseStudy = {
   galleryColumns: 3,
 
   filmstrip: [
-    { src: "/work/egg-reports/violet-1@2x.png",        alt: "VIOLET report — personalized live-birth probability predictions" },
-    { src: "/work/egg-reports/violet-2@2x.png",        alt: "VIOLET egg images and AI predictions — microscopy grid with probability scores" },
-    { src: "/work/egg-reports/brochure.png",            alt: "Clinician reviewing printed VIOLET report with patient" },
-    { src: "/work/egg-reports/magenta-1@2x.png",       alt: "MAGENTA report — embryo quality scores and euploidy predictions" },
-    { src: "/work/egg-reports/magenta-2@2x.png",       alt: "MAGENTA egg assessment grid with per-oocyte MAGENTA scores" },
-    { src: "/work/egg-reports/rose-donor-lot-1@2x.png", alt: "ROSE donor lot report — aggregate oocyte quality assessment for egg donation clinics" },
-    { src: "/work/egg-reports/oocyte-images-1@2x.png", alt: "Future Fertility oocyte images report — egg microscopy with AI quality assessment" },
-    { src: "/work/egg-reports/download.png",            alt: "Future Fertility web app — customize and share report panel" },
+    { src: "/work/egg-reports/violet-1@2x.webp",        alt: "VIOLET report — personalized live-birth probability predictions" },
+    { src: "/work/egg-reports/violet-2@2x.webp",        alt: "VIOLET egg images and AI predictions — microscopy grid with probability scores" },
+    { src: "/work/egg-reports/brochure.webp",            alt: "Clinician reviewing printed VIOLET report with patient" },
+    { src: "/work/egg-reports/magenta-1@2x.webp",       alt: "MAGENTA report — embryo quality scores and euploidy predictions" },
+    { src: "/work/egg-reports/magenta-2@2x.webp",       alt: "MAGENTA egg assessment grid with per-oocyte MAGENTA scores" },
+    { src: "/work/egg-reports/rose-donor-lot-1@2x.webp", alt: "ROSE donor lot report — aggregate oocyte quality assessment for egg donation clinics" },
+    { src: "/work/egg-reports/oocyte-images-1@2x.webp", alt: "Future Fertility oocyte images report — egg microscopy with AI quality assessment" },
+    { src: "/work/egg-reports/download.webp",            alt: "Future Fertility web app — customize and share report panel" },
   ],
 
   next: { slug: "modus-v", title: "Modus X", eyebrow: "Surgical navigation · Synaptive Medical" },
@@ -358,7 +358,7 @@ const IMAGE_CAPTURE: CaseStudy = {
         "The clutter wasn't only cosmetic. Capture happens under real time pressure: every second an egg spends outside the incubator is a second a lab works to minimize. A dense interface taxes exactly the moment that needs to be fastest and calmest — and it made the product harder to learn for every new clinic onboarding to it.",
       ],
       figure: {
-        src: "/work/image-capture/cap-app-before@2x.png",
+        src: "/work/image-capture/cap-app-before@2x.webp",
         alt: "The original FF Capture app — a dense, dev-built Windows interface with a small image preview",
         caption: "The original Capture app — functional and trusted, but dev-built and dense. The live image sits in a small preview, boxed in by toolbars and tables.",
         frameless: true,
@@ -373,7 +373,7 @@ const IMAGE_CAPTURE: CaseStudy = {
         "Two findings anchored the redesign. First, lab efficiency is the metric that matters — specifically, minimizing the time eggs spend outside the incubator — so the capture loop had to get genuinely faster, not just better-looking. Second, the existing mental model was an asset: hundreds of clinics already knew this app. The job was to streamline and modernize that model with a scalpel, not replace it with something theoretically nicer that would strand power users.",
       ],
       figure: {
-        src: "/work/image-capture/user-workflow-mapping@2x.png",
+        src: "/work/image-capture/user-workflow-mapping@2x.webp",
         alt: "Workflow map synthesized from discovery interviews with embryologists",
         caption: "Workflow mapping synthesized from the discovery interviews — separating the core capture loop from the edge-case UI that could move off the main screen.",
         frameless: true,
@@ -387,7 +387,7 @@ const IMAGE_CAPTURE: CaseStudy = {
         "Quality is surfaced where the decision is made. Because capture quality gates the downstream AI — there's a minimum threshold for highlights, shadow, and focus — the redesign makes quality control glanceable: a simple green / amber / red read on each image, so embryologists get it right the first time and hand a clean image to the reporting pipeline. The product identities (VIOLET, MAGENTA, ROSE) and a hand-tuned light/dark theme carry through from the report system, so the whole suite feels like one product.",
       ],
       figure: {
-        src: "/work/image-capture/cap-app-magenta-light@2x.png",
+        src: "/work/image-capture/cap-app-magenta-light@2x.webp",
         alt: "The redesigned capture workspace, MAGENTA IVF theme — image fills the canvas with a calm review rail and per-image QC",
         caption:
           "The redesigned capture workspace (MAGENTA / IVF). The image owns the canvas; review and per-image quality control sit in a calm right rail; one clear capture action anchors the flow.",
@@ -398,17 +398,17 @@ const IMAGE_CAPTURE: CaseStudy = {
 
   gallery: [
     {
-      src: "/work/image-capture/cap-app-new-assessment@2x.png",
+      src: "/work/image-capture/cap-app-new-assessment@2x.webp",
       alt: "Redesigned New Assessment intake — patient, cycle, and embryo information grouped semantically",
       caption: "Structured intake — patient, cycle, and embryo information regrouped semantically from the research, so setup is fast and legible.",
     },
     {
-      src: "/work/image-capture/cap-app-rose-light@2x.png",
+      src: "/work/image-capture/cap-app-rose-light@2x.webp",
       alt: "Capture workspace in the ROSE donor-oocyte theme",
       caption: "ROSE — donor oocyte capture, completing the product family under one design system.",
     },
     {
-      src: "/work/image-capture/cap-app-violet-dark@2x.png",
+      src: "/work/image-capture/cap-app-violet-dark@2x.webp",
       alt: "Capture workspace in the VIOLET theme, dark mode",
       caption: "A hand-tuned dark theme, parallel to light — never an auto-inversion.",
     },
@@ -453,13 +453,13 @@ const IMAGE_CAPTURE: CaseStudy = {
   },
 
   filmstrip: [
-    { src: "/work/image-capture/cap-app-after-2x.png",                 alt: "Redesigned FF Capture — image-dominant capture workspace" },
-    { src: "/work/image-capture/cap-app-violet-light@2x.png",          alt: "FF Capture — VIOLET egg-freezing theme, light mode" },
-    { src: "/work/image-capture/cap-app-magenta-dark@2x.png",          alt: "FF Capture — MAGENTA IVF theme, dark mode" },
-    { src: "/work/image-capture/cap-app-rose-light@2x.png",            alt: "FF Capture — ROSE donor-oocyte theme" },
-    { src: "/work/image-capture/cap-app-new-empty@2x.png",            alt: "FF Capture — empty state before capture" },
-    { src: "/work/image-capture/ui-explorations-canvas-large@2x.png",  alt: "Breadth of UI explorations from the redesign" },
-    { src: "/work/image-capture/context-of-use@2x.png",               alt: "An embryologist using FF Capture at the microscope station" },
+    { src: "/work/image-capture/cap-app-after-2x.webp",                 alt: "Redesigned FF Capture — image-dominant capture workspace" },
+    { src: "/work/image-capture/cap-app-violet-light@2x.webp",          alt: "FF Capture — VIOLET egg-freezing theme, light mode" },
+    { src: "/work/image-capture/cap-app-magenta-dark@2x.webp",          alt: "FF Capture — MAGENTA IVF theme, dark mode" },
+    { src: "/work/image-capture/cap-app-rose-light@2x.webp",            alt: "FF Capture — ROSE donor-oocyte theme" },
+    { src: "/work/image-capture/cap-app-new-empty@2x.webp",            alt: "FF Capture — empty state before capture" },
+    { src: "/work/image-capture/ui-explorations-canvas-large@2x.webp",  alt: "Breadth of UI explorations from the redesign" },
+    { src: "/work/image-capture/context-of-use@2x.webp",               alt: "An embryologist using FF Capture at the microscope station" },
   ],
 
   next: { slug: "ff-reports", title: "Violet & Magenta", eyebrow: "Clinical reporting · Future Fertility" },
@@ -502,7 +502,7 @@ const MODUS_X: CaseStudy = {
         "That was a real problem for a product at this price point and in this setting. New clinics needed staff who could run it with minimal training; an operating room is no place for a fiddly UI; and a million-dollar instrument should feel as premium as it costs. The mandate: dramatically streamline the experience and make it look the part — without losing anything a surgeon relied on, and without introducing any possibility of a use error.",
       ],
       figure: {
-        src: "/work/synaptive/surgical-overlay.png",
+        src: "/work/synaptive/surgical-overlay.webp",
         alt: "The Modus X live surgical overlay — the surgeon's 4K operative view with controls at the edges",
         caption: "The live surgical overlay — the surgeon's 4K view, with controls kept to the edges. The job was to make a powerful instrument feel effortless at a glance.",
         frameless: true,
@@ -517,7 +517,7 @@ const MODUS_X: CaseStudy = {
         "Then I pressure-tested the redesign against a deliberately high bar: we recruited external nurses — not power users — and watched whether they could run the system with minimal training. If they could, the design was working. All of it ran under FDA formative and summative testing protocol, so usability wasn't a nice-to-have; it was a documented safety requirement.",
       ],
       figure: {
-        src: "/work/synaptive/justin-and-team-during-fda-usability-testing.jpg",
+        src: "/work/synaptive/justin-and-team-during-fda-usability-testing.webp",
         alt: "The design and research team in scrubs during FDA usability testing in front of the Modus X system",
         caption: "Usability testing under FDA protocol — including external nurses recruited to prove the 'anyone can run this with minimal training' bar.",
         frameless: true,
@@ -531,7 +531,7 @@ const MODUS_X: CaseStudy = {
         "The fifth path was the differentiator: hands-free voice control. Surgeons had asked for it — if they could get the perfect view without ever fiddling with the UI, they could stay focused on the surgery. I led the UX for it end to end: defining the command set (“OK Vimo, focus here”; “OK Vimo, zoom in 20%”), selecting the microphone hardware (lavalier vs. head-mounted), and validating it in pig-lab trials with real neurosurgeons wearing it and feeding back. It shipped as a first-class modality, not a gimmick — voice that actually worked in a live surgical setting.",
       ],
       figure: {
-        src: "/work/synaptive/surgeon-testing-new-surgical-overlay-10-ft-ui.jpg",
+        src: "/work/synaptive/surgeon-testing-new-surgical-overlay-10-ft-ui.webp",
         alt: "A neurosurgeon working from the redesigned Modus X 10-foot overlay on a 4K display during surgery",
         caption: "A neurosurgeon working from the redesigned 10-foot overlay on the 4K display — controls legible across the room, attention on the field, not the interface.",
         wide: true,
@@ -541,17 +541,17 @@ const MODUS_X: CaseStudy = {
 
   gallery: [
     {
-      src: "/work/synaptive/modus-x-ui-examples.png",
+      src: "/work/synaptive/modus-x-ui-examples.webp",
       alt: "Redesigned Modus X operator touchscreen UI — setup wizard and procedure home",
       caption: "The redesigned operator UI — setup wizard and procedure home, with large, glanceable touch targets.",
     },
     {
-      src: "/work/synaptive/modus-x-voice-control-testing.png",
+      src: "/work/synaptive/modus-x-voice-control-testing.webp",
       alt: "Voice-control trials — testing command recognition and microphone types",
       caption: "Voice-control trials — testing command recognition and microphone types in a simulated surgical setting.",
     },
     {
-      src: "/work/synaptive/modus-ia-and-specs.png",
+      src: "/work/synaptive/modus-ia-and-specs.webp",
       alt: "Modus X information architecture and UI specifications",
       caption: "Information architecture and UI specs, documented to FDA submission standards for the engineering handoff.",
     },
@@ -596,14 +596,14 @@ const MODUS_X: CaseStudy = {
   },
 
   filmstrip: [
-    { src: "/work/synaptive/surgical-overlay.png",                              alt: "Modus X live surgical overlay — the surgeon's 4K operative view with edge controls" },
-    { src: "/work/synaptive/modus-x-ui-examples.png",                           alt: "Redesigned Modus X operator touchscreen UI" },
-    { src: "/work/synaptive/justin-and-team-during-fda-usability-testing.jpg",  alt: "The design and research team during FDA usability testing" },
-    { src: "/work/synaptive/surgeon-testing-3D-modus-X.jpg",                    alt: "A neurosurgeon testing Modus X's 3D visualization" },
-    { src: "/work/synaptive/synaptive-brain-tractography.jpg",                  alt: "Brain tractography — the neuro-imaging Modus X is built around" },
-    { src: "/work/synaptive/synaptive-modus-x-in-brain-surgery.jpg",           alt: "Modus X in use during live brain surgery" },
-    { src: "/work/synaptive/workflow-and-service-blueprinting.png",            alt: "Workflow and service blueprinting from the discovery phase" },
-    { src: "/work/synaptive/product-101.png",                                  alt: "Modus X product overview" },
+    { src: "/work/synaptive/surgical-overlay.webp",                              alt: "Modus X live surgical overlay — the surgeon's 4K operative view with edge controls" },
+    { src: "/work/synaptive/modus-x-ui-examples.webp",                           alt: "Redesigned Modus X operator touchscreen UI" },
+    { src: "/work/synaptive/justin-and-team-during-fda-usability-testing.webp",  alt: "The design and research team during FDA usability testing" },
+    { src: "/work/synaptive/surgeon-testing-3D-modus-X.webp",                    alt: "A neurosurgeon testing Modus X's 3D visualization" },
+    { src: "/work/synaptive/synaptive-brain-tractography.webp",                  alt: "Brain tractography — the neuro-imaging Modus X is built around" },
+    { src: "/work/synaptive/synaptive-modus-x-in-brain-surgery.webp",           alt: "Modus X in use during live brain surgery" },
+    { src: "/work/synaptive/workflow-and-service-blueprinting.webp",            alt: "Workflow and service blueprinting from the discovery phase" },
+    { src: "/work/synaptive/product-101.webp",                                  alt: "Modus X product overview" },
   ],
 
   next: { slug: "metrolinx-presto", title: "PRESTO", eyebrow: "Transit service design · Metrolinx" },
@@ -647,7 +647,7 @@ const PRESTO: CaseStudy = {
         "Their ask was deliberately holistic: don't optimize a single channel — design the whole journey. Make paying to ride coherent no matter how a person chooses to do it, or which operators a trip crosses. That's a service-design problem before it's a UI one — which is why Metrolinx brought in Fjord to do the field research and systems thinking the brief demanded.",
       ],
       figure: {
-        src: "/work/presto/03-ethnography-immersion.png",
+        src: "/work/presto/03-ethnography-immersion.webp",
         alt: "A board of fare media collected from transit operators across Ontario during field research",
         caption: "Fare media collected from across the network — a single rider's trip can cross many operators, each with its own way to pay. The fragmentation, made tangible.",
       },
@@ -661,7 +661,7 @@ const PRESTO: CaseStudy = {
         "That ground truth became the foundation everything else stood on. We synthesized hundreds of observations into the themes and opportunity areas that would steer the design — not a list of channel fixes, but a read on the whole rider relationship with paying to ride.",
       ],
       figure: {
-        src: "/work/presto/04-user-research.png",
+        src: "/work/presto/04-user-research.webp",
         alt: "Field research in transit stations — intercepting riders at PRESTO machines, with a board of research locations across operators",
         caption: "Field research across the network — riders intercepted at machines from Brampton to the TTC to Durham, observations logged location by location.",
       },
@@ -674,7 +674,7 @@ const PRESTO: CaseStudy = {
         "Because this was an agency deliverable a government client would implement, the work had to survive handoff. The blueprints and workflow maps encoded intent unambiguously — a future-state vision robust enough to build a province-wide, 50M-rider experience from, long after the engagement ended.",
       ],
       figure: {
-        src: "/work/presto/08-blueprint-artifact-showcase.png",
+        src: "/work/presto/08-blueprint-artifact-showcase.webp",
         alt: "The Future State Vision for PRESTO Ticketing service blueprint",
         caption: "The future-state service blueprint for PRESTO ticketing — the rider journey, the service moments behind it, and the workflows that make it coherent across every fare type.",
         wide: true,
@@ -684,17 +684,17 @@ const PRESTO: CaseStudy = {
 
   gallery: [
     {
-      src: "/work/presto/05-research-findings-showcase.png",
+      src: "/work/presto/05-research-findings-showcase.webp",
       alt: "Showcase of the PRESTO discovery research findings",
       caption: "Discovery findings — the themes and opportunity areas synthesized from the field research.",
     },
     {
-      src: "/work/presto/07-concept-posters.png",
+      src: "/work/presto/07-concept-posters.webp",
       alt: "Concept posters from the PRESTO future-experience work",
       caption: "Concept posters — future-experience directions made tangible for stakeholders and testing.",
     },
     {
-      src: "/work/presto/10-concept-testing-for-validation.png",
+      src: "/work/presto/10-concept-testing-for-validation.webp",
       alt: "Concept testing sessions validating the PRESTO future-experience directions",
       caption: "Concept testing — validating the directions with riders before they moved toward implementation.",
     },
@@ -739,13 +739,13 @@ const PRESTO: CaseStudy = {
   },
 
   filmstrip: [
-    { src: "/work/presto/01-service-and-project-context.png",                  alt: "PRESTO service and project context" },
-    { src: "/work/presto/02-project-management-war-room.png",                   alt: "The project war room — managing a large, complex service-design engagement" },
-    { src: "/work/presto/presto-service-design-affinity-diagramming.png",       alt: "Affinity diagramming the field research" },
-    { src: "/work/presto/06-synthesis.png",                                     alt: "Synthesizing field research into themes and opportunities" },
-    { src: "/work/presto/09-backlog-development-and-prioritization.png",        alt: "Backlog development and prioritization" },
-    { src: "/work/presto/11-workflow-mapping-deliverable.png",                  alt: "Workflow mapping deliverable for the PRESTO ticketing experience" },
-    { src: "/work/presto/05-research-findings-showcase.png",                    alt: "PRESTO discovery research findings" },
+    { src: "/work/presto/01-service-and-project-context.webp",                  alt: "PRESTO service and project context" },
+    { src: "/work/presto/02-project-management-war-room.webp",                   alt: "The project war room — managing a large, complex service-design engagement" },
+    { src: "/work/presto/presto-service-design-affinity-diagramming.webp",       alt: "Affinity diagramming the field research" },
+    { src: "/work/presto/06-synthesis.webp",                                     alt: "Synthesizing field research into themes and opportunities" },
+    { src: "/work/presto/09-backlog-development-and-prioritization.webp",        alt: "Backlog development and prioritization" },
+    { src: "/work/presto/11-workflow-mapping-deliverable.webp",                  alt: "Workflow mapping deliverable for the PRESTO ticketing experience" },
+    { src: "/work/presto/05-research-findings-showcase.webp",                    alt: "PRESTO discovery research findings" },
   ],
 
   next: { slug: "experiencepoint-impact", title: "Impact", eyebrow: "Learning platform · ExperiencePoint" },
@@ -789,7 +789,7 @@ const IMPACT: CaseStudy = {
         "I'd been hired to productize the workforce-transformation offering; that work paused, and the team sprinted instead to build something new under real pressure. The question wasn't \"can we run a workshop on Zoom\" — it was whether the thing that made ExperiencePoint special could survive being moved to a screen at all.",
       ],
       figure: {
-        src: "/work/experiencepoint/01-overview.png",
+        src: "/work/experiencepoint/01-overview.webp",
         alt: "Impact by ExperiencePoint product overview — a virtual, expert-guided design sprint using human-centered design",
         caption: "Impact — a live, expert-guided virtual design sprint. The brief: keep what made the in-person workshops great, in a form that works over video.",
       },
@@ -803,7 +803,7 @@ const IMPACT: CaseStudy = {
         "And we earned it by prototyping the workshop on ourselves and on external test groups, fast — running it, watching where energy dipped, and re-cutting the timing and mechanics until the virtual version had its own pace and pull. In the early, intense months of the pandemic, designing, testing, and optimizing a live virtual sprint was itself a design sprint.",
       ],
       figure: {
-        src: "/work/experiencepoint/02-modular-delivery.png",
+        src: "/work/experiencepoint/02-modular-delivery.webp",
         alt: "The modular delivery architecture for Impact — sprint stages that flex to different durations and client needs",
         caption: "The modular architecture — one consistent, high-quality core that flexes by duration and client need, and across in-person, virtual, and self-directed delivery.",
       },
@@ -815,7 +815,7 @@ const IMPACT: CaseStudy = {
         "To sell and scale, Impact had to deliver the same excellent learning every time, run by facilitators who weren't me. So I designed a modular learning architecture — a consistent, high-quality core that flexes from a single session to a multi-day program, and adapts across in-person, virtual, and self-directed delivery — and built the product plans around it with each Fortune 100 client. Underneath sat the full machine: master talking points and a train-the-trainer program so any facilitator could deliver it, plus the production-manager role that handles the live logistics so the facilitator can focus on the room. Digital credentials and prep guides closed the loop into a sellable, end-to-end experience.",
       ],
       figure: {
-        src: "/work/experiencepoint/03-experience-example.png",
+        src: "/work/experiencepoint/03-experience-example.webp",
         alt: "Examples of the designed Impact experience — structured activity templates, interview plans, and play-by-play guides",
         caption: "The designed experience, made concrete — activity structures, interview plans, and play-by-plays that hold the session's pace and quality together.",
         wide: true,
@@ -825,12 +825,12 @@ const IMPACT: CaseStudy = {
 
   gallery: [
     {
-      src: "/work/experiencepoint/04-digital-credentials.png",
+      src: "/work/experiencepoint/04-digital-credentials.webp",
       alt: "Digital badges and certificates for Impact, plus the post-workshop webpage flow",
       caption: "Digital credentials and a post-workshop webpage — extending the experience past the session and giving attendees something to take with them.",
     },
     {
-      src: "/work/experiencepoint/05-getting-ready-guide.png",
+      src: "/work/experiencepoint/05-getting-ready-guide.webp",
       alt: "The Impact Getting Ready Guide — preparation materials for participants and facilitators",
       caption: "The Getting Ready Guide — prep that sets up both attendees and facilitators for a session that runs smoothly from the first minute.",
     },
@@ -874,12 +874,12 @@ const IMPACT: CaseStudy = {
   },
 
   filmstrip: [
-    { src: "/work/experiencepoint/Screen Shot 2020-12-17 at 12.51.45 PM.png", alt: "The ExperiencePoint product team on a video call during the pandemic build" },
-    { src: "/work/experiencepoint/03-experience-example.png",                  alt: "Designed Impact experience artifacts — activity templates and play-by-plays" },
-    { src: "/work/experiencepoint/EP Product Team - 3-May-2022.jpg",           alt: "The ExperiencePoint product team" },
-    { src: "/work/experiencepoint/05-getting-ready-guide.png",                 alt: "The Impact Getting Ready Guide" },
-    { src: "/work/experiencepoint/79931CAD-0BB0-4047-8F09-A5629327EF7E.jpg",   alt: "The ExperiencePoint team back together in person" },
-    { src: "/work/experiencepoint/04-digital-credentials.png",                 alt: "Impact digital credentials and post-workshop flow" },
+    { src: "/work/experiencepoint/Screen Shot 2020-12-17 at 12.51.45 PM.webp", alt: "The ExperiencePoint product team on a video call during the pandemic build" },
+    { src: "/work/experiencepoint/03-experience-example.webp",                  alt: "Designed Impact experience artifacts — activity templates and play-by-plays" },
+    { src: "/work/experiencepoint/EP Product Team - 3-May-2022.webp",           alt: "The ExperiencePoint product team" },
+    { src: "/work/experiencepoint/05-getting-ready-guide.webp",                 alt: "The Impact Getting Ready Guide" },
+    { src: "/work/experiencepoint/79931CAD-0BB0-4047-8F09-A5629327EF7E.webp",   alt: "The ExperiencePoint team back together in person" },
+    { src: "/work/experiencepoint/04-digital-credentials.webp",                 alt: "Impact digital credentials and post-workshop flow" },
   ],
 
   next: { slug: "ff-cloud", title: "Cloud", eyebrow: "AI healthtech · Future Fertility" },
