@@ -54,10 +54,17 @@ A from-scratch rebuild of Justin Kirkey's design portfolio (justinkirkey.com). T
 
 ## Typography
 
-- **DECISION NEEDED — lock before heavy build:** display serif + geometric sans.
-  - Display serif candidates: Fraunces (free, high-contrast, Canela-adjacent), or licensed Canela.
-  - Sans candidates: Plus Jakarta Sans (continuity with FF work), or a Söhne/Aeonik-style face.
-  - Self-host the font files for performance.
+- **LOCKED (2026-06-30):** PP Pangaia (display serif) + PP Object Sans (geometric
+  sans, body/UI) + PP Supply Mono (labels/eyebrows). Self-hosted via plain
+  `@font-face` in `app/globals.css` (files in `public/fonts/`) — see
+  `docs/README.md`'s "Locked decisions" for why not `next/font`.
+  - This superseded the original Phase 0 placeholder pick (Fraunces + Geist),
+    which is what the candidates below originally referred to (kept for
+    historical context — no longer live options).
+  - Display serif candidates considered: Fraunces (free, high-contrast,
+    Canela-adjacent), or licensed Canela.
+  - Sans candidates considered: Plus Jakarta Sans (continuity with FF work),
+    or a Söhne/Aeonik-style face.
 
 ---
 

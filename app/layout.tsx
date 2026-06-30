@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import { serif, sans, mono } from "./fonts";
 import { SITE } from "@/lib/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import { PageFrame } from "@/components/PageFrame";
 import { MorphProvider } from "@/components/morph/MorphProvider";
 import { SkipLink } from "@/components/SkipLink";
 import { GoogleAnalytics } from "@next/third-parties/google";
-// import TypeLab from "@/components/TypeLab"; // TYPE LAB — uncomment to bring back the font-pairing picker
 import "./globals.css";
-// import "./type-lab.css"; // TYPE LAB — uncomment alongside TypeLab above
 
 // Per-page <title>/meta via the Next Metadata API (CLAUDE.md SEO build-in).
 // Pages override `title` through the template; everything else inherits.
@@ -60,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${serif.variable} ${sans.variable} ${mono.variable} h-full`}
+      className="h-full"
       // The IntroAperture pre-paint script may add `intro-play` to <html> before
       // hydration (once-per-session, landing only) — expected, so suppress the
       // class-mismatch warning here (standard theme-script pattern).
@@ -86,7 +83,6 @@ export default function RootLayout({
         <SmoothScroll />
         <PageFrame />
         <MorphProvider>{children}</MorphProvider>
-        {/* <TypeLab /> */}{/* TYPE LAB — uncomment to bring back the font-pairing picker */}
       </body>
       {/* GA4 — production only; no-op in dev so local clicks stay clean */}
       {process.env.NODE_ENV === "production" && (

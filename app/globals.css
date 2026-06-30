@@ -1,6 +1,94 @@
 @import "tailwindcss";
 
 /* ============================================================================
+   Type system — the "two-typeface system used fearlessly" (CLAUDE.md grammar
+   #2). Self-hosted, plain @font-face (not next/font): these are static PP
+   (Pangram Pangram) instances mapped onto font-weight RANGES per file rather
+   than a true variable font, so next/font/local's metrics-based optimizations
+   don't cleanly apply — plain @font-face + font-display: swap is the proven,
+   working approach (this is exactly how these files were already verified
+   under the old Type Lab font-pairing tool before it was promoted to default).
+     - Display serif: PP Pangaia — carries the large titles.
+     - Sans: PP Object Sans — body copy, UI, geometric/neutral.
+     - Mono: PP Supply Mono — eyebrows/labels/captions only two weight bands
+       (ultralight, regular-through-black) — nothing in this codebase requests
+       a heavy mono weight, so that's a non-issue.
+   ============================================================================ */
+
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPPangaia-Ultralight.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 351 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPPangaia-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPPangaia-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Pangaia";
+  font-weight: 351 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/fonts/PPPangaia-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 100 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPObjectSans-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 100 600;
+  font-style: italic;
+  font-display: swap;
+  src: url("/fonts/PPObjectSans-Slanted.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 601 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPObjectSans-Heavy.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Object Sans";
+  font-weight: 601 900;
+  font-style: italic;
+  font-display: swap;
+  src: url("/fonts/PPObjectSans-HeavySlanted.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PP Supply Mono";
+  font-weight: 100 350;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPSupplyMono-Ultralight.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PP Supply Mono";
+  font-weight: 351 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PPSupplyMono-Regular.woff2") format("woff2");
+}
+
+/* ============================================================================
    Light-first, work-dominant design system — Phase 1
    ----------------------------------------------------------------------------
    Tokens live in :root. Color utilities are generated via `@theme inline` so
@@ -57,16 +145,16 @@
   --color-panel-bg: var(--panel-bg);
   --color-panel-fg: var(--panel-fg);
 
-  /* Two-typeface system (CLAUDE.md grammar #2) */
-  --font-serif: var(--font-serif);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Two-typeface system (CLAUDE.md grammar #2) — see the @font-face block above. */
+  --font-serif: "PP Pangaia", ui-serif, Georgia, serif;
+  --font-sans: "PP Object Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "PP Supply Mono", ui-monospace, monospace;
 }
 
 @theme {
   /* ---- Type scale — fluid, "fearless" display (CLAUDE.md grammar #2) ----
-     Display tiers ride Fraunces; text tiers ride Geist. clamp() keeps titles
-     huge on desktop (display → 144px) without overflowing small screens. */
+     Display tiers ride Pangaia; text tiers ride Object Sans. clamp() keeps
+     titles huge on desktop (display → 144px) without overflowing small screens. */
   /* Carousel project titles — scale hard on widescreen for a bold, confident
      read (the "fearless scale" pushed further than text-display). */
   --text-hero: clamp(3rem, 7.5vw, 10rem);
@@ -118,15 +206,9 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans); /* fallback chain is already baked into the token */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-/* Let Fraunces' optical-size axis track the font-size automatically, so big
-   titles get the high-contrast display cut and smaller serif stays readable. */
-.font-serif {
-  font-optical-sizing: auto;
 }
 
 ::selection {

@@ -37,7 +37,7 @@
   the template is battle-tested. Its asset checklist is pre-staged in
   [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md).
 - **Stack:** Next.js 16 static export · Tailwind v4 · Lenis · Framer Motion ·
-  Fraunces + Geist. Target host: Cloudflare Pages.
+  Pangaia + Object Sans. Target host: Cloudflare Pages.
 - **Repo:** [github.com/jjrkk/jk-portfolio-v2](https://github.com/jjrkk/jk-portfolio-v2) (public). Branch → preview URL; merge to `main` → auto-deploys.
 - **Cloudflare Pages:** `jk-portfolio-v2.pages.dev`. Build: `npm run build` → `out/`, `NODE_VERSION=20`.
 
@@ -68,8 +68,13 @@
 
 - **Stack:** Next.js static export (`output: "export"`) → Cloudflare Pages. SEO is
   why (full per-page HTML at build).
-- **Fonts:** Fraunces (display serif) + Geist (sans) + Geist Mono, self-hosted via
-  `next/font` ([`app/fonts.ts`](../app/fonts.ts)). Display tiers are weight **600**.
+- **Fonts:** PP Pangaia (display serif) + PP Object Sans (sans) + PP Supply Mono
+  (labels/eyebrows), self-hosted via plain `@font-face` in
+  [`app/globals.css`](../app/globals.css) (files in `public/fonts/`) — not
+  `next/font`, since these are static instances mapped onto font-weight
+  *ranges* per file rather than a true variable font. Display tiers are weight
+  **600**. (Chosen via a since-removed dev-only font-pairing tool; PP =
+  Pangram Pangram, free-for-personal-use.)
 - **Palette (Direction A — branded & harmonized)**, in [`lib/theme.ts`](../lib/theme.ts):
   - Site brand accent: **fuchsia `#D7355D`** (intro slide, frame, default `--accent`).
   - Per-project: FF Cloud `#40539e` (future-blue) · Image Capture `#6d54c9` ·
@@ -226,3 +231,11 @@ execution. Switch with `/model` at phase boundaries.
   (fuchsia brand, future-blue FF Cloud, cooler intro tint), bolder display weight, the
   rich card treatment (tilt/gloss/blobs), 4:3 IMAX-ish cards, snap scrolling, pagination
   pills, keyboard nav, the accent page-frame + fuchsia hand-off.
+- **2026-06-30:** fonts corrected to the actual intended pick — **PP Pangaia +
+  PP Object Sans + PP Supply Mono** — replacing the Phase 0 placeholder
+  (Fraunces + Geist), which had silently stayed live after a since-removed
+  dev-only font-pairing tool (`TypeLab`) was disabled without ever updating
+  the permanent `next/font` source. Switched from `next/font` to plain
+  self-hosted `@font-face` (these are static instances on font-weight
+  *ranges*, not a true variable font). Type Lab and its other 10 unused
+  candidate typefaces were deleted.
