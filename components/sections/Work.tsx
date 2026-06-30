@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   motion,
@@ -34,6 +34,9 @@ function setEdges(edges: { top: boolean; bottom: boolean; left: boolean; right: 
   d.edgeLeft = edges.left ? "on" : "off";
   d.edgeRight = edges.right ? "on" : "off";
 }
+
+/** useLayoutEffect on the client, useEffect on the server (avoids SSR warning). */
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 function clearEdges() {
   const d = document.documentElement.dataset;
@@ -234,6 +237,20 @@ function Carousel() {
     ["#fdfcfb", "#D7355D"],
     { clamp: true },
   );
+  // Filmstrip fades out as the intro strip closes — same timing family as navInk.
+  const filmstripOpacity = useTransform(
+    scrollYProgress,
+    [0, firstSeg * 0.5],
+    [1, 0],
+    { clamp: true },
+  );
+
+  // Refs for content-anchored filmstrip positioning: the strip is an absolute
+  // sibling of the card, but its vertical position is measured off the intro's
+  // CTA row (which lives inside the card) so it tracks the fluid, centred content
+  // at every viewport rather than floating at a fixed bottom offset.
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const introCtaRef = useRef<HTMLDivElement>(null);
 
   // Write prev/next accent rgba vars so the directional gradient overlay can
   // bleed the incoming colour in from the top (prev) and bottom (next) edges.
@@ -537,7 +554,7 @@ function Carousel() {
           the intro slides the card up flush (the strip closes), and the nav ink
           crosses from on-accent white to on-card dark — the same parallax the rest
           of the deck uses. */}
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div ref={stickyRef} className="sticky top-0 h-screen overflow-hidden">
         {/* Light card surface — the per-slide --panel-bg tint. Driven by
             stripY (136 → -40) via transform: translateY (compositor-only, no
             layout reflow per frame). The card is calc(100%+40px) tall so its
@@ -577,7 +594,7 @@ function Carousel() {
             <div className="grid w-full grid-cols-12 items-center gap-x-12">
               <div className="relative col-span-5 min-h-[520px]">
                 <AnimatePresence mode="wait">
-                  <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} />
+                  <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} ctaRef={introCtaRef} />
                 </AnimatePresence>
               </div>
               <div className={cn("relative col-span-7 h-[66vh] [transition:margin-top_0.45s_ease]", active === 0 && "-mt-[68px]")}>
@@ -593,6 +610,23 @@ function Carousel() {
             the h-screen sticky container — keeping it at true viewport center
             regardless of the card's y-transform. */}
         <Pagination active={active} onJump={scrollToSlideIndex} />
+
+        {/* Filmstrip — 6 case-study mini-thumbnails, lower-left, intro only.
+            Vertically anchored to the intro CTA row via measurement (see component).
+            Hard-conditioned on active === 0 (not just opacity/pointer-events) so it
+            has zero presence — visually, in the DOM, and for hit-testing — on every
+            other slide. active only flips to 1 once the scroll-eased playhead
+            crosses the slide-1 midpoint, by which point filmstripOpacity has
+            already faded to 0 over the first half of that same transition, so the
+            unmount lands after it's already invisible — no pop. */}
+        {active === 0 && (
+          <FilmstripNav
+            onJump={scrollToSlideIndex}
+            filmstripOpacity={filmstripOpacity}
+            stickyRef={stickyRef}
+            ctaRef={introCtaRef}
+          />
+        )}
 
         {/* Persistent nav — fixed top bar, above the card (z-60). Its colour
             crosses white→dark (navInk) as the card rises under it: on the accent
@@ -635,6 +669,10 @@ function Pagination({
       {SLIDES.map((s, i) => {
         const isActive = i === active;
         const flyoutLabel = s.kind === "intro" ? "Intro" : s.title;
+        // The shared --accent var tracks the CURRENTLY ACTIVE slide, not
+        // whichever pill is hovered — look up each slide's own accent so the
+        // flyout always shows that project's real colour, not just the active one's.
+        const flyoutAccent = getProjectTheme(s.slug)?.accent ?? SITE_ACCENT;
         return (
           <button
             key={s.slug}
@@ -650,7 +688,7 @@ function Pagination({
               className="pointer-events-none absolute right-full mr-4 top-1/2 -translate-y-1/2 translate-x-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 motion-reduce:transition-none"
             >
               <span className="inline-flex flex-col items-start gap-1.5 rounded-2xl border border-foreground/10 bg-panel-bg/90 px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.14)] backdrop-blur-md">
-                <span className="whitespace-nowrap font-serif text-[1.6rem] font-[700] leading-none text-accent">
+                <span className="whitespace-nowrap font-serif text-[1.6rem] font-[700] leading-none" style={{ color: flyoutAccent }}>
                   {flyoutLabel}
                 </span>
                 <span className="whitespace-nowrap font-mono text-[0.7rem] uppercase tracking-[0.14em] leading-none text-foreground/50">
@@ -671,6 +709,198 @@ function Pagination({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+// Spacing for the content-anchored filmstrip. GAP = the resting gap below the
+// CTA row (matches the content's mt-9 rhythm so it reads as part of the column).
+// The hover tooltip flies in above the thumb and is allowed to overlap the CTA
+// row at this gap — its panel (heavier blur, see FilmstripThumb) carries enough
+// contrast on its own rather than pushing the whole strip down to avoid it.
+// FLOOR = breathing room at the viewport's bottom edge; the position is
+// clamped to keep the strip on-screen on short viewports.
+const FILM_GAP = 36;
+const FILM_FLOOR = 30;
+
+/** Lower-left filmstrip — 6 case-study mini-thumbnails. Only ever mounted on
+ *  the intro slide (see the `active === 0` gate at the call site) — it has
+ *  zero presence, visually or for hit-testing, on every other slide, rather
+ *  than just fading/disabling in place. Clicking a thumb smooth-scrolls to
+ *  that project's carousel slide. Desktop-only (lives inside Carousel).
+ *
+ *  Vertical position is *measured* off the intro CTA row rather than set with a
+ *  fixed `bottom`: the hero type is fluid and the content is vertically centred,
+ *  so the CTAs sit at a different viewport offset at every size. Anchoring keeps
+ *  a constant gap below the CTAs (consistent with the content rhythm) and never
+ *  overlaps them or drifts to the floor. */
+function FilmstripNav({
+  onJump,
+  filmstripOpacity,
+  stickyRef,
+  ctaRef,
+}: {
+  onJump: (i: number) => void;
+  filmstripOpacity: MotionValue<number>;
+  stickyRef: React.RefObject<HTMLDivElement | null>;
+  ctaRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const WORK_SLIDES = SLIDES.slice(1); // exclude intro (index 0)
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [top, setTop] = useState<number | null>(null);
+  // Lifted (not per-thumb local state) so hovering one thumb can dim its siblings.
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  useIsoLayoutEffect(() => {
+    const measure = () => {
+      const cta = ctaRef.current;
+      const sticky = stickyRef.current;
+      const row = rowRef.current;
+      if (!cta || !sticky || !row) return;
+      const c = cta.getBoundingClientRect();
+      const s = sticky.getBoundingClientRect();
+      const stripH = row.offsetHeight;
+      // Resting position: GAP below the CTA row, in container-local coords.
+      const ideal = c.bottom - s.top + FILM_GAP;
+      // Clamp so the strip (+ label lane) never runs past the viewport floor.
+      const maxTop = s.height - stripH - FILM_FLOOR;
+      const next = Math.max(0, Math.min(ideal, maxTop));
+      // Change-guard: no-op (no re-render) once settled, so the rAF loop is free.
+      setTop((prev) => (prev != null && Math.abs(prev - next) < 0.5 ? prev : next));
+    };
+    // Follow the CTA every frame for ~750ms so the strip rises *with* the slide's
+    // entrance transform (y:20→0) instead of snapping after it settles.
+    let raf = 0;
+    const start = performance.now();
+    const loop = () => {
+      measure();
+      if (performance.now() - start < 750) raf = requestAnimationFrame(loop);
+    };
+    measure();
+    raf = requestAnimationFrame(loop);
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", measure);
+    };
+  }, [ctaRef, stickyRef]);
+
+  return (
+    <motion.div
+      style={{ opacity: filmstripOpacity, top: top ?? 0 }}
+      className={cn(
+        "pointer-events-none absolute inset-x-0 z-[60]",
+        // hidden until measured (avoids a one-frame flash at the container top)
+        top == null && "invisible",
+        // hide on viewports too short to seat the strip below the centred content
+        "[@media(max-height:840px)]:hidden",
+      )}
+    >
+      {/* Same PAD as the grid → left edge aligns with the content block, and the
+          max-w/mx-auto cap keeps it aligned on ultra-wide monitors too. */}
+      <div ref={rowRef} className={cn(PAD, "flex items-end gap-2.5 [@media(min-height:1051px)]:gap-3.5")}>
+        {WORK_SLIDES.map((item, wi) => (
+          <FilmstripThumb
+            key={item.slug}
+            item={item}
+            dimmed={hoveredIdx != null && hoveredIdx !== wi}
+            onHoverChange={(hovered) => setHoveredIdx(hovered ? wi : null)}
+            onClick={() => {
+              track("filmstrip_thumb_click", { slug: item.slug });
+              onJump(wi + 1);
+            }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function FilmstripThumb({
+  item,
+  dimmed,
+  onHoverChange,
+  onClick,
+}: {
+  item: WorkItem;
+  dimmed: boolean;
+  onHoverChange: (hovered: boolean) => void;
+  onClick: () => void;
+}) {
+  // The shared --accent CSS var tracks the CURRENTLY ACTIVE slide (for the
+  // scroll-color theming), not the hovered thumb's own project — so it can't
+  // be used here. Look up each item's own accent directly.
+  const tooltipAccent = getProjectTheme(item.slug)?.accent ?? SITE_ACCENT;
+  return (
+    <div
+      className="group relative shrink-0"
+      onMouseEnter={() => onHoverChange(true)}
+      onMouseLeave={() => onHoverChange(false)}
+    >
+      {/* Flyout tooltip — the exact Pagination flyout treatment (rounded-2xl
+          blurred panel-bg chip, large serif title + mono eyebrow subhead),
+          left-aligned to the thumb instead of centred. Pure CSS group-hover
+          (no JS state, no motion-library entrance) — instant, matching the
+          Pagination flyout's feel exactly. Free to overlap the CTA row above
+          (the strip itself stays at its normal FILM_GAP rather than dodging
+          it) — the panel's heavy blur + near-opaque fill carry contrast on
+          their own. No separate height gate: verified it never reaches the
+          panel's top edge anywhere the strip itself is visible (>840px). */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-0 z-10 block bottom-[calc(100%+24px)] translate-y-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100 motion-reduce:transition-none"
+      >
+        {/* Heavier blur + higher fill opacity than the Pagination flyout: this
+            panel is allowed to sit over the CTA row at common viewport heights
+            (the strip stays put rather than being pushed down to dodge it), so
+            it needs to carry its own contrast against whatever's underneath. */}
+        <span className="inline-flex flex-col items-start gap-1.5 whitespace-nowrap rounded-2xl border border-foreground/10 bg-panel-bg/95 px-5 py-3.5 shadow-[0_10px_36px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+          <span className="font-serif text-[1.6rem] font-[700] leading-none" style={{ color: tooltipAccent }}>
+            {item.title}
+          </span>
+          <span className="font-mono text-[0.7rem] uppercase tracking-[0.14em] leading-none text-foreground/50">
+            {item.eyebrow}
+          </span>
+        </span>
+      </span>
+
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`Go to ${item.title}`}
+        className={cn(
+          "relative block aspect-[4/3] w-auto cursor-pointer overflow-hidden rounded-[6px] pointer-events-auto",
+          // height-tiered scale — grows with available vertical space. Mutually
+          // exclusive ranges so source order can't break the cascade.
+          "h-[54px] [@media(max-height:950px)]:h-[46px] [@media(min-height:1051px)]:h-[60px]",
+          // premium resting state: layered, diffuse elevation (close contact
+          // shadow + a softer, wider falloff) — same floating quality as the
+          // hero cards' shadow, scaled down rather than one flat blob.
+          "shadow-[0_1.5px_3px_-1px_rgba(21,19,15,0.22),0_8px_18px_-10px_rgba(21,19,15,0.28)]",
+          "transition-[transform,box-shadow,opacity] duration-300 ease-out",
+          // Dim non-hovered siblings so attention focuses on the hovered thumb.
+          dimmed && "opacity-40",
+          // Subtle, premium hover: a 1px lift only — no scale — so the image
+          // never "jumps". The shadow doing the heavy lifting reads as
+          // elevation without the motion feeling exaggerated at this size.
+          "hover:-translate-y-px hover:shadow-[0_3px_8px_-2px_rgba(21,19,15,0.28),0_16px_28px_-12px_rgba(21,19,15,0.38)]",
+        )}
+      >
+        {item.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={item.image} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full bg-foreground/10" />
+        )}
+        {/* Glossy top highlight — a subtle sheen so the thumbs read as tactile,
+            pressable cards rather than flat crops. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[6px] bg-gradient-to-b from-white/22 via-white/0 to-transparent"
+        />
+        {/* Same luminous specular edge as the hero cards, scaled to the thumb radius. */}
+        <SpecularBorder radius="rounded-[6px]" />
+      </button>
     </div>
   );
 }
@@ -699,9 +929,9 @@ function CarouselCard({
     Math.max(0, Math.min(1, 1.5 - Math.abs(index - p))),
   );
   const zIndex = useTransform(pos, (p) => Math.round(50 - Math.abs(index - p) * 10));
-  // Peeking cards (within 1.5 positions) are hittable so clicking them focuses
-  // the card. The focus-vs-navigate decision is made in WorkStage's Link
-  // onClick (gated by isActive) — see there.
+  // Peeking cards (within 1.5 positions) are hittable — every project card
+  // (not Intro) is dependably one click away from its case study, peeking or
+  // not. See WorkStage's Link onClick.
   const pointerEvents = useTransform(pos, (p) =>
     Math.abs(index - p) < 1.5 ? "auto" : "none",
   );
@@ -724,12 +954,20 @@ function CarouselCard({
   );
 }
 
-function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef?: React.MutableRefObject<(() => void) | null> }) {
+function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; activeMorphRef?: React.MutableRefObject<(() => void) | null>; ctaRef?: React.RefObject<HTMLDivElement | null> }) {
   const isIntro = item.kind === "intro";
 
   return (
     <motion.div
-      className="absolute inset-y-0 left-0 right-0 flex flex-col justify-center"
+      className={cn(
+        "absolute inset-y-0 left-0 right-0 flex flex-col justify-center",
+        // Intro only: reserve the filmstrip's block (GAP + thumb height) at the
+        // bottom so justify-center centres the *whole* mass — text + CTAs + strip
+        // — as one group, lifting the copy slightly for even top/bottom padding.
+        // Tracks the strip's height tiers; nil ≤840px where the strip is hidden.
+        isIntro &&
+          "[@media(min-height:841px)_and_(max-height:1050px)]:pb-[88px] [@media(min-height:1051px)]:pb-[96px]",
+      )}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12, transition: { duration: 0.2, ease: "easeIn" } }}
@@ -771,7 +1009,10 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
         </div>
       )}
 
-      <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <div
+        ref={isIntro ? ctaRef : undefined}
+        className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3"
+      >
         {isIntro ? (
           <>
             <button
@@ -814,13 +1055,14 @@ function CarouselText({ item, activeMorphRef }: { item: WorkItem; activeMorphRef
   );
 }
 
-/** Specular hairline glass border — shared between desktop + mobile cards.
- *  Bright top-left → fades → hair of dark bottom-right. Mask-exclude keeps it
- *  strictly in the 1px border zone without touching card content. */
-function SpecularBorder() {
+/** Specular hairline glass border — shared between desktop + mobile cards (and
+ *  the filmstrip thumbs, at a smaller radius). Bright top-left → fades → hair
+ *  of dark bottom-right. Mask-exclude keeps it strictly in the 1px border zone
+ *  without touching card content. */
+function SpecularBorder({ radius = "rounded-[1rem]" }: { radius?: string }) {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-[25] rounded-[1rem]"
+      className={cn("pointer-events-none absolute inset-0 z-[25]", radius)}
       style={{
         border: "1px solid transparent",
         background:
@@ -1005,10 +1247,13 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
         {/* Frosted glass badge + full-card link */}
         {isClickable && (
           <>
-            {/* Small badge bottom-left — only shown on the active (focused) card.
-                Peeking cards suppress it so the affordance is "click to focus",
-                not "click to navigate". Fades + rises 4px on hover. */}
-            <div className={cn("pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out", isActive && "group-hover:translate-y-0 group-hover:opacity-100")}>
+            {/* Small badge bottom-left. Project cards show it on hover whether
+                peeking or focused — every project card is dependably one click
+                away from its case study, so the affordance should say so
+                wherever you hover it. Intro keeps the old "active-card only"
+                gate: a peeking Intro click still just focuses it (see onClick
+                below), so the badge would be misleading there. */}
+            <div className={cn("pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out", (isActive || item.kind === "project") && "group-hover:translate-y-0 group-hover:opacity-100")}>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/28 px-3.5 py-2 backdrop-blur-md">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/90">{item.kind === "intro" ? "About" : "Case study"}</span>
                 <span aria-hidden className="text-white/60 transition-transform duration-200 group-hover:translate-x-0.5">→</span>
@@ -1017,15 +1262,20 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
             <Link
               href={item.href!}
               onClick={(e) => {
-                // Peeking (not focused) card → don't navigate; bring it into
-                // focus first. preventDefault is honored by Next's <Link>.
+                // Project cards: dependably navigable on a single click,
+                // peeking or focused — hover already brightens the card to
+                // full opacity as the "you can click into this" signal, so
+                // there's no need for a focus-first detour.
+                if (item.kind === "project") {
+                  handleMorphClick(e);
+                  return;
+                }
+                // Intro: unchanged two-step — a peeking click brings it into
+                // focus first; only the focused card navigates normally.
                 if (!isActive) {
                   e.preventDefault();
                   onRequestFocus?.();
-                  return;
                 }
-                // Focused card → navigate (morph for projects).
-                if (item.kind === "project") handleMorphClick(e);
               }}
               className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
               aria-label={`View ${item.title} case study`}

@@ -33,6 +33,8 @@ type EngagementEvents = {
   work_cta_click: Record<string, never>;
   /** "GET IN TOUCH" secondary CTA on the intro slide clicked. */
   contact_cta_click: { surface: "desktop" | "mobile" };
+  /** Bottom-left filmstrip thumbnail clicked (desktop intro only). */
+  filmstrip_thumb_click: { slug: string };
   /** Bottom "Next case study" panel clicked. */
   case_next_click: { from_slug: string; to_slug: string };
 };
