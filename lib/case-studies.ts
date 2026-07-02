@@ -938,7 +938,7 @@ const FF_CLOUD: CaseStudy = {
         "Before removing anything, I catalogued the platform's quiet strengths — the things satisfied users never file tickets about: the cumulative multi-cycle reporting patients rely on across appointments, the at-a-glance product colour-badges, the home-page filters that double as a quality-control tool, the three-panel detail layout trainers use to orient new clinics. Those were protected. What came out was the density-without-hierarchy, the dated chrome, and the real friction — like the absence of a quick download from the list view.",
       ],
       figure: {
-        src: "/work/cloud/ff-cloud-dashboard-after.webp",
+        src: "/work/cloud/ff-cloud-dashboard-after-v2.webp",
         alt: "The redesigned FF Cloud dashboard — a calm, scannable, role-aware overview with a clinic snapshot rail",
         caption: "After — the redesign: a calm, scannable, role-aware overview. The density stays (it's a feature for high-frequency professional use); the hierarchy and the chrome are what changed.",
         wide: true,
@@ -952,7 +952,7 @@ const FF_CLOUD: CaseStudy = {
         "Across the suite, product identity stays meaningful — VIOLET, MAGENTA, and ROSE are reserved as semantic markers, never generic accents — while the platform chrome holds to a single neutral-first blue. Light and dark are hand-tuned in parallel, never auto-inverted.",
       ],
       figure: {
-        src: "/work/cloud/ff-cloud-assessment-after.webp",
+        src: "/work/cloud/ff-cloud-assessment-after-v2.webp",
         alt: "The redesigned MAGENTA assessment detail view — preserved three-panel layout with modernized density and per-oocyte quality control",
         caption: "The redesigned MAGENTA assessment — the preserved three-panel anchor, modernized density, and per-oocyte quality control. Confidential UI shown under NDA.",
         wide: true,
@@ -1060,32 +1060,32 @@ const FF_CLOUD: CaseStudy = {
 
   gallery: [
     {
-      src: "/work/cloud/ff-cloud-insights.webp",
+      src: "/work/cloud/ff-cloud-insights-v2.webp",
       alt: "The FF Cloud Clinic Insights dashboard — clinically meaningful KPIs like quality, age, and blast rates",
       caption: "Clinic Insights — the KPI dashboard lab directors wanted, built on clinically meaningful metrics (quality, maturation, blast rates) rather than vanity volume counts.",
     },
     {
-      src: "/work/cloud/ff-cloud-home-dark.webp",
+      src: "/work/cloud/ff-cloud-home-dark-v2.webp",
       alt: "The FF Cloud dashboard in dark mode — hand-tuned parallel theming",
       caption: "The parallel dark theme — hand-tuned alongside light, never an auto-inversion.",
     },
     {
-      src: "/work/cloud/ff-cloud-download-dialog.webp",
+      src: "/work/cloud/ff-cloud-download-dialog-v2.webp",
       alt: "The FF Cloud download report dialog — the source-of-truth modal",
       caption: "The download dialog — report delivery made the primary action, matching how clinics actually share results.",
     },
     {
-      src: "/work/cloud/ff-cloud-violet.webp",
+      src: "/work/cloud/ff-cloud-violet-v2.webp",
       alt: "A VIOLET egg-freezing assessment in FF Cloud",
       caption: "VIOLET — egg-freezing assessment, with product identity carried as a semantic marker.",
     },
     {
-      src: "/work/cloud/ff-cloud-rose.webp",
+      src: "/work/cloud/ff-cloud-rose-v2.webp",
       alt: "A ROSE egg-donation assessment in FF Cloud",
-      caption: "ROSE — egg-donation assessment, the same system extended to a different product line.",
+      caption: "ROSE — egg-donation assessment's oocyte sorting, the same system extended to a different product line.",
     },
     {
-      src: "/work/cloud/ff-cloud-new-assessment.webp",
+      src: "/work/cloud/ff-cloud-new-assessment-v2.webp",
       alt: "The FF Cloud new-assessment intake flow",
       caption: "New assessment — structured intake, regrouped so setup is fast and legible.",
     },
