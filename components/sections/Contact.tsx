@@ -9,11 +9,9 @@ import { SITE } from "@/lib/site";
 import { track } from "@/lib/analytics";
 
 // Single source of truth for the résumé link (used by Contact, Work, AboutHero).
-// TODO(polish): add UTM tags here — and to SITE.socials (LinkedIn/email) in
-// lib/site.ts — so outbound clicks are attributable. Do all external links in
-// one pass; consider centralizing them in lib/site.ts at that time.
-export const RESUME_URL =
-  "https://drive.google.com/file/d/1h0HfLLc7f9PIux_H52rgf-qihaPk7JNu/view";
+// Self-hosted static file — swap public/resume/justin-kirkey-resume.pdf to update.
+export const RESUME_URL = "/resume/justin-kirkey-resume.pdf";
+export const RESUME_DOWNLOAD_FILENAME = "Justin Kirkey - Resume.pdf";
 
 /** Brand fuchsia hardcoded so the dark footer is always on-brand regardless
  *  of where the scroll-driven --accent is sitting at the time it's revealed. */
@@ -40,8 +38,7 @@ export function Contact({ dark }: { dark?: boolean }) {
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
             <a
               href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              download={RESUME_DOWNLOAD_FILENAME}
               onClick={() => track("resume_click", { location: "contact_footer" })}
               className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_rgba(0,0,0,0.22)] active:translate-y-0 active:scale-100 active:duration-100"
             >
@@ -95,8 +92,7 @@ export function Contact({ dark }: { dark?: boolean }) {
             {/* Primary CTA — résumé */}
             <a
               href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              download={RESUME_DOWNLOAD_FILENAME}
               onClick={() => track("resume_click", { location: "contact_footer" })}
               className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-[0_12px_26px_-10px_var(--accent)] active:translate-y-0 active:scale-100 active:duration-100"
             >

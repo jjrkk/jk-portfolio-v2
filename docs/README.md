@@ -187,8 +187,10 @@
   the last candid is the cats — matches the copy).
 - **Copy** across intro / thesis / about / personality / contact **and every case
   study** is **DRAFT** — wordsmith.
-- **Résumé:** ✅ resolved — all résumé links point to the Google Drive PDF (`RESUME_URL`
-  in [`Contact.tsx`](../components/sections/Contact.tsx), shared by Contact / Work / AboutHero).
+- **Résumé:** ✅ resolved — self-hosted at `public/resume/justin-kirkey-resume.pdf`;
+  all résumé links use `RESUME_URL` + `download={RESUME_DOWNLOAD_FILENAME}` for a
+  seamless direct download (no more Google Drive dependency), defined in
+  [`Contact.tsx`](../components/sections/Contact.tsx), shared by Contact / Work / AboutHero.
 - **Links polish (later):** add **UTM tags** to all outbound links (résumé, LinkedIn,
   email) for attribution; consider centralizing them in `lib/site.ts` at that time.
 

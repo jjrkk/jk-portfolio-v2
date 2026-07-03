@@ -21,7 +21,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
-import { RESUME_URL, Contact } from "@/components/sections/Contact";
+import { RESUME_URL, RESUME_DOWNLOAD_FILENAME, Contact } from "@/components/sections/Contact";
 import { useMorphBegin, useMorphTarget, useMorphActive } from "@/components/morph/MorphProvider";
 import { track } from "@/lib/analytics";
 
@@ -1781,8 +1781,7 @@ function HorizontalCarousel({ className }: { className: string }) {
             <div className="mt-7 flex flex-col items-start gap-5">
               <a
                 href={RESUME_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                download={RESUME_DOWNLOAD_FILENAME}
                 onClick={() => track("resume_click", { location: "work_intro" })}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-[#D7355D] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)]"
               >

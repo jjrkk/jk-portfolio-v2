@@ -3,7 +3,7 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE } from "@/lib/site";
-import { RESUME_URL } from "@/components/sections/Contact";
+import { RESUME_URL, RESUME_DOWNLOAD_FILENAME } from "@/components/sections/Contact";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { track } from "@/lib/analytics";
 
@@ -57,8 +57,7 @@ export function AboutHero() {
                 </a>
                 <a
                   href={RESUME_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  download={RESUME_DOWNLOAD_FILENAME}
                   onClick={() => track("resume_click", { location: "about_hero" })}
                   className="text-white/70 transition-colors hover:text-white"
                 >
