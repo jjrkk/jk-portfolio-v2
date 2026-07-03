@@ -44,8 +44,17 @@ export default function SmoothScroll() {
   }, []);
 
   // Reset to top on every route change so Lenis's virtual scroll position
-  // doesn't bleed into the incoming page.
+  // doesn't bleed into the incoming page — EXCEPT on a slide-return (clicking
+  // "ALL PROJECTS" back to the landing), where the carousel restores the scroll
+  // to the origin slide itself. Resetting there would yank scroll to 0 and let
+  // the snap-on-scroll-end ramp it back, dragging the returning morph clone into
+  // an "up then drop" landing. PageNav sets the flag; we consume it once.
   useEffect(() => {
+    const w = window as unknown as { __jkSuppressScrollReset?: boolean };
+    if (w.__jkSuppressScrollReset) {
+      w.__jkSuppressScrollReset = false;
+      return;
+    }
     lenisRef.current?.scrollTo(0, { immediate: true });
   }, [pathname]);
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { SITE } from "@/lib/site";
+import { useMorphBackTrigger } from "@/components/morph/MorphProvider";
 
 /**
  * Persistent top nav for inner pages (About, case studies).
@@ -26,6 +27,7 @@ export function PageNav({
   rightHref,
   rightExternal,
   tone = "dark",
+  originSlug,
 }: {
   rightLabel: string;
   rightHref: string;
@@ -33,9 +35,16 @@ export function PageNav({
   /** "dark" = ink on a light canvas (default). "light" = white over an accent
    *  hero (case studies); auto-switches to dark + backdrop once hero scrolls out. */
   tone?: "dark" | "light";
+  /** The landing carousel slide this page corresponds to (a case-study slug).
+   *  Stashed in sessionStorage so the landing returns to the right slide
+   *  instead of a hardcoded one, and used to look up a registered reverse-morph
+   *  trigger (see MorphProvider's useRegisterBackTrigger/useMorphBackTrigger).
+   *  Omit on pages with no matching slide (About). */
+  originSlug?: string;
 }) {
   // Starts true so we render white-on-accent immediately (no flash of dark text).
   const [overHero, setOverHero] = useState(true);
+  const tryMorphBack = useMorphBackTrigger();
   const isExternal = rightExternal ?? /^(https?:|mailto:)/.test(rightHref);
   const isAnchor = rightHref.startsWith("#");
 
@@ -119,8 +128,29 @@ export function PageNav({
       <div className="relative flex items-center justify-between px-6 pb-5 pt-12 sm:px-10 lg:px-16 lg:pt-14 xl:px-24">
         <Link
           href="/"
-          onClick={() => {
-            try { sessionStorage.setItem("jk-return-slide", "1"); } catch {}
+          onClick={(e) => {
+            try {
+              if (originSlug) {
+                sessionStorage.setItem("jk-return-slug", originSlug);
+                const w = window as unknown as {
+                  __jkSuppressScrollReset?: boolean;
+                  __jkSuppressAccentReset?: boolean;
+                };
+                // Tell SmoothScroll to skip its reset-scroll-to-0 for this
+                // navigation, so the carousel's own restore can place the
+                // scroll on the origin slide without a reset+snap ramp under
+                // the returning morph (see Work.tsx's return-restore effect).
+                w.__jkSuppressScrollReset = true;
+                // And tell this page's ProjectAccent to skip resetting --accent
+                // to the brand fuchsia on unmount — the landing carousel owns
+                // the accent on return, so the reset would only cause a 1-frame
+                // fuchsia flash behind the morph clone.
+                w.__jkSuppressAccentReset = true;
+              }
+            } catch {}
+            // Modifier/middle clicks open in a new tab — never intercept those.
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+            if (tryMorphBack(originSlug)) e.preventDefault(); // handler already navigating
           }}
           className={`group relative font-mono text-eyebrow uppercase transition-colors duration-300 ${linkColor}`}
         >

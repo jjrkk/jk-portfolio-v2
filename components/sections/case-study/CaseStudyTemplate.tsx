@@ -41,7 +41,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
       }
     >
       {theme && <ProjectAccent accent={theme.accent} accentContrast={theme.accentContrast} />}
-      <PageNav rightLabel="Contact" rightHref="#contact" tone="light" />
+      <PageNav rightLabel="Contact" rightHref="#contact" tone="light" originSlug={study.slug} />
 
       <main id="main-content" tabIndex={-1}>
         {/* Hero + content group. This wrapper BOUNDS the hero's sticky range:

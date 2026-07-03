@@ -18,6 +18,16 @@ export function ProjectAccent({ accent, accentContrast }: { accent: string; acce
     root.style.setProperty("--accent", accent);
     if (accentContrast) root.style.setProperty("--accent-contrast", accentContrast);
     return () => {
+      // Skip the brand-accent reset when returning to the landing carousel
+      // (PageNav's "ALL PROJECTS" sets this flag): the carousel restores the
+      // origin slide's own accent, and resetting here would flash fuchsia for a
+      // frame behind the morph clone. Other exits (About, browser nav) reset as
+      // usual so a non-carousel page never inherits the project accent.
+      const w = window as unknown as { __jkSuppressAccentReset?: boolean };
+      if (w.__jkSuppressAccentReset) {
+        w.__jkSuppressAccentReset = false;
+        return;
+      }
       root.style.setProperty("--accent", SITE_ACCENT);
       root.style.setProperty("--accent-contrast", DEFAULT_ACCENT_CONTRAST);
     };

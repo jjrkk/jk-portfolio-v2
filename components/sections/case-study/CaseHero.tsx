@@ -40,7 +40,7 @@ export function CaseHero({ study }: { study: CaseStudy }) {
         </p>
 
         <div className="mt-10 lg:mt-12">
-          <HeroImageTilt morphId={study.slug}>
+          <HeroImageTilt morphId={study.slug} heroSrc={hero.src}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={hero.src} alt={hero.alt} className="aspect-[16/11] w-full object-cover" />
           </HeroImageTilt>

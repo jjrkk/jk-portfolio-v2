@@ -22,7 +22,7 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { RESUME_URL, Contact } from "@/components/sections/Contact";
-import { useMorphBegin } from "@/components/morph/MorphProvider";
+import { useMorphBegin, useMorphTarget, useMorphActive } from "@/components/morph/MorphProvider";
 import { track } from "@/lib/analytics";
 
 /** Publish the four page-frame edges to the root element. Whichever scrolling
@@ -152,6 +152,27 @@ export function Work() {
   );
 }
 
+/** The slide index to start the carousel on for THIS mount: the origin slide
+ *  when returning from a case study ("ALL PROJECTS"), else the intro (0).
+ *  Read during render (not removed here — the return-restore effect clears the
+ *  flag once all render-time readers have seen it) so the very first paint is
+ *  already at the destination slide. That matters because the intro slide (0)
+ *  carries an extra `pb`/`-mt` layout that CSS-transitions away over 0.45s when
+ *  `active` leaves 0 — starting at 0 then setActive(idx) would slide the card
+ *  ~30px during that transition, which the inbound morph clone would track as a
+ *  residual "up then settle" on landing. Starting at idx avoids it entirely. */
+function initialSlideIndex(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const slug = sessionStorage.getItem("jk-return-slug");
+    if (slug) {
+      const i = SLIDES.findIndex((s) => s.slug === slug);
+      if (i > 0) return i;
+    }
+  } catch {}
+  return 0;
+}
+
 /** "Justin Kirkey" chrome button with a maple leaf SVG that bounces in from the left on hover. */
 function NameButton() {
   const [hovered, setHovered] = useState(false);
@@ -278,8 +299,10 @@ function Carousel() {
   // Apply once on mount so the gradient is correct before any scroll event fires.
   useEffect(() => { applyEdgeGradient(pos.get()); }, []);
 
-  const [active, setActive] = useState(0);
-  const activeRef = useRef(0);
+  // Start on the origin slide when returning from a case study, so the intro
+  // slide's layout never paints (and never transitions away). See initialSlideIndex.
+  const [active, setActive] = useState(initialSlideIndex);
+  const activeRef = useRef(active);
   // Shared morph trigger: the active WorkStage registers its triggerMorph here
   // so CarouselText's "Case study" link can fire the same conduit transition.
   const activeMorphRef = useRef<(() => void) | null>(null);
@@ -514,31 +537,86 @@ function Carousel() {
       active >= TOTAL - 1 ? "on" : "off";
   }, [active]);
 
-  // On return from an inner page ("ALL PROJECTS" nav link), smooth-scroll to
-  // the slide flagged in sessionStorage before navigation.
+  // On return from an inner page ("ALL PROJECTS" nav link), restore the exact
+  // slide — and its colour — the user left from, instantly and pre-paint, so
+  // there's no detour through the intro slide's colour/position and no visible
+  // scroll animation to sit through. (Previously hardcoded to slide 1 with a
+  // 250ms-delayed 1s smooth scroll — see docs/Page-Transitions-Plan.md.) When
+  // PageNav's reverse conduit also fired (see HeroImageTilt/MorphProvider),
+  // this positions the landing card correctly BEFORE useMorphTarget measures
+  // it, so the inbound clone has a real position to land on.
   //
-  // The flag is consumed INSIDE the timeout, not in the effect body. Under
-  // React StrictMode (dev) effects run twice (run → cleanup → run); consuming
-  // it in the body would let the first run remove it + the cleanup clear the
-  // timeout, leaving the second run with nothing to do — so the scroll never
-  // fired. Reading in the body but removing in the timeout keeps it robust.
-  //
-  // We also pre-set activeRef + active to the destination so the snap-on-
-  // scroll-end machine reinforces the target instead of the (lagging) origin.
-  useEffect(() => {
-    let flag: string | null = null;
-    try { flag = sessionStorage.getItem("jk-return-slide"); } catch {}
-    if (!flag) return;
-    const idx = parseInt(flag, 10);
-    if (!Number.isFinite(idx) || idx <= 0) return;
-    // Wait for the carousel layout + Lenis to be ready, then scroll.
-    const t = setTimeout(() => {
-      try { sessionStorage.removeItem("jk-return-slide"); } catch {}
-      activeRef.current = idx;
-      setActive(idx);
-      scrollToSlideIndex(idx, 1.0);
-    }, 250);
-    return () => clearTimeout(t);
+  // useLayoutEffect (not useEffect) so it lands before the first paint of the
+  // returning page. Safe under React StrictMode's dev double-invoke: the
+  // sessionStorage flag is read AND cleared synchronously in the same pass,
+  // so a second invocation simply finds nothing to do.
+  useIsoLayoutEffect(() => {
+    let slug: string | null = null;
+    try { slug = sessionStorage.getItem("jk-return-slug"); } catch {}
+    if (!slug) return;
+    const idx = SLIDES.findIndex((s) => s.slug === slug);
+    try { sessionStorage.removeItem("jk-return-slug"); } catch {}
+    if (idx <= 0) return; // unknown/removed slug, or intro — already correct at rest
+
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.height <= window.innerHeight) return; // mobile: carousel is display:none
+
+    // 1. Compute the destination scroll position for the origin slide.
+    const top = rect.top + window.scrollY;
+    const target = top + (idx / (TOTAL - 1)) * (rect.height - window.innerHeight);
+    const lenis = (
+      window as unknown as {
+        lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void };
+      }
+    ).lenis;
+    const theme = SLIDE_THEMES[idx];
+
+    // `slam`: force scroll + card spring + colours to the origin slide in one
+    // frame, with no easing. Native window.scrollTo is the authority (it always
+    // moves scroll synchronously — Lenis's own scrollTo silently no-ops in the
+    // races around a route change, e.g. if Lenis is momentarily stopped, which
+    // left scroll stranded at 0 → the accent, derived from scroll, stayed on the
+    // brand fuchsia even though the spring-pinned cards looked correct). The
+    // Lenis immediate scrollTo just keeps Lenis's internal target in sync so its
+    // rAF loop doesn't ease the page away afterward.
+    const slam = () => {
+      window.scrollTo(0, target);
+      lenis?.scrollTo(target, { immediate: true });
+      springPos.jump(idx);
+      // Re-assert the accent/panel vars too: the reactive pos→accent transform
+      // only fires on CHANGE (and settles at idx then holds), and the
+      // case-study page's ProjectAccent resets --accent to the brand fuchsia in
+      // its unmount cleanup (a passive effect firing after this layout effect).
+      // Without re-asserting, the returning landing stays stuck on fuchsia.
+      document.documentElement.style.setProperty("--accent", theme.accent);
+      el.style.setProperty("--panel-bg", theme.panelBg);
+    };
+
+    slam();
+    activeRef.current = idx;
+    setActive(idx);
+    applyEdgeGradient(idx);
+
+    // 2. Re-assert every frame for the whole inbound-morph window (~55 frames ≈
+    //    the clone's flight + the preceding nav delay), because several things
+    //    fire just after a route change and would otherwise drift the scroll /
+    //    colour: SmoothScroll's reset (mostly suppressed via the PageNav flag),
+    //    ProjectAccent's fuchsia reset, framer's scroll lag, and Lenis easing.
+    //    Holding scroll dead-still keeps pos=idx, so the card, its accent, and
+    //    post-morph scroll continuity are all correct and stationary while the
+    //    clone flies its clean arc. Bounded; normal behaviour resumes after.
+    let pinRaf = 0;
+    let pinFrames = 0;
+    const pin = () => {
+      if (pinFrames++ > 55) return;
+      slam();
+      pinRaf = requestAnimationFrame(pin);
+    };
+    pinRaf = requestAnimationFrame(pin);
+
+    return () => cancelAnimationFrame(pinRaf);
   }, []);
 
   return (
@@ -1082,6 +1160,42 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
   const imgRef = useRef<HTMLImageElement>(null);
   const beginMorph = useMorphBegin();
 
+  // Reverse-conduit landing target: true only for the ONE card matching the
+  // slug flagged by PageNav's back link, and only for this initial mount (a
+  // fresh reverse trip is always a fresh mount of the whole carousel). Lazy
+  // useState initializer (not a ref) — the initializer runs exactly once and
+  // reading state during render is the safe, idiomatic way to do this.
+  const [isReturnTarget] = useState(
+    () =>
+      item.kind === "project" &&
+      typeof window !== "undefined" &&
+      (() => {
+        try { return sessionStorage.getItem("jk-return-slug") === item.slug; } catch { return false; }
+      })(),
+  );
+  // Retire eligibility for good once this mount's morph cycle has resolved
+  // (landed, or never started because the fallback path was taken) — without
+  // this, a LATER, unrelated forward-click on this same card would see its
+  // own beginMorph() call satisfy useMorphTarget's `active.id === morphId`
+  // (since morphId would still equal this card's own slug) and immediately
+  // "land" the outbound clone on its own start position instead of travelling
+  // to the case-study hero.
+  //
+  // Derived during render (React's "adjust state while rendering" pattern —
+  // see react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes),
+  // not in an effect: fires the moment morphActive is false while still
+  // eligible — whether that's already true on the very first render (the
+  // fallback, no-conduit path) or only becomes true later once an in-flight
+  // conduit lands (ctx.active clears → useMorphActive() re-renders this
+  // component). The !retired guard makes the set idempotent, so this is safe
+  // to evaluate on every render without looping.
+  const morphActive = useMorphActive();
+  const [retired, setRetired] = useState(false);
+  if (isReturnTarget && !morphActive && !retired) setRetired(true);
+  const { ref: morphTargetRef, hidden: morphTargetHidden } = useMorphTarget<HTMLDivElement>(
+    isReturnTarget && !retired ? item.slug : undefined,
+  );
+
   // Core morph logic, separated from the click event so CarouselText's
   // "Case study" link can fire the same conduit transition.
   const triggerMorph = useCallback(() => {
@@ -1179,25 +1293,40 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
     }
 
     return (
-      /* eslint-disable-next-line @next/next/no-img-element */
-      <img
-        ref={imgRef}
-        src={item.image}
-        alt={
-          item.kind === "intro"
-            ? "Justin Kirkey sketching a product flow at the whiteboard"
-            : `${item.title} — case study preview`
-        }
-        loading="lazy"
-        className="block aspect-[4/3] w-full rounded-[1rem] object-cover"
-      />
+      // Wrapper is the reverse-conduit morph target (mirrors HeroImageTilt's
+      // wrapper-div-around-the-real-img pattern); imgRef stays on the <img>
+      // itself for the forward-morph source capture, unchanged. NOTE: this
+      // wrapper is only the geometry anchor — the actual hide during an inbound
+      // morph is applied to the whole card shell (see the shell motion.div
+      // below), so the empty white card surface never shows behind the
+      // in-flight clone.
+      <div ref={morphTargetRef} className="overflow-hidden rounded-[1rem]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={imgRef}
+          src={item.image}
+          alt={
+            item.kind === "intro"
+              ? "Justin Kirkey sketching a product flow at the whiteboard"
+              : `${item.title} — case study preview`
+          }
+          loading="lazy"
+          className="block aspect-[4/3] w-full rounded-[1rem] object-cover"
+        />
+      </div>
     );
   };
 
   return (
     <div
       className="group relative w-full transition-transform duration-500 hover:scale-[1.015]"
-      style={{ perspective: 1000 }}
+      // While this card is the target of an inbound (reverse) morph, hide the
+      // ENTIRE card — shell surface, blob glow, and image together — so the
+      // in-flight clone is the only thing visible; otherwise the empty white
+      // card surface shows behind the descending clone (a ghostly "2nd card").
+      // Reveal is instant on landing: the clone lands exactly here, then
+      // unmounts as this becomes visible, so the hand-off reads as continuous.
+      style={{ perspective: 1000, opacity: morphTargetHidden ? 0 : 1 }}
     >
       {/* Color burst glass blobs. Transform-ONLY motion (rotate + scale) on a
           static organic border-radius — never animate border-radius, which
