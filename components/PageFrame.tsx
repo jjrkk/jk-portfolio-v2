@@ -38,10 +38,19 @@ export function PageFrame() {
   // breathing room. Mobile uses the standard 12px rail to keep the nav tight.
   // Start at 12 to match SSR output; useEffect corrects to 28 on desktop after hydration.
   const [topInset, setTopInset] = useState(12);
+  // Corner radius matches the content it's cut around: desktop sections use
+  // rounded-[2rem] (32px), but the mobile page card (Work.tsx HorizontalCarousel)
+  // uses rounded-[16px] — a smaller frame radius on mobile keeps the two flush
+  // instead of leaving a visible accent sliver beyond the card's own corner.
+  const [cornerRadius, setCornerRadius] = useState(16);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
-    setTopInset(mq.matches ? 28 : 12);
-    const handler = (e: MediaQueryListEvent) => setTopInset(e.matches ? 28 : 12);
+    const apply = (matches: boolean) => {
+      setTopInset(matches ? 28 : 12);
+      setCornerRadius(matches ? 32 : 16);
+    };
+    apply(mq.matches);
+    const handler = (e: MediaQueryListEvent) => apply(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
@@ -106,11 +115,12 @@ export function PageFrame() {
 
   // A corner rounds only when BOTH its adjacent edges are "on" (capped). If
   // either is bleeding (off), the corner stays square so the rail runs perfectly
-  // straight. R matches the content sections' rounded-[2rem] = 32px so the
-  // frame arc and content arc are flush — no visible gap in the corner zone.
-  // Safe at 12px inset: the condition already sets R=0 when an edge is off,
+  // straight. cornerRadius matches the content underneath (32px desktop /
+  // 16px mobile, see above) so the frame arc and content arc are flush — no
+  // visible gap in the corner zone.
+  // Safe at 12px inset: the condition already sets it to 0 when an edge is off,
   // so the arc never bleeds from a hidden edge back into the viewport.
-  const R = 32;
+  const R = cornerRadius;
   const topLeft = edges.top && edges.left ? R : 0;
   const topRight = edges.top && edges.right ? R : 0;
   const bottomRight = edges.bottom && edges.right ? R : 0;
