@@ -16,10 +16,10 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "About",
   description: SITE.description,
-  alternates: { canonical: "/about" },
+  alternates: { canonical: "/about/" },
   openGraph: {
     type: "profile",
-    url: `${SITE.url}/about`,
+    url: `${SITE.url}/about/`,
     title: `About — ${SITE.name}`,
     description: SITE.description,
   },

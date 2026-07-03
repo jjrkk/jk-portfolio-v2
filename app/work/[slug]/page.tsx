@@ -25,10 +25,10 @@ export async function generateMetadata({
   return {
     title: study.title,
     description,
-    alternates: { canonical: `/work/${slug}` },
+    alternates: { canonical: `/work/${slug}/` },
     openGraph: {
       type: "article",
-      url: `${SITE.url}/work/${slug}`,
+      url: `${SITE.url}/work/${slug}/`,
       title,
       description,
       // Next doesn't inherit the root openGraph.images once a child sets its

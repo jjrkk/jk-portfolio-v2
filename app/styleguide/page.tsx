@@ -166,7 +166,7 @@ export default function StyleguidePage() {
 
           <Row label="<ArrowLink>">
             <div className="flex flex-wrap items-center gap-10">
-              <ArrowLink href="/about">View case study</ArrowLink>
+              <ArrowLink href="/about/">View case study</ArrowLink>
               <ArrowLink href="https://example.com">Live prototype</ArrowLink>
               <ArrowLink href="#" direction="down">Scroll to work</ArrowLink>
             </div>

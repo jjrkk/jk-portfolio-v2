@@ -719,7 +719,7 @@ function Carousel() {
             <NameButton />
           </div>
           <Link
-            href="/about"
+            href="/about/"
             className="group pointer-events-auto inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-[0.14em] transition-opacity hover:opacity-70"
           >
             About
@@ -1653,7 +1653,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                   `text-eyebrow` size as if it conflicted with the text color, leaving
                   ABOUT at the 16px base size while the name stays 12px. */}
               <Link
-                href="/about"
+                href="/about/"
                 className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors duration-300 hover:text-accent"
               >
                 About
@@ -1915,7 +1915,7 @@ function StackedList({ className }: { className: string }) {
             Justin Kirkey
           </span>
           <Link
-            href="/about"
+            href="/about/"
             className="font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors hover:text-accent"
           >
             About →

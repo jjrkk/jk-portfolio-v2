@@ -28,5 +28,5 @@ export const SITE = {
  */
 export const ROUTES = [
   { path: "/", label: "Work", priority: 1.0 },
-  { path: "/about", label: "About", priority: 0.8 },
+  { path: "/about/", label: "About", priority: 0.8 },
 ] as const;
