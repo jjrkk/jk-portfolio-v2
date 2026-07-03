@@ -1376,13 +1376,11 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
         {/* Frosted glass badge + full-card link */}
         {isClickable && (
           <>
-            {/* Small badge bottom-left. Project cards show it on hover whether
-                peeking or focused — every project card is dependably one click
-                away from its case study, so the affordance should say so
-                wherever you hover it. Intro keeps the old "active-card only"
-                gate: a peeking Intro click still just focuses it (see onClick
-                below), so the badge would be misleading there. */}
-            <div className={cn("pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out", (isActive || item.kind === "project") && "group-hover:translate-y-0 group-hover:opacity-100")}>
+            {/* Small badge bottom-left — the "clicking this navigates" affordance.
+                Shown on hover only for the FOCUSED card, since a peeking card's
+                click just brings it into focus (see onClick below); showing
+                "Case study →" on a peeking card would mispromise a jump. */}
+            <div className={cn("pointer-events-none absolute bottom-4 left-4 z-30 translate-y-1 opacity-0 transition-all duration-300 ease-out", isActive && "group-hover:translate-y-0 group-hover:opacity-100")}>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/28 px-3.5 py-2 backdrop-blur-md">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/90">{item.kind === "intro" ? "About" : "Case study"}</span>
                 <span aria-hidden className="text-white/60 transition-transform duration-200 group-hover:translate-x-0.5">→</span>
@@ -1391,23 +1389,26 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
             <Link
               href={item.href!}
               onClick={(e) => {
-                // Project cards: dependably navigable on a single click,
-                // peeking or focused — hover already brightens the card to
-                // full opacity as the "you can click into this" signal, so
-                // there's no need for a focus-first detour.
-                if (item.kind === "project") {
-                  handleMorphClick(e);
-                  return;
-                }
-                // Intro: unchanged two-step — a peeking click brings it into
-                // focus first; only the focused card navigates normally.
+                // Two-step for every card: a click on an out-of-focus (peeking)
+                // card first brings it into focus in the deck — it does NOT jump
+                // straight to the destination. Only a click on the already-
+                // focused card navigates (projects via the conduit morph; the
+                // intro falls through to its plain /about Link).
                 if (!isActive) {
                   e.preventDefault();
                   onRequestFocus?.();
+                  return;
+                }
+                if (item.kind === "project") {
+                  handleMorphClick(e);
                 }
               }}
               className="absolute inset-0 z-40 cursor-pointer rounded-[1rem]"
-              aria-label={`View ${item.title} case study`}
+              aria-label={
+                isActive
+                  ? `View ${item.title} case study`
+                  : `Bring ${item.title} into focus`
+              }
             />
           </>
         )}
