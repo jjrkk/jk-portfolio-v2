@@ -15,6 +15,7 @@ export type WorkItem = {
   eyebrow: string;
   title: string;
   titleLines?: string[]; // if set, each string renders on its own line (desktop hero)
+  rotatingWords?: string[]; // intro only — animated last line, cycles through this list
   blurb: string;
   image?: string; // path under /public; absent → placeholder stage
   href?: string;
@@ -23,17 +24,31 @@ export type WorkItem = {
   chips?: string[]; // intro only — quick-fact chips beside the copy
 };
 
-/** Slide 0 — the intro ("Justin 101"), in carousel-friendly format. */
+/** Slide 0 — the intro ("Justin 101"), in carousel-friendly format.
+ *  `title` stays short — it's the fallback read by the filmstrip hover
+ *  tooltip, the pagination aria-label, and the reduced-motion stacked list,
+ *  none of which render the animated rotatingWords line. */
 export const INTRO: WorkItem = {
   slug: "intro",
   kind: "intro",
   eyebrow: "AI-Native Product Design Leader",
-  title: "Design it. Build it. Ship it.",
-  titleLines: ["Design it.", "Build it.", "Ship it."],
+  title: "I design, build & ship.",
+  titleLines: ["I design, build,", "and ship for"],
+  rotatingWords: [
+    "surgeons",
+    "embryologists",
+    "radiologists",
+    "clinicians",
+    "nurses",
+    "patients",
+    "caregivers",
+    "transit riders",
+    "Fortune 100 teams",
+  ],
   blurb:
-    "15+ years of product & design leadership in consumer, healthcare and other high-stakes, regulated products.",
+    "15+ years in healthtech and other regulated, high-stakes products — now building with agentic AI, from strategy to deployed code.",
   image: "/personality/jk-whiteboard.webp",
-  href: "/about",
+  href: "/about/",
   chips: [
     "AI",
     "Product",

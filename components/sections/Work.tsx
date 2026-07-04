@@ -21,6 +21,7 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
+import { RotatingWord } from "@/components/ui/RotatingWord";
 import { RESUME_URL, RESUME_DOWNLOAD_FILENAME, Contact } from "@/components/sections/Contact";
 import { useMorphBegin, useMorphTarget, useMorphActive } from "@/components/morph/MorphProvider";
 import { track } from "@/lib/analytics";
@@ -1056,10 +1057,11 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
       </div>
 
       {isIntro ? (
-        <h1 className="mt-7 font-serif text-hero text-accent">
-          {item.titleLines
-            ? item.titleLines.map((line, i) => <span key={i} className="block">{line}</span>)
-            : item.title}
+        <h1 className="mt-7 font-serif text-intro-hero text-accent">
+          {item.titleLines?.map((line, i) => <span key={i} className="block">{line}</span>)}
+          {item.rotatingWords && (
+            <span className="block"><RotatingWord words={item.rotatingWords} /></span>
+          )}
         </h1>
       ) : (
         <h2 className="mt-7 font-serif text-hero text-accent">{item.title}</h2>
@@ -1836,7 +1838,8 @@ function HorizontalCarousel({ className }: { className: string }) {
 
             {isIntro ? (
               <h1 className="mt-3 font-serif text-display-sm text-accent">
-                {item.title}
+                {item.titleLines ? `${item.titleLines.join(" ")} ` : `${item.title} `}
+                {item.rotatingWords && <RotatingWord words={item.rotatingWords} />}
               </h1>
             ) : (
               <h2 className="mt-3 font-serif text-display-sm text-accent">
@@ -1964,7 +1967,7 @@ function IntroBlock({ item }: { item: WorkItem }) {
         </div>
       )}
       <div className="mt-8">
-        <ArrowLink href={item.href ?? "/about"}>About Justin</ArrowLink>
+        <ArrowLink href={item.href ?? "/about/"}>About Justin</ArrowLink>
       </div>
     </div>
   );

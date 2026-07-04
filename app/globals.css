@@ -162,6 +162,17 @@
   --text-hero--letter-spacing: -0.03em;
   --text-hero--font-weight: 700;
 
+  /* Intro-only hero tier — the intro's tagline runs longer per line than the
+     one-word project titles above (which stay on --text-hero), so it needs
+     its own, smaller fluid scale to avoid mid-line wrapping. Tuned against
+     the longest rotating-word line ("Fortune 100 teams") at 1024–1920px,
+     with margin — the previous pass fit "banking clients" exactly to the
+     pixel, which broke the moment a longer word was added. */
+  --text-intro-hero: clamp(2.6rem, 4.35vw, 6rem);
+  --text-intro-hero--line-height: 0.98;
+  --text-intro-hero--letter-spacing: -0.025em;
+  --text-intro-hero--font-weight: 700;
+
   --text-display: clamp(3.25rem, 8vw, 9rem);
   --text-display--line-height: 0.92;
   --text-display--letter-spacing: -0.025em;
