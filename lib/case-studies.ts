@@ -280,7 +280,7 @@ const VIOLET_MAGENTA: CaseStudy = {
       "The redesigned reports entered development in fall 2024 and launched in January 2025 — becoming the standard output for every fertility clinic using Future Fertility from day one.",
     ],
     metrics: [
-      { value: "+18", label: "Customer NPS lift", note: "Post-launch; placeholder — final figure in progress", placeholder: true },
+      { value: "+21", label: "Customer NPS lift", note: "Year-over-year — from +13 in 2024 to +34 in 2025, per Future Fertility's CSAT survey" },
       { value: "Global", label: "Default from day one", note: "Every clinic using Future Fertility received the redesign at launch, Jan 2025" },
       { value: "3 products", label: "One report system", note: "VIOLET, MAGENTA, and ROSE — unified information architecture, built-in localization" },
     ],

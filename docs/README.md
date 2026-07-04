@@ -16,8 +16,8 @@
   reference. Sections: accent hero w/ overlapping title-crossing → overview
   (narrative + meta) → narrative beats w/ light-stage figures → judgment/
   trade-offs → impact metrics → next-study → contact. Static-export verified
-  (`/work/ff-reports` prerenders; unknown slugs 404 until ported). Copy is DRAFT;
-  NPS metric is a placeholder pending Justin's real figure.
+  (`/work/ff-reports` prerenders; unknown slugs 404 until ported). Copy is DRAFT.
+  NPS metric now real (`+21` YoY lift, from Future Fertility's 2025 CSAT survey).
 - **Deliberate IA change (2026-06-17):** the landing is now **cases-only** —
   carousel + contact footer. Everything biographical (how-I-work thesis, logo
   wall, about teaser, personality) **moved to `/about`**. This supersedes the
@@ -173,8 +173,10 @@
 > studies are fleshed out — this list is the running tally. **Keep it updated.**
 
 - **Real metrics** — replace placeholders with hard/directional numbers: V&M's NPS
-  (`+18`, flagged `placeholder` in `lib/case-studies.ts`), plus PRESTO and Modus X /
-  Synaptive figures (the CLAUDE.md per-study mining task).
+  ✅ resolved (`+21` YoY lift, real figure in `lib/case-studies.ts`); Image Capture's
+  rollout response is still qualitative-only (`placeholder` in `lib/case-studies.ts`,
+  quantitative NPS pending); plus PRESTO and Modus X / Synaptive figures (the
+  CLAUDE.md per-study mining task).
 - **Case-study imagery** — re-export per
   [`Case-Study-Asset-Spec`](./Case-Study-Asset-Spec_JK_2026-06-17.md): light/white
   stages, retina, ≤~400KB each. V&M still uses an interim duplicate. Raw exports are
