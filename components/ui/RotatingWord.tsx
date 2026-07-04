@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/cn";
 
-/** Cycles through `words` on a timer, crossfading with a soft blur + vertical
- *  drift (matches the easing Reveal/PageTransition already use). Reduced-motion
+/** Cycles through `words` on a timer, crossfading with a subtle vertical drift
+ *  (matches the easing Reveal/PageTransition already use). Reduced-motion
  *  freezes on the first word — no interval, no animation. */
 export function RotatingWord({
   words,
@@ -37,10 +37,10 @@ export function RotatingWord({
         <motion.span
           key={words[index]}
           className="inline-block italic"
-          initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -14, filter: "blur(6px)" }}
-          transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           {words[index]}
         </motion.span>
