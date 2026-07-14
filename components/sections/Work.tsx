@@ -1809,7 +1809,11 @@ function HorizontalCarousel({ className }: { className: string }) {
 
             <div className="mt-auto flex flex-col gap-1 border-t border-white/20 pt-5 font-mono text-eyebrow uppercase text-white/40">
               <span>{SITE.name}</span>
-              <span>Built with agentic AI · {new Date().getFullYear()}</span>
+              <span>
+                Built with <span className="text-white">good vibes</span>,{" "}
+                <span className="text-white">curiosity</span> &{" "}
+                <span className="text-white">agentic AI</span> · {new Date().getFullYear()}
+              </span>
             </div>
           </div>
         </div>

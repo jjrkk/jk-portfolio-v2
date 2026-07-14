@@ -15,11 +15,14 @@ const CLIENTS: Client[] = [
   { name: "Metrolinx",               src: "/experience/logos/metrolinx-logo.svg" },
   { name: "Ford",                    src: "/experience/logos/ford-logo.svg" },
   { name: "Medtronic",               src: "/experience/logos/medtronic-logo.svg" },
-  { name: "TD",                      src: "/experience/logos/td-bank-logo.svg" },
-  { name: "Movember",                src: "/experience/logos/movember-logo-black.jpg", multiply: true },
+  { name: "TD",                      src: "/experience/logos/td-bank-logo.png" },
+  { name: "Movember",                src: "/experience/logos/movember-logo-black.png" },
   { name: "UHN",                     src: "/experience/logos/UHN-logo.png" },
+  { name: "Chrysler",                src: "/experience/logos/chrysler-logo.png" },
   { name: "Jeep",                    src: "/experience/logos/jeep-logo.svg" },
   { name: "Publicis Sapient",        src: "/experience/logos/publicis-sapient-logo.svg" },
+  { name: "CMC Electronics",         src: "/experience/logos/cmc-electronics-logo.png" },
+  { name: "CNH Industrial",          src: "/experience/logos/cnh-industrial-logo.svg" },
 ];
 
 const RECOGNITION = [
@@ -46,8 +49,6 @@ export function LogoWall() {
                   loading="lazy"
                   className={cn(
                     "h-8 w-auto max-w-full object-contain",
-                    "grayscale opacity-50 transition-all duration-500",
-                    "hover:grayscale-0 hover:opacity-100",
                     c.multiply && "mix-blend-multiply",
                   )}
                 />

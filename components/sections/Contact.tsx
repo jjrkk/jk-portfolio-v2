@@ -62,7 +62,11 @@ export function Contact({ dark }: { dark?: boolean }) {
 
           <div className="mt-24 flex flex-col gap-2 border-t border-white/20 pt-8 font-mono text-eyebrow uppercase text-white/40 sm:flex-row sm:items-center sm:justify-between">
             <span>{SITE.name}</span>
-            <span>Built with agentic AI · {new Date().getFullYear()}</span>
+            <span>
+              Built with <span className="text-white">good vibes</span>,{" "}
+              <span className="text-white">curiosity</span> &{" "}
+              <span className="text-white">agentic AI</span> · {new Date().getFullYear()}
+            </span>
           </div>
         </Container>
       </footer>
@@ -110,7 +114,11 @@ export function Contact({ dark }: { dark?: boolean }) {
 
         <div className="mt-24 flex flex-col gap-2 border-t border-border pt-8 font-mono text-eyebrow uppercase text-faint sm:flex-row sm:items-center sm:justify-between">
           <span>{SITE.name}</span>
-          <span>Built with agentic AI · {new Date().getFullYear()}</span>
+          <span>
+            Built with <span className="text-foreground">good vibes</span>,{" "}
+            <span className="text-foreground">curiosity</span> &{" "}
+            <span className="text-foreground">agentic AI</span> · {new Date().getFullYear()}
+          </span>
         </div>
       </Container>
     </footer>
