@@ -68,7 +68,7 @@ export const WORK: WorkItem[] = [
       "Modernizing a clinical AI platform — and pioneering the human-AI workflow that built it.",
     image: "/work/cloud/ff-cloud.webp",
     flagship: true,
-    href: "/work/ff-cloud",
+    href: "/work/ff-cloud/",
   },
   {
     slug: "cap-app-redesign",
@@ -78,7 +78,7 @@ export const WORK: WorkItem[] = [
     blurb:
       "Rethinking the embryologist's image-capture workflow for speed, clarity, and clinical trust.",
     image: "/work/image-capture/cap-app-after-2x.webp",
-    href: "/work/cap-app-redesign",
+    href: "/work/cap-app-redesign/",
   },
   {
     slug: "ff-reports",
@@ -88,7 +88,7 @@ export const WORK: WorkItem[] = [
     blurb:
       "Designing the egg- and embryo-quality reports clinicians use to counsel fertility patients.",
     image: "/work/egg-reports/ff-reports-card.webp",
-    href: "/work/ff-reports",
+    href: "/work/ff-reports/",
   },
   {
     slug: "modus-v",
@@ -98,7 +98,7 @@ export const WORK: WorkItem[] = [
     blurb:
       "UX for a robotic digital microscope used by surgeons in live neurosurgery.",
     image: "/work/synaptive/modus-v-hero-image.webp",
-    href: "/work/modus-v",
+    href: "/work/modus-v/",
   },
   {
     slug: "metrolinx-presto",
@@ -108,7 +108,7 @@ export const WORK: WorkItem[] = [
     blurb:
       "Field research and service blueprinting across a transit network serving 50M+ riders.",
     image: "/work/presto/presto-ticketing-machines.webp",
-    href: "/work/metrolinx-presto",
+    href: "/work/metrolinx-presto/",
   },
   {
     slug: "experiencepoint-impact",
@@ -118,7 +118,7 @@ export const WORK: WorkItem[] = [
     blurb:
       "A modular design-sprint simulation delivered to Fortune 100 teams worldwide.",
     image: "/work/experiencepoint/impact.webp",
-    href: "/work/experiencepoint-impact",
+    href: "/work/experiencepoint-impact/",
   },
 ];
 

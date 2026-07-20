@@ -1,0 +1,25 @@
+# Cloudflare Pages redirects.
+
+# The landing page *is* the work index (see lib/site.ts ROUTES — "/" is
+# labeled "Work"), so there's no standalone /work listing route.
+/work   /   301
+/work/  /   301
+
+# The prior Framer site used /<client>/<project-slug> URLs. Google still has
+# these indexed (Search Console > Page indexing > Not found) and real
+# visitors are still landing on them — confirmed the top source of 404s
+# (~44% of active users hit one in the last 28 days). Exact matches below
+# send known old URLs straight to the right case study; the wildcard
+# fallbacks below them catch any other old-site permutation (including the
+# mismatched-prefix variants GA is showing, e.g. /synaptive/virtual-design-sprint)
+# and land them on the work index instead of a dead end.
+/experiencepoint/virtual-design-sprint                /work/experiencepoint-impact/   301
+/future-fertility/egg-quality-assessment-redesign      /work/ff-cloud/                 301
+/future-fertility/image-capture-app-ui-redesign        /work/cap-app-redesign/         301
+/synaptive/surgical-microscope-ux-ui-design            /work/modus-v/                  301
+/accenture-metrolinx/presto-service-design-project     /work/metrolinx-presto/         301
+
+/experiencepoint/*      /   301
+/future-fertility/*     /   301
+/synaptive/*            /   301
+/accenture-metrolinx/*  /   301
