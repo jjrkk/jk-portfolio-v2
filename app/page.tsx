@@ -12,9 +12,9 @@ export default function Home() {
       {/* First-load aperture — runs its pre-paint gate before the carousel paints */}
       <IntroAperture />
       <main id="main-content" tabIndex={-1}>
-      {/* accent background so corner-hole cutouts of the carousel always match
+      {/* wall background so corner-hole cutouts of the carousel always match
           the current slide's colour rather than showing the body cream behind */}
-      <div className="relative z-[1]" style={{ background: "var(--accent)" }}>
+      <div className="relative z-[1]" style={{ background: "var(--wall)" }}>
         <Work />
       </div>
       {/* Desktop only: the contact is a vertical sticky reveal below the

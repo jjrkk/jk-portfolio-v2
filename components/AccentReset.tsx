@@ -4,17 +4,20 @@ import { useEffect } from "react";
 import { SITE_ACCENT } from "@/lib/theme";
 
 /**
- * The landing carousel animates --accent / --panel-bg on the root element and
- * doesn't reset them on unmount. On a client-side nav into a page without the
- * carousel (About, case studies), those vars would otherwise stay frozen at the
- * last project color. This restores the site brand accent so the PageFrame and
- * accent text read correctly. Renders nothing.
+ * The landing carousel animates --accent / --panel-bg / --wall on the root
+ * element and doesn't reset them on unmount. On a client-side nav into a page
+ * without the carousel (About, case studies), those vars would otherwise stay
+ * frozen at the last project's values. This restores the site brand accent
+ * (buttons/links/focus) and clears --wall back to its light :root default
+ * (globals.css) so the PageFrame and page surface read correctly. Renders
+ * nothing.
  */
 export function AccentReset() {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--accent", SITE_ACCENT);
     root.style.removeProperty("--panel-bg");
+    root.style.removeProperty("--wall");
     return () => {
       // Leave it at brand on the way out; the carousel re-takes ownership on /.
       root.style.removeProperty("--accent");

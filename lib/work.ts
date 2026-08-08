@@ -46,15 +46,13 @@ export const INTRO: WorkItem = {
     "Fortune 100 teams",
   ],
   blurb:
-    "15+ years in healthtech and other regulated, high-stakes products — now building with agentic AI, from strategy to deployed code.",
+    "15+ years in healthcare and high-stakes products — now building with agentic AI, from strategy to deployed code.",
   image: "/personality/jk-whiteboard.webp",
   href: "/about/",
   chips: [
     "AI",
     "Product",
     "UX/UI",
-    "Med tech",
-    "Consumer tech",
   ],
 };
 

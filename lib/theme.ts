@@ -32,6 +32,34 @@ export type ProjectTheme = {
 /** The site's brand "home" accent (not tied to any one project). */
 export const SITE_ACCENT = "#D7355D";
 
+/** The brand-default "wall"/page-surface color (landing intro + post-carousel
+ *  rest state, About, PageFrame, Contact). Re-darkened a step per Justin's
+ *  steer (2026-08-07) — once the intro card (INTRO_PANEL_BG) went almost
+ *  white, the wall needed to sit a bit deeper again to keep the two surfaces
+ *  legibly distinct; still nowhere near the original "too grey" value. Must
+ *  stay in sync with --wall's :root default in globals.css — same
+ *  manual-sync convention as SITE_ACCENT / --accent. */
+export const WALL_LIGHT = "#eef0f6";
+
+/** Intro slide's own card surface — almost white, just a whisper cool, so the
+ *  INTRO_BLOB glow (kept at full strength, unchanged) does the work of
+ *  reading as "cool/blue" rather than the flat surface itself. Iterated twice
+ *  lighter per Justin's steer (2026-08-07): full tint felt "too blue" as a
+ *  dominant surface, then a lighter tint still read as a distinct surface
+ *  color rather than a near-white one. Must stay in sync with --panel-bg's
+ *  :root default in globals.css (first paint, before Work.tsx hydrates). */
+export const INTRO_PANEL_BG = "#fbfcfe";
+
+/** Intro card's decorative color-burst blob — a paler tint from FF Cloud's
+ *  own blue family (see PROJECT_THEMES's ff-cloud accent) rather than its
+ *  full-strength value, so the coordinated-palette tie-in stays but the blob
+ *  reads as a soft wash instead of a saturated pigment (lightened alongside
+ *  INTRO_PANEL_BG for the same reason). Decoupled from --accent (which stays
+ *  brand fuchsia on the intro for the headline/CTA/eyebrow) via its own
+ *  --blob channel — see Work.tsx. Must stay in sync with --blob's :root
+ *  default in globals.css. */
+export const INTRO_BLOB = "#93a4d9";
+
 export const PROJECT_THEMES: ProjectTheme[] = [
   { slug: "ff-cloud", label: "Cloud", accent: "#40539e", panelBg: "#ebedf6", panelFg: "#15130f" },
   { slug: "cap-app-redesign", label: "Image Capture", accent: "#6d54c9", panelBg: "#ece9f8", panelFg: "#15130f" },

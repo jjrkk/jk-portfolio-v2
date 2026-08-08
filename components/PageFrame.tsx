@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 /**
- * Accent frame around the whole viewport — the BASE CANVAS peeking out from
- * behind the lighter card surface, colored with the live --accent.
+ * Frame around the whole viewport — the BASE WALL peeking out from behind
+ * the lighter card surface, colored with the live --wall.
  *
  * "Page-surface paradigm": a frame edge is visible on a side only when there is
  * no more content to scroll to in that direction. When content remains, the card
@@ -139,7 +139,7 @@ export function PageFrame() {
         borderTopRightRadius: topRight,
         borderBottomRightRadius: bottomRight,
         borderBottomLeftRadius: bottomLeft,
-        boxShadow: "0 0 0 100vmax var(--accent)",
+        boxShadow: "0 0 0 100vmax var(--wall)",
         transition:
           "top 0.45s ease, right 0.45s ease, bottom 0.45s ease, left 0.45s ease, border-radius 0.45s ease",
       }}

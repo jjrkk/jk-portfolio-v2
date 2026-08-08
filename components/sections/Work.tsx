@@ -13,7 +13,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { SLIDES, type WorkItem } from "@/lib/work";
-import { PROJECT_THEMES, SITE_ACCENT, getProjectTheme } from "@/lib/theme";
+import { PROJECT_THEMES, SITE_ACCENT, WALL_LIGHT, INTRO_PANEL_BG, INTRO_BLOB, getProjectTheme } from "@/lib/theme";
 import { cn } from "@/lib/cn";
 import { hexLerp } from "@/lib/color";
 import { SITE } from "@/lib/site";
@@ -22,6 +22,7 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { RotatingWord } from "@/components/ui/RotatingWord";
+import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { RESUME_URL, RESUME_DOWNLOAD_FILENAME, Contact } from "@/components/sections/Contact";
 import { useMorphBegin, useMorphTarget, useMorphActive } from "@/components/morph/MorphProvider";
 import { track } from "@/lib/analytics";
@@ -74,12 +75,19 @@ const MIN_SCALE = 0.82;
 const PAD = "mx-auto w-full max-w-[140rem] px-6 sm:px-10 lg:px-16 xl:px-24";
 
 // Per-slide theme: intro rides the base canvas + brand accent, then the work.
+// `wall` drives the outer page-surface backdrop (--wall): light/neutral at
+// the intro, then tracks each project's own accent exactly like `accent`
+// does — so the scroll-color-theming journey through the work is unchanged,
+// and only the brand-default resting state (intro / post-carousel) is calm.
+// `blob` drives the card's decorative color-burst blob (--blob), decoupled
+// from `accent` so the intro's card + blobs can go cool while --accent stays
+// brand fuchsia (headline/CTA/eyebrow); every project slide sets it equal to
+// its own accent, so per-project blob behavior is completely unchanged.
 const SLIDE_THEMES = [
-  // Intro rides a pale, cool magenta tint from the fuchsia family (cooler than
-  // the warm base canvas; pairs with the accent; reads pink against FF Cloud's
-  // blue-lavender for a clean transition).
-  { panelBg: "#f8ecf2", accent: SITE_ACCENT },
-  ...PROJECT_THEMES.map((t) => ({ panelBg: t.panelBg, accent: t.accent })),
+  // Intro rides a cool blue-slate card tint that pairs with the calm wall
+  // (--wall) instead of the old warm-pink-on-fuchsia pairing.
+  { panelBg: INTRO_PANEL_BG, accent: SITE_ACCENT, wall: WALL_LIGHT, blob: INTRO_BLOB },
+  ...PROJECT_THEMES.map((t) => ({ panelBg: t.panelBg, accent: t.accent, wall: t.accent, blob: t.accent })),
 ];
 
 /** Per-chip border/bg/text styling: accent for the new-school tag, a softer
@@ -224,48 +232,39 @@ function Carousel() {
   const indices = SLIDE_THEMES.map((_, i) => i);
   const bg = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.panelBg));
   const accent = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.accent));
-  // --accent goes on :root so the fixed PageFrame sibling can read it.
-  // --panel-bg is only consumed inside the carousel section, so scope it to
-  // ref.current to limit the CSS cascade to that subtree (cheaper style recalc).
+  const wall = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.wall));
+  const blob = useTransform(pos, indices, SLIDE_THEMES.map((t) => t.blob));
+  // --accent / --wall go on :root so the fixed PageFrame sibling (and other
+  // wall consumers) can read them. --panel-bg / --blob are only consumed
+  // inside the carousel section, so scope them to ref.current to limit the
+  // CSS cascade to that subtree (cheaper style recalc).
   useMotionValueEvent(bg, "change", (v) =>
     ref.current?.style.setProperty("--panel-bg", v),
   );
   useMotionValueEvent(accent, "change", (v) =>
     document.documentElement.style.setProperty("--accent", v),
   );
+  useMotionValueEvent(wall, "change", (v) =>
+    document.documentElement.style.setProperty("--wall", v),
+  );
+  useMotionValueEvent(blob, "change", (v) =>
+    ref.current?.style.setProperty("--blob", v),
+  );
 
   // Intro-only top strip: the light card sits ~136px below the top at the very
-  // top of the page so the nav rides directly on the accent. As you scroll off
-  // the intro the card rises flush (translateY 120→0) like the rest of the deck,
-  // and the nav ink crosses from on-accent white to on-card dark ink. Both are
-  // tied to the first slide segment [0 → 1/(TOTAL-1)] so they complete exactly as
-  // slide 1 settles. (Only the intro is ever dropped — and the intro has no top
-  // peek — so the deck can never spill onto the strip.)
+  // top of the page so the nav rides directly on the wall. As you scroll off
+  // the intro the card rises flush (translateY 120→0) like the rest of the deck.
+  // The nav ink used to cross white→dark here (the wall was fuchsia at rest);
+  // now the wall is a calm near-white at rest and the card is always a light
+  // tint too, so dark ink + the fuchsia leaf mark both hold constant across
+  // the whole journey — no crossfade needed. (Only the intro is ever dropped —
+  // and the intro has no top peek — so the deck can never spill onto the strip.)
   const STRIP = 136;
-  const firstSeg = 1 / (TOTAL - 1);
   // Animate past 0 to -40 so the rounded top corners slide above the sticky
   // container's overflow-hidden clip instead of morphing to flat.
   const stripY = useTransform(springPos, [0, 1], [STRIP, -40], { clamp: true });
-  const navInk = useTransform(
-    scrollYProgress,
-    [0, firstSeg * 0.6],
-    ["#fdfcfb", "#15130f"],
-    { clamp: true },
-  );
-  // Leaf icon gets its own colour: white on accent, fuchsia on card.
-  const navLeafColor = useTransform(
-    scrollYProgress,
-    [0, firstSeg * 0.6],
-    ["#fdfcfb", "#D7355D"],
-    { clamp: true },
-  );
-  // Filmstrip fades out as the intro strip closes — same timing family as navInk.
-  const filmstripOpacity = useTransform(
-    scrollYProgress,
-    [0, firstSeg * 0.5],
-    [1, 0],
-    { clamp: true },
-  );
+  const navInk = "#15130f";
+  const navLeafColor = "#D7355D";
 
   // Refs for content-anchored filmstrip positioning: the strip is an absolute
   // sibling of the card, but its vertical position is measured off the intro's
@@ -469,21 +468,23 @@ function Carousel() {
     };
   }, []);
 
-  // On unmount: remove --accent from root (PageFrame needs it cleaned up so
-  // later routes don't inherit the last slide's colour). --panel-bg and the
-  // prev/next-rgba vars are on ref.current which is removed from DOM automatically.
+  // On unmount: remove --accent / --wall from root (PageFrame needs them
+  // cleaned up so later routes don't inherit the last slide's colour).
+  // --panel-bg and the prev/next-rgba vars are on ref.current which is
+  // removed from DOM automatically.
   useEffect(() => {
     return () => {
       document.documentElement.style.removeProperty("--accent");
+      document.documentElement.style.removeProperty("--wall");
     };
   }, []);
 
-  // Frame hand-off: once scrolled past the pinned carousel, ease the accent and
-  // panel bg from the last slide (amber) to the brand fuchsia / base canvas —
-  // so the page frame and the lower sections settle on the brand color. Scroll-
-  // driven, so it picks up seamlessly where the carousel's own theming leaves
-  // off at the boundary. (Carousel scrollYProgress clamps at 1 past the deck, so
-  // its theming doesn't fight this.)
+  // Frame hand-off: once scrolled past the pinned carousel, ease the accent,
+  // wall, and panel bg from the last slide (amber) to the brand fuchsia / calm
+  // wall / base canvas — so the page frame and the lower sections settle on
+  // the brand-default state. Scroll-driven, so it picks up seamlessly where
+  // the carousel's own theming leaves off at the boundary. (Carousel
+  // scrollYProgress clamps at 1 past the deck, so its theming doesn't fight this.)
   useEffect(() => {
     const root = document.documentElement;
     const last = SLIDE_THEMES[SLIDE_THEMES.length - 1];
@@ -496,6 +497,7 @@ function Carousel() {
       if (beyond <= 0) return; // inside the carousel — its theming handles it
       const t = Math.min(1, beyond / (window.innerHeight * 0.4));
       root.style.setProperty("--accent", hexLerp(last.accent, SITE_ACCENT, t));
+      root.style.setProperty("--wall", hexLerp(last.wall, WALL_LIGHT, t));
       el.style.setProperty("--panel-bg", hexLerp(last.panelBg, "#f7f5f2", t));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -569,10 +571,24 @@ function Carousel() {
     const target = top + (idx / (TOTAL - 1)) * (rect.height - window.innerHeight);
     const lenis = (
       window as unknown as {
-        lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void };
+        lenis?: {
+          scrollTo: (t: number, o?: { immediate?: boolean }) => void;
+          stop: () => void;
+          start: () => void;
+        };
       }
     ).lenis;
     const theme = SLIDE_THEMES[idx];
+
+    // Stop Lenis for the duration of the restore: Lenis owns scroll via its own
+    // RAF loop (it doesn't just read native scrollTop), so window.scrollTo /
+    // lenis.scrollTo({immediate}) only win the FRAME they're called on — Lenis's
+    // next tick can re-assert its own (stale, pre-navigation) position and drag
+    // scrollY back toward 0, which cascades into --accent/--wall (both derived
+    // from scroll-driven `pos`) reverting too. Stopping the instance removes the
+    // competing authority entirely instead of repeatedly out-racing it. Started
+    // again once the pin window below has held for a full 55 frames.
+    lenis?.stop();
 
     // `slam`: force scroll + card spring + colours to the origin slide in one
     // frame, with no easing. Native window.scrollTo is the authority (it always
@@ -586,12 +602,13 @@ function Carousel() {
       window.scrollTo(0, target);
       lenis?.scrollTo(target, { immediate: true });
       springPos.jump(idx);
-      // Re-assert the accent/panel vars too: the reactive pos→accent transform
-      // only fires on CHANGE (and settles at idx then holds), and the
-      // case-study page's ProjectAccent resets --accent to the brand fuchsia in
-      // its unmount cleanup (a passive effect firing after this layout effect).
-      // Without re-asserting, the returning landing stays stuck on fuchsia.
+      // Re-assert the accent/wall/panel vars too: the reactive pos→accent/wall
+      // transforms only fire on CHANGE (and settle at idx then hold), and the
+      // case-study page's ProjectAccent resets --accent/--wall to brand fuchsia
+      // in its unmount cleanup (a passive effect firing after this layout
+      // effect). Without re-asserting, the returning landing stays stuck there.
       document.documentElement.style.setProperty("--accent", theme.accent);
+      document.documentElement.style.setProperty("--wall", theme.wall);
       el.style.setProperty("--panel-bg", theme.panelBg);
     };
 
@@ -608,16 +625,36 @@ function Carousel() {
     //    Holding scroll dead-still keeps pos=idx, so the card, its accent, and
     //    post-morph scroll continuity are all correct and stationary while the
     //    clone flies its clean arc. Bounded; normal behaviour resumes after.
+    //
+    //    Guards against a DOM node that's been torn down by a real unmount
+    //    (rather than relying solely on the cleanup below to cancel it) — see
+    //    the restart-timer note below for why.
     let pinRaf = 0;
     let pinFrames = 0;
     const pin = () => {
-      if (pinFrames++ > 55) return;
+      if (pinFrames++ > 55 || !document.body.contains(el)) return;
       slam();
       pinRaf = requestAnimationFrame(pin);
     };
     pinRaf = requestAnimationFrame(pin);
 
-    return () => cancelAnimationFrame(pinRaf);
+    // Restarts Lenis after the hold window, on a plain timer rather than from
+    // the pin loop's own completion or this effect's cleanup. Both of those
+    // are cancelled by React's dev-mode Strict Mode double-invoke (mount →
+    // cleanup → mount, synchronously, before the pin loop's first rAF has even
+    // fired) — if the restart lived there, Lenis would end up stopped with
+    // nothing left to ever start it again. A bare setTimeout survives that.
+    const restartLenis = setTimeout(() => lenis?.start(), 950);
+
+    return () => {
+      cancelAnimationFrame(pinRaf);
+      // Deliberately NOT clearing restartLenis or calling lenis?.start() here:
+      // under the double-invoke this cleanup fires synchronously right after
+      // lenis?.stop() above, and undoing the stop here would remove the one
+      // frame of protection the whole mechanism exists to provide. A genuine
+      // unmount just leaves Lenis paused until the timer above fires — the
+      // page is navigating away in that case regardless.
+    };
   }, []);
 
   return (
@@ -628,11 +665,10 @@ function Carousel() {
       style={{ height: `${TOTAL * 100}vh` }}
     >
       {/* Pinned chrome + card group. The OUTER sticky is transparent so the
-          accent base canvas (page.tsx) shows through the top nav strip — at the
-          very top of the page the nav rides directly on the accent. Scrolling off
-          the intro slides the card up flush (the strip closes), and the nav ink
-          crosses from on-accent white to on-card dark — the same parallax the rest
-          of the deck uses. */}
+          wall base canvas (page.tsx) shows through the top nav strip — at the
+          very top of the page the nav rides directly on the wall. Scrolling off
+          the intro slides the card up flush (the strip closes) — the same
+          parallax the rest of the deck uses. */}
       <div ref={stickyRef} className="sticky top-0 h-screen overflow-hidden">
         {/* Light card surface — the per-slide --panel-bg tint. Driven by
             stripY (136 → -40) via transform: translateY (compositor-only, no
@@ -663,6 +699,14 @@ function Carousel() {
             }}
           />
 
+          {/* Luminous edge on the page-card shell itself (not just the hero
+              image within it) — same treatment as the hero cards, so the card
+              reads crisply against the wall even where a blob's glow softens
+              the boundary. Radius tracks the shell's own rounded-corner state. */}
+          <SpecularBorder
+            radius={cn("rounded-t-[2rem]", active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none")}
+          />
+
           {/* Pagination moved to sticky container sibling — see below */}
 
           {/* Centered stage — card gets the larger share; tight gap to the copy.
@@ -690,28 +734,15 @@ function Carousel() {
             regardless of the card's y-transform. */}
         <Pagination active={active} onJump={scrollToSlideIndex} />
 
-        {/* Filmstrip — 6 case-study mini-thumbnails, lower-left, intro only.
-            Vertically anchored to the intro CTA row via measurement (see component).
-            Hard-conditioned on active === 0 (not just opacity/pointer-events) so it
-            has zero presence — visually, in the DOM, and for hit-testing — on every
-            other slide. active only flips to 1 once the scroll-eased playhead
-            crosses the slide-1 midpoint, by which point filmstripOpacity has
-            already faded to 0 over the first half of that same transition, so the
-            unmount lands after it's already invisible — no pop. */}
-        {active === 0 && (
-          <FilmstripNav
-            onJump={scrollToSlideIndex}
-            filmstripOpacity={filmstripOpacity}
-            stickyRef={stickyRef}
-            ctaRef={introCtaRef}
-          />
-        )}
+        {/* Filmstrip intentionally not rendered — simplifying the intro for now
+            (2026-08-07); the FilmstripNav/FilmstripThumb components below are
+            kept intact to bring back later, not deleted. */}
 
-        {/* Persistent nav — fixed top bar, above the card (z-60). Its colour
-            crosses white→dark (navInk) as the card rises under it: on the accent
-            at the very top, on the card thereafter. The card's overflow-hidden
-            clips the deck off the top edge once flush, so the deck never reaches
-            the nav. */}
+        {/* Persistent nav — fixed top bar, above the card (z-60). Dark ink +
+            fuchsia leaf mark hold constant now that both the wall (at rest)
+            and the card are light-toned — no crossfade needed. The card's
+            overflow-hidden clips the deck off the top edge once flush, so the
+            deck never reaches the nav. */}
         <motion.div
           style={{ color: navInk, "--nav-leaf-color": navLeafColor } as unknown as React.CSSProperties}
           className={`${PAD} pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between pt-14`}
@@ -1139,22 +1170,6 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
  *  the filmstrip thumbs, at a smaller radius). Bright top-left → fades → hair
  *  of dark bottom-right. Mask-exclude keeps it strictly in the 1px border zone
  *  without touching card content. */
-function SpecularBorder({ radius = "rounded-[1rem]" }: { radius?: string }) {
-  return (
-    <div
-      className={cn("pointer-events-none absolute inset-0 z-[25]", radius)}
-      style={{
-        border: "1px solid transparent",
-        background:
-          "linear-gradient(135deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.04) 45%, rgba(0,0,0,0.10) 100%) border-box",
-        WebkitMask: "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
-        WebkitMaskComposite: "destination-out",
-        maskComposite: "exclude",
-      }}
-    />
-  );
-}
-
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
 function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus, activeMorphRef }: { item: WorkItem; animateBlobs?: boolean; isActive?: boolean; onRequestFocus?: () => void; activeMorphRef?: React.MutableRefObject<(() => void) | null> }) {
   const isClickable = !!item.href;
@@ -1338,10 +1353,11 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
       {/* Horizontal inset is 2× vertical so the blob bleeds generously into the
           copy area on the left and the frame edge on the right. */}
       <div className="absolute -top-12 -bottom-12 -left-24 -right-24 overflow-visible opacity-[0.44] blur-[80px] pointer-events-none transition-all duration-700 ease-out group-hover:opacity-[0.62] group-hover:blur-[110px] group-hover:-top-16 group-hover:-bottom-16 group-hover:-left-32 group-hover:-right-32">
-        {/* Blob 1 - rotating clockwise (accent color) */}
+        {/* Blob 1 - rotating clockwise (--blob: matches each project's accent;
+            decoupled from --accent so the intro card can go cool independently) */}
         <motion.div
           className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] will-change-transform"
-          style={{ background: "var(--accent)", opacity: 0.72 }}
+          style={{ background: "var(--blob)", opacity: 0.72 }}
           animate={animateBlobs ? { rotate: [0, 90, 180, 360], scale: [1, 1.12, 0.92, 1] } : undefined}
           transition={animateBlobs ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
         />
@@ -1556,22 +1572,25 @@ function HorizontalCarousel({ className }: { className: string }) {
   }, []);
 
   // Keep root theme vars in sync with the visible panel (drives the page frame +
-  // section glow). The appended contact panel (index TOTAL) rides the brand
-  // fuchsia on the base canvas.
+  // section glow). The appended contact panel (index TOTAL) rides the calm
+  // wall on the base canvas (accent stays brand fuchsia for CTA/text use).
   useEffect(() => {
     // Desktop Carousel manages these vars itself (scoped to its section element
     // for --panel-bg). Skip on desktop to avoid conflicting writes.
     if (isDesktop()) return;
     const isContactPanel = active >= TOTAL;
-    // The section bg is ALWAYS the accent base canvas; --panel-bg only tints the
+    // The section bg is the WALL base canvas; --panel-bg only tints the
     // lighter "page card" that wraps the slides. On the contact the card has
     // ended (peeking left) so it keeps the LAST project's tint, while the base
-    // canvas / accent goes brand fuchsia (mirrors the desktop reveal).
-    const { panelBg, accent } = isContactPanel
-      ? { panelBg: SLIDE_THEMES[TOTAL - 1].panelBg, accent: SITE_ACCENT }
+    // canvas / wall goes calm and --accent goes brand fuchsia (mirrors the
+    // desktop reveal).
+    const { panelBg, accent, wall, blob } = isContactPanel
+      ? { panelBg: SLIDE_THEMES[TOTAL - 1].panelBg, accent: SITE_ACCENT, wall: WALL_LIGHT, blob: SITE_ACCENT }
       : SLIDE_THEMES[active] ?? SLIDE_THEMES[0];
     document.documentElement.style.setProperty("--accent", accent);
+    document.documentElement.style.setProperty("--wall", wall);
     document.documentElement.style.setProperty("--panel-bg", panelBg);
+    document.documentElement.style.setProperty("--blob", blob);
     // rgba variant for the section radial-gradient glow (gradients can't use hex vars directly)
     const r = parseInt(accent.slice(1, 3), 16);
     const g = parseInt(accent.slice(3, 5), 16);
@@ -1608,7 +1627,9 @@ function HorizontalCarousel({ className }: { className: string }) {
     return () => {
       window.removeEventListener("resize", onResize);
       document.documentElement.style.removeProperty("--accent");
+      document.documentElement.style.removeProperty("--wall");
       document.documentElement.style.removeProperty("--panel-bg");
+      document.documentElement.style.removeProperty("--blob");
       document.documentElement.style.removeProperty("--accent-glow");
       clearEdges();
     };
@@ -1623,7 +1644,7 @@ function HorizontalCarousel({ className }: { className: string }) {
     <section
       ref={sectionRef}
       className={cn(
-        "relative h-[100svh] overflow-hidden bg-accent [transition:background-color_0.45s_ease]",
+        "relative h-[100svh] overflow-hidden bg-wall [transition:background-color_0.45s_ease]",
         className
       )}
     >
@@ -1633,7 +1654,7 @@ function HorizontalCarousel({ className }: { className: string }) {
           <button
             type="button"
             onClick={() => goTo(0)}
-            className="flex cursor-pointer items-center gap-1.5 pl-[3.25rem] font-mono text-eyebrow uppercase tracking-[0.14em] text-white/80 transition-colors duration-300 hover:text-white sm:pl-14"
+            className="flex cursor-pointer items-center gap-1.5 pl-[3.25rem] font-mono text-eyebrow uppercase tracking-[0.14em] text-foreground transition-colors duration-300 hover:text-accent sm:pl-14"
           >
             <span aria-hidden>←</span>
             Back
@@ -1641,9 +1662,9 @@ function HorizontalCarousel({ className }: { className: string }) {
         ) : (
           <>
             <div className="flex items-center justify-between px-8">
-              {/* Name always sits over the lighter card (its peek on the contact),
-                  so it stays dark. ABOUT + dots cross over to the accent base canvas
-                  on the contact, so those adapt to white. */}
+              {/* Name/About/dots only render outside the contact panel (the Back
+                  button above replaces this chrome on contact) — both the wall
+                  and the card are light-toned, so dark ink throughout is correct. */}
               <button
                 type="button"
                 onClick={() => goTo(0)}
@@ -1698,11 +1719,13 @@ function HorizontalCarousel({ className }: { className: string }) {
             key={slide.slug}
             className="relative w-[calc(100vw-3rem)] flex-shrink-0 snap-center pt-[6.25rem] sm:w-[calc(100vw-3.5rem)]"
           >
-              {/* Accent glow blob — uses each slide's own accent so off-screen peeks stay correct */}
+              {/* Glow blob — uses each slide's own --blob (matches desktop's WorkStage
+                  blob; intro rides the cool INTRO_BLOB, not brand fuchsia) so
+                  off-screen peeks stay correct */}
               <div className="pointer-events-none absolute -inset-8 blur-[72px] opacity-[0.22]">
                 <motion.div
                   className="absolute inset-0 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] will-change-transform"
-                  style={{ background: SLIDE_THEMES[i]?.accent ?? "var(--accent)", opacity: 0.65 }}
+                  style={{ background: SLIDE_THEMES[i]?.blob ?? "var(--blob)", opacity: 0.65 }}
                   animate={Math.abs(i - active) <= 1 ? { rotate: [0, 90, 180, 360], scale: [1, 1.1, 0.92, 1] } : undefined}
                   transition={Math.abs(i - active) <= 1 ? { duration: 16, repeat: Infinity, ease: "easeInOut" } : undefined}
                 />
@@ -1757,10 +1780,10 @@ function HorizontalCarousel({ className }: { className: string }) {
         ))}
         </div>
 
-        {/* Contact — sits on the BASE CANVAS, beyond the lighter card's rounded
-            right edge. Transparent so it INHERITS the section's base-canvas color
-            (var(--accent)): the project accent while it peeks past the last
-            project, brand fuchsia once it's the active panel. */}
+        {/* Contact — sits on the BASE WALL, beyond the lighter card's rounded
+            right edge. Transparent so it INHERITS the section's wall color
+            (var(--wall)): the project accent while it peeks past the last
+            project, the calm brand-default wall once it's the active panel. */}
         <div
           key="contact"
           className="relative w-[calc(100vw-3rem)] flex-shrink-0 snap-center pt-[6.25rem] sm:w-[calc(100vw-3.5rem)]"
@@ -1769,13 +1792,13 @@ function HorizontalCarousel({ className }: { className: string }) {
             className="relative flex flex-col px-7 py-9"
             style={{ height: "calc(100svh - 8.5rem)" }}
           >
-            <Eyebrow mark={false} className="text-white/50">
+            <Eyebrow mark={false} className="text-faint">
               Contact
             </Eyebrow>
-            <h2 className="mt-4 font-serif text-display-sm font-semibold leading-[0.98] text-white">
+            <h2 className="mt-4 font-serif text-display-sm font-semibold leading-[0.98] text-foreground">
               Let&rsquo;s build something.
             </h2>
-            <p className="mt-4 max-w-sm font-sans text-body text-white/70">
+            <p className="mt-4 max-w-sm font-sans text-body text-muted">
               Open to Lead, Staff, and Director product-design roles — and
               AI-first teams where designing and building live in the same person.
             </p>
@@ -1785,7 +1808,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                 href={RESUME_URL}
                 download={RESUME_DOWNLOAD_FILENAME}
                 onClick={() => track("resume_click", { location: "work_intro" })}
-                className="group inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-[#D7355D] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.18)]"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-mono text-caption uppercase tracking-[0.12em] text-accent-contrast shadow-[0_2px_10px_-4px_rgba(21,19,15,0.18)]"
               >
                 Résumé
                 <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
@@ -1796,23 +1819,22 @@ function HorizontalCarousel({ className }: { className: string }) {
                 <ArrowLink
                   href={SITE.socials.linkedin}
                   external
-                  className="text-white/80 hover:text-white"
+                  className="text-foreground/80 hover:text-accent"
                 >
                   LinkedIn
                 </ArrowLink>
                 <EmailCopyButton
                   email={SITE.socials.email}
-                  dark
                 />
               </div>
             </div>
 
-            <div className="mt-auto flex flex-col gap-1 border-t border-white/20 pt-5 font-mono text-eyebrow uppercase text-white/40">
+            <div className="mt-auto flex flex-col gap-1 border-t border-foreground/10 pt-5 font-mono text-eyebrow uppercase text-faint">
               <span>{SITE.name}</span>
               <span>
-                Built with <span className="text-white">good vibes</span>,{" "}
-                <span className="text-white">curiosity</span> &{" "}
-                <span className="text-white">agentic AI</span> · {new Date().getFullYear()}
+                Built with <span className="text-foreground">good vibes</span>,{" "}
+                <span className="text-foreground">curiosity</span> &{" "}
+                <span className="text-foreground">agentic AI</span> · {new Date().getFullYear()}
               </span>
             </div>
           </div>

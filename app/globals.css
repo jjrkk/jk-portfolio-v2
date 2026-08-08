@@ -128,8 +128,31 @@
   /* — Per-project theming channel — the carousel animates these on the root
      element as you scroll (drives the panel bg AND the page frame). Defaults
      match the intro slide so first paint is correct before JS hydrates. */
-  --panel-bg: #f8ecf2;
+  --panel-bg: #fbfcfe;
   --panel-fg: var(--foreground);
+
+  /* Intro card's decorative blob color — decoupled from --accent so the card
+     surface + blobs can go cool while --accent stays brand fuchsia (headline,
+     CTA, eyebrow). See lib/theme.ts's INTRO_BLOB / Work.tsx. A paler tint from
+     FF Cloud's blue family for palette consistency; project slides override
+     this to match their own accent (unchanged per-project blob behavior). */
+  --blob: #93a4d9;
+
+  /* — Wall — the full-bleed "page surface" backdrop behind the panel/card
+     (landing outer div, About main + hero, PageFrame flood, intro-aperture,
+     Contact). Decoupled from --accent so the brand-default resting state can
+     be a calm near-white instead of full-saturation fuchsia, while --accent
+     keeps doing interactive + per-project-hero duty untouched. During the
+     carousel, Work.tsx overrides --wall to track --accent on actual project
+     slides (so the scroll-color-theming journey is unchanged) and only
+     resolves to this light value at the intro slide / post-carousel rest
+     state. Cool-tinted per Justin's steer (2026-08-07) — a deliberate
+     deviation from --background's "warm off-white" for this token only.
+     Iterated twice more the same day: lightened ("less grey"), then
+     re-darkened a step once the intro card went almost-white, to keep the
+     two surfaces legibly distinct. */
+  --wall: #eef0f6;
+  --wall-ink: var(--foreground);
 }
 
 @theme inline {
@@ -144,6 +167,8 @@
   --color-accent-contrast: var(--accent-contrast);
   --color-panel-bg: var(--panel-bg);
   --color-panel-fg: var(--panel-fg);
+  --color-wall: var(--wall);
+  --color-wall-ink: var(--wall-ink);
 
   /* Two-typeface system (CLAUDE.md grammar #2) — see the @font-face block above. */
   --font-serif: "PP Pangaia", ui-serif, Georgia, serif;
@@ -251,11 +276,11 @@ body {
 }
 
 /* ── Initial-load aperture (landing, once per session) ─────────────────────
-   The accent frame is BORN: a box-shadow flood (the same mechanism as
-   PageFrame) opens from a full-bleed fuchsia viewport inward to the 12px rails,
-   revealing the page center-out, then fades out onto the real frame underneath.
-   Only renders under html.intro-play — set by a pre-paint inline script on a
-   fresh session (see IntroAperture.tsx). Repeat visits, no-JS, and
+   The wall frame is BORN: a box-shadow flood (the same mechanism as
+   PageFrame) opens from a full-bleed wall-color viewport inward to the 12px
+   rails, revealing the page center-out, then fades out onto the real frame
+   underneath. Only renders under html.intro-play — set by a pre-paint inline
+   script on a fresh session (see IntroAperture.tsx). Repeat visits, no-JS, and
    reduced-motion never add the class, so they see nothing (display:none). */
 .intro-aperture {
   display: none;
@@ -265,8 +290,8 @@ html.intro-play .intro-aperture {
   position: fixed;
   z-index: 150;
   pointer-events: none;
-  /* transparent box; the flood is everything OUTSIDE it (= the accent frame) */
-  box-shadow: 0 0 0 100vmax var(--accent);
+  /* transparent box; the flood is everything OUTSIDE it (= the wall frame) */
+  box-shadow: 0 0 0 100vmax var(--wall);
   /* start collapsed at viewport center → flood covers the whole screen */
   top: 50vh;
   right: 50vw;

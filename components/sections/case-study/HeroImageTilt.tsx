@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useMorphBegin, useMorphTarget, useRegisterBackTrigger } from "@/components/morph/MorphProvider";
+import { SpecularBorder } from "@/components/ui/SpecularBorder";
 
 /** Rotation (deg) below which the hero reads as "square-on enough" to serve as
  *  a clean FLIP source for the reverse conduit — see the back-trigger below. */
@@ -90,10 +91,11 @@ export function HeroImageTilt({
     return (
       <div
         ref={morphRef}
-        className="overflow-hidden rounded-2xl shadow-[0_30px_70px_-40px_rgba(0,0,0,0.5)]"
+        className="relative overflow-hidden rounded-2xl shadow-[0_30px_70px_-40px_rgba(0,0,0,0.5)]"
         style={{ opacity: hidden ? 0 : 1 }}
       >
         {children}
+        <SpecularBorder radius="rounded-2xl" />
       </div>
     );
   }
@@ -101,10 +103,11 @@ export function HeroImageTilt({
   return (
     <motion.div
       ref={morphRef}
-      className="overflow-hidden rounded-2xl shadow-[0_30px_70px_-40px_rgba(0,0,0,0.5)] will-change-transform"
+      className="relative overflow-hidden rounded-2xl shadow-[0_30px_70px_-40px_rgba(0,0,0,0.5)] will-change-transform"
       style={{ rotate, transformOrigin: "center center", opacity: hidden ? 0 : 1 }}
     >
       {children}
+      <SpecularBorder radius="rounded-2xl" />
     </motion.div>
   );
 }
