@@ -11,7 +11,7 @@ import type { CaseNarrativeBlock } from "@/lib/case-studies";
  */
 export function CaseNarrative({ block }: { block: CaseNarrativeBlock }) {
   const aside = block.figureLayout === "aside" && !!block.figure;
-  const sectionBg = block.sectionTone === "tinted" ? "bg-[#edeae6]" : "bg-background";
+  const sectionBg = block.sectionTone === "tinted" ? "bg-[var(--background-tinted)]" : "bg-background";
 
   const textBlock = (
     <div className={aside ? undefined : "max-w-3xl"}>

@@ -110,13 +110,24 @@
 
 :root {
   /* — Canvas & ink — */
-  --background: #f7f5f2; /* warm off-white: calm, premium, not clinical white */
+  /* --background / --background-tinted / --border re-tinted cool (2026-08-08)
+     to match --wall's hue family — they used to be a separate warm-paper
+     scale (#f7f5f2-ish) left over from before the wall rework, which read as
+     a jarring temperature seam wherever they sit directly against --wall or
+     --panel-bg (About's content card, case-study narrative sections). Now
+     all three are the same blue-grey undertone as --wall, differentiated
+     only by lightness: --background sits a touch lighter than --wall (a
+     "subtle nested card catching light" cue), --background-tinted a step
+     darker, --border darker still. Per-project --panel-bg tints (lib/theme.ts)
+     are untouched — those are meant to read as distinct project color, not
+     neutral canvas. */
+  --background: #f4f5fa; /* cool near-white canvas: calm, premium, not clinical white */
   --foreground: #15130f; /* near-black ink: high contrast (fixes old-site sin) */
   --muted: #57544e; /* secondary text — passes AA on the canvas */
   --faint: #8a8780; /* labels / tertiary — large or non-essential text only */
-  --border: #e4e0d9; /* hairline structure: "borders before shadows" */
+  --border: #dfe2ea; /* hairline structure: "borders before shadows" */
   --surface: #ffffff; /* light "stages" screenshots sit on — the brightest layer */
-  --background-tinted: #edeae6; /* one step darker than --background; section contrast rhythm */
+  --background-tinted: #e8eaf1; /* one step darker than --background; section contrast rhythm */
 
   /* — Accent — site BRAND value: the violet-magenta "home" color (eyebrows,
      links, focus, the hero before you enter a project). LOCKED via Direction A
@@ -181,22 +192,14 @@
      Display tiers ride Pangaia; text tiers ride Object Sans. clamp() keeps
      titles huge on desktop (display → 144px) without overflowing small screens. */
   /* Carousel project titles — scale hard on widescreen for a bold, confident
-     read (the "fearless scale" pushed further than text-display). */
+     read (the "fearless scale" pushed further than text-display). The intro's
+     fixed, static tagline (lib/work.ts's INTRO.titleLines) shares this same
+     tier — it used to run its own smaller scale to make room for an animated
+     rotating-word line that no longer exists. */
   --text-hero: clamp(3rem, 7.5vw, 10rem);
   --text-hero--line-height: 0.9;
   --text-hero--letter-spacing: -0.03em;
   --text-hero--font-weight: 700;
-
-  /* Intro-only hero tier — the intro's tagline runs longer per line than the
-     one-word project titles above (which stay on --text-hero), so it needs
-     its own, smaller fluid scale to avoid mid-line wrapping. Tuned against
-     the longest rotating-word line ("Fortune 100 teams") at 1024–1920px,
-     with margin — the previous pass fit "banking clients" exactly to the
-     pixel, which broke the moment a longer word was added. */
-  --text-intro-hero: clamp(2.6rem, 4.35vw, 6rem);
-  --text-intro-hero--line-height: 0.98;
-  --text-intro-hero--letter-spacing: -0.025em;
-  --text-intro-hero--font-weight: 700;
 
   --text-display: clamp(3.25rem, 8vw, 9rem);
   --text-display--line-height: 0.92;

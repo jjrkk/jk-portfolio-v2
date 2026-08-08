@@ -12,7 +12,7 @@ export function CaseDesignSystem({ data }: { data: CaseDesignSystemData }) {
   const { eyebrow, title, intro, principles, colorTiers, statuses } = data;
 
   return (
-    <section className="bg-[#edeae6] py-24 sm:py-32">
+    <section className="bg-[var(--background-tinted)] py-24 sm:py-32">
       <Container>
         <div className="max-w-3xl">
           <Reveal>

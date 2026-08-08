@@ -60,6 +60,14 @@ export const INTRO_PANEL_BG = "#fbfcfe";
  *  default in globals.css. */
 export const INTRO_BLOB = "#93a4d9";
 
+/** The brand-default "background" canvas color (About's content card, case-
+ *  study neutral narrative sections, the post-carousel panel-bg hand-off in
+ *  Work.tsx). Re-tinted cool (2026-08-08) to join --wall's hue family instead
+ *  of the old warm-paper scale — same manual-sync convention as SITE_ACCENT /
+ *  WALL_LIGHT: must stay in sync with --background's :root default in
+ *  globals.css. */
+export const BACKGROUND_LIGHT = "#f4f5fa";
+
 export const PROJECT_THEMES: ProjectTheme[] = [
   { slug: "ff-cloud", label: "Cloud", accent: "#40539e", panelBg: "#ebedf6", panelFg: "#15130f" },
   { slug: "cap-app-redesign", label: "Image Capture", accent: "#6d54c9", panelBg: "#ece9f8", panelFg: "#15130f" },

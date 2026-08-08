@@ -8,7 +8,7 @@ function CopyIcon({ bgFill }: { bgFill?: string }) {
   return (
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
       <rect x="3.5" y="0.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="0.5" y="3.5" width="9" height="9" rx="1.5" fill={bgFill ?? "var(--background,#f7f5f2)"} stroke="currentColor" strokeWidth="1.2" />
+      <rect x="0.5" y="3.5" width="9" height="9" rx="1.5" fill={bgFill ?? "var(--background,#f4f5fa)"} stroke="currentColor" strokeWidth="1.2" />
     </svg>
   );
 }

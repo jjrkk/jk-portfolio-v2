@@ -26,12 +26,12 @@ const TYPE_SPECIMENS = [
 ];
 
 const COLOR_TOKENS = [
-  { name: "background", hex: "#f7f5f2", note: "Warm off-white canvas" },
+  { name: "background", hex: "#f4f5fa", note: "Cool near-white canvas" },
   { name: "surface", hex: "#ffffff", note: "Light stages for work" },
   { name: "foreground", hex: "#15130f", note: "Near-black ink" },
   { name: "muted", hex: "#57544e", note: "Secondary text (AA)" },
   { name: "faint", hex: "#8a8780", note: "Labels / tertiary" },
-  { name: "border", hex: "#e4e0d9", note: "Hairline structure" },
+  { name: "border", hex: "#dfe2ea", note: "Hairline structure" },
   { name: "accent", hex: "#a8237a", note: "Site brand · violet-magenta" },
 ];
 
