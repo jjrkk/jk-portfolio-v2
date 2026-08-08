@@ -13,7 +13,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { SLIDES, type WorkItem } from "@/lib/work";
-import { PROJECT_THEMES, SITE_ACCENT, WALL_LIGHT, INTRO_PANEL_BG, INTRO_BLOB, getProjectTheme } from "@/lib/theme";
+import { PROJECT_THEMES, SITE_ACCENT, WALL_LIGHT, BACKGROUND_LIGHT, INTRO_PANEL_BG, INTRO_BLOB, getProjectTheme } from "@/lib/theme";
 import { cn } from "@/lib/cn";
 import { hexLerp } from "@/lib/color";
 import { SITE } from "@/lib/site";
@@ -21,7 +21,6 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { EmailCopyButton } from "@/components/ui/EmailCopyButton";
 import { Reveal } from "@/components/ui/Reveal";
-import { RotatingWord } from "@/components/ui/RotatingWord";
 import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { RESUME_URL, RESUME_DOWNLOAD_FILENAME, Contact } from "@/components/sections/Contact";
 import { useMorphBegin, useMorphTarget, useMorphActive } from "@/components/morph/MorphProvider";
@@ -90,16 +89,6 @@ const SLIDE_THEMES = [
   ...PROJECT_THEMES.map((t) => ({ panelBg: t.panelBg, accent: t.accent, wall: t.accent, blob: t.accent })),
 ];
 
-/** Per-chip border/bg/text styling: accent for the new-school tag, a softer
- *  secondary tint for old-school, plain for everything else. */
-function chipStyle(chip: string) {
-  const lower = chip.toLowerCase();
-  if (lower.includes("new school") || lower.includes("claude"))
-    return "border-accent/40 bg-accent/10 text-accent";
-  if (lower.includes("old school") || lower.includes("figma"))
-    return "border-blue-400/40 bg-blue-500/[0.08] text-blue-600/80";
-  return "border-foreground/20 text-foreground/80";
-}
 
 
 /** Scroll past the carousel to the Contact section below it. */
@@ -498,7 +487,7 @@ function Carousel() {
       const t = Math.min(1, beyond / (window.innerHeight * 0.4));
       root.style.setProperty("--accent", hexLerp(last.accent, SITE_ACCENT, t));
       root.style.setProperty("--wall", hexLerp(last.wall, WALL_LIGHT, t));
-      el.style.setProperty("--panel-bg", hexLerp(last.panelBg, "#f7f5f2", t));
+      el.style.setProperty("--panel-bg", hexLerp(last.panelBg, BACKGROUND_LIGHT, t));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -1088,11 +1077,8 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
       </div>
 
       {isIntro ? (
-        <h1 className="mt-7 font-serif text-intro-hero text-accent">
+        <h1 className="mt-7 font-serif text-hero text-accent">
           {item.titleLines?.map((line, i) => <span key={i} className="block">{line}</span>)}
-          {item.rotatingWords && (
-            <span className="block"><RotatingWord words={item.rotatingWords} /></span>
-          )}
         </h1>
       ) : (
         <h2 className="mt-7 font-serif text-hero text-accent">{item.title}</h2>
@@ -1101,24 +1087,6 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
       <p className="mt-7 max-w-xl font-sans text-body-lg text-foreground/75">
         {item.blurb}
       </p>
-
-      {item.chips && (
-        <div className="mt-8 flex flex-col gap-2.5">
-          <div className="flex flex-wrap gap-2.5">
-            {item.chips.map((chip) => (
-              <span
-                key={chip}
-                className={cn(
-                  "inline-flex items-center rounded-full border px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em]",
-                  chipStyle(chip),
-                )}
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div
         ref={isIntro ? ctaRef : undefined}
@@ -1864,8 +1832,7 @@ function HorizontalCarousel({ className }: { className: string }) {
 
             {isIntro ? (
               <h1 className="mt-3 font-serif text-display-sm text-accent">
-                {item.titleLines ? `${item.titleLines.join(" ")} ` : `${item.title} `}
-                {item.rotatingWords && <RotatingWord words={item.rotatingWords} />}
+                {item.titleLines ? item.titleLines.join(" ") : item.title}
               </h1>
             ) : (
               <h2 className="mt-3 font-serif text-display-sm text-accent">
@@ -1876,22 +1843,6 @@ function HorizontalCarousel({ className }: { className: string }) {
             <p className="mt-2 line-clamp-2 font-sans text-body text-foreground/75">
               {item.blurb}
             </p>
-
-            {isIntro && item.chips && (
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {item.chips.map((chip) => (
-                  <span
-                    key={chip}
-                    className={cn(
-                      "inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]",
-                      chipStyle(chip),
-                    )}
-                  >
-                    {chip}
-                  </span>
-                ))}
-              </div>
-            )}
 
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
               {isIntro ? (
@@ -1972,21 +1923,6 @@ function IntroBlock({ item }: { item: WorkItem }) {
       <Eyebrow>{item.eyebrow}</Eyebrow>
       <h1 className="mt-6 font-serif text-display-sm text-accent">{item.title}</h1>
       <p className="mt-6 font-sans text-body-lg text-muted">{item.blurb}</p>
-      {item.chips && (
-        <div className="mt-6 flex flex-wrap gap-2">
-          {item.chips.map((chip) => (
-            <span
-              key={chip}
-              className={cn(
-                "inline-flex items-center rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em]",
-                chipStyle(chip),
-              )}
-            >
-              {chip}
-            </span>
-          ))}
-        </div>
-      )}
       {item.image && (
         <div className="mt-8">
           <WorkStage item={item} />

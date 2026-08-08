@@ -15,45 +15,30 @@ export type WorkItem = {
   eyebrow: string;
   title: string;
   titleLines?: string[]; // if set, each string renders on its own line (desktop hero)
-  rotatingWords?: string[]; // intro only — animated last line, cycles through this list
   blurb: string;
   image?: string; // path under /public; absent → placeholder stage
   href?: string;
   confidential?: boolean;
   flagship?: boolean;
-  chips?: string[]; // intro only — quick-fact chips beside the copy
 };
 
 /** Slide 0 — the intro ("Justin 101"), in carousel-friendly format.
  *  `title` stays short — it's the fallback read by the filmstrip hover
- *  tooltip, the pagination aria-label, and the reduced-motion stacked list,
- *  none of which render the animated rotatingWords line. */
+ *  tooltip, the pagination aria-label, and the reduced-motion stacked list. */
 export const INTRO: WorkItem = {
   slug: "intro",
   kind: "intro",
   eyebrow: "AI-Native Product Design Leader",
-  title: "I design, build & ship.",
-  titleLines: ["I design, build,", "and ship for"],
-  rotatingWords: [
-    "surgeons",
-    "embryologists",
-    "radiologists",
-    "clinicians",
-    "nurses",
-    "patients",
-    "caregivers",
-    "transit riders",
-    "Fortune 100 teams",
-  ],
+  title: "I design, build, & ship.",
+  // Explicit 3-line split (not left to soft-wrap): at --text-hero scale,
+  // "I design, build," alone doesn't fit one line on common desktop widths,
+  // so this locks the break points deliberately rather than leaving it to
+  // wrap unpredictably per viewport.
+  titleLines: ["I design,", "build,", "& ship."],
   blurb:
     "15+ years in healthcare and high-stakes products — now building with agentic AI, from strategy to deployed code.",
   image: "/personality/jk-whiteboard.webp",
   href: "/about/",
-  chips: [
-    "AI",
-    "Product",
-    "UX/UI",
-  ],
 };
 
 export const WORK: WorkItem[] = [

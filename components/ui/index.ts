@@ -5,4 +5,3 @@ export { ArrowLink } from "./ArrowLink";
 export { TwoColumn } from "./TwoColumn";
 export { MetaList, type MetaItem } from "./MetaList";
 export { Reveal } from "./Reveal";
-export { RotatingWord } from "./RotatingWord";
