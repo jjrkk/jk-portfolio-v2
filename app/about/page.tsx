@@ -60,6 +60,10 @@ export default function AboutPage() {
               <AtWork />
               <ExperienceTimeline />
               <Personality />
+              {/* Mirrors the opener above: the same cool wash bleeding up from
+                  the card's bottom edge, bookending the hand-off to Contact's
+                  own wall-colored surface below instead of a flat cut. */}
+              <CaseSectionOpener color={INTRO_BLOB} position="bottom" />
             </div>
           </div>
           <FooterReveal>
