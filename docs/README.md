@@ -5,19 +5,19 @@
 > Keep it updated as the build progresses. A fresh Claude Code session should
 > read this first.
 
-## Quick status (updated 2026-06-24)
+## Quick status (updated 2026-08-08)
 
-- **Phases 0, 1, 2: DONE.** The landing (homepage) is fully built.
+- **Phases 0–5: DONE.** Landing, About, the case-study template, and **all six
+  case studies** (FF Cloud, Image Capture, Violet & Magenta, Modus X, PRESTO,
+  Impact) are built and live at `/work/[slug]`, including the FF Cloud flagship's
+  "How I worked with AI" section + live dual-thread/design-system showcase
+  (`aiWorkflow` / `designSystem` in [`lib/case-studies.ts`](../lib/case-studies.ts)).
+  This supersedes the "port remaining case studies" plan below — that work is
+  done. Copy is still DRAFT throughout; one metric (Image Capture's rollout
+  response) is still qualitative-only, flagged `placeholder` in the data.
 - **About page (`/about`): DONE.** Split hero → big statement → "At work"
   philosophy → experience timeline → clients & recognition → off-the-clock →
   contact. Persistent top nav (name ↔ ABOUT/CONTACT) on both pages + breakpoints.
-- **Phase 3 — case-study template: BUILT (reference port done).** Repeatable
-  `/work/[slug]` template + **Violet & Magenta** (`ff-reports`) ported as the
-  reference. Sections: accent hero w/ overlapping title-crossing → overview
-  (narrative + meta) → narrative beats w/ light-stage figures → judgment/
-  trade-offs → impact metrics → next-study → contact. Static-export verified
-  (`/work/ff-reports` prerenders; unknown slugs 404 until ported). Copy is DRAFT.
-  NPS metric now real (`+21` YoY lift, from Future Fertility's 2025 CSAT survey).
 - **Deliberate IA change (2026-06-17):** the landing is now **cases-only** —
   carousel + contact footer. Everything biographical (how-I-work thesis, logo
   wall, about teaser, personality) **moved to `/about`**. This supersedes the
@@ -29,13 +29,21 @@
   on first paint). All reduced-motion-gated. Back-transition (case study →
   landing) deliberately **deferred** until more studies exist. Details:
   [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md).
-- **Next: port the remaining case studies, MVP-first** — build each to a
-  launch-able "decent" bar, then iterate. **Revised order (2026-06-24):
-  Image Capture → Modus X → (PRESTO, Impact) → FF Cloud LAST.** FF Cloud is the
-  flagship but the most asset-/content-blocked (needs the "How I worked with AI"
-  section + dual-thread diagram + bespoke assets), so it's saved for last when
-  the template is battle-tested. Its asset checklist is pre-staged in
-  [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md).
+- **Page-surface rework (2026-08-07): DONE.** The brand-default page background
+  decoupled from `--accent` into its own `--wall` token — a calm, cool-tinted
+  near-white (`#eef0f6`) instead of full-saturation fuchsia — across the landing
+  intro/rest state, About, PageFrame, and Contact. `--accent` now stays purely
+  interactive (buttons/links/focus/case-study hero fills).
+- **Neutral-palette cohesion pass (2026-08-08): DONE.** `--background`,
+  `--background-tinted`, and `--border` were still the old warm-paper scale from
+  before the wall rework, creating a visible temperature seam wherever they sat
+  directly against `--wall`/`--panel-bg` (About's content card, case-study
+  neutral narrative sections). Re-tinted all three into `--wall`'s cool hue
+  family, differentiated only by lightness. See `lib/theme.ts`'s `BACKGROUND_LIGHT`
+  and the `--background`/`--background-tinted`/`--border` comments in
+  [`app/globals.css`](../app/globals.css) for the values and rationale.
+  Per-project `panelBg` accent tints (`lib/theme.ts`) are untouched by design.
+- **Next: Phase 6/7 polish** — see "Build sequence — remaining" below.
 - **Stack:** Next.js 16 static export · Tailwind v4 · Lenis · Framer Motion ·
   Pangaia + Object Sans. Target host: Cloudflare Pages.
 - **Repo:** [github.com/jjrkk/jk-portfolio-v2](https://github.com/jjrkk/jk-portfolio-v2) (public). Branch → preview URL; merge to `main` → auto-deploys.
@@ -204,18 +212,21 @@
 - **About page** ✅ DONE (`/about`) + persistent nav.
 - **Page transitions** ✅ DONE (conduit morph + About fade + initial-load aperture);
   back-transition deferred. See [`Page-Transitions-Plan.md`](./Page-Transitions-Plan.md).
-- **Case studies — port the rest, MVP-first** [NEXT]. Revised order (2026-06-24):
-  **Image Capture → Modus X → (PRESTO, Impact) → FF Cloud (LAST)**. For each: wire
-  `lib/case-studies.ts` content + light-stage assets to a launch-able bar, then iterate.
-  FF Cloud additionally needs the "How I worked with AI" section + dual-thread diagram
-  (confidentiality rules; see [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md)). Opus
-  for FF Cloud / judgment work; Sonnet for the deterministic ports.
-- **Phase 6 — signature motion** spike (optional; the card tilt/blobs + the transition
-  system already lean signature).
-- **Phase 7 — polish**: responsive/mobile, a11y/contrast, **perf (images are large PNGs →
-  WebP/AVIF)**, motion-restraint, copy proofing, OG/SEO finalize (sitemap/robots/JSON-LD
-  done; OG art), **UTM tags on outbound links**, analytics, base-canvas tone exploration,
-  DNS cutover.
+- **Case studies — all six ported** ✅ DONE (2026-08-08 status check; the "MVP-first,
+  FF Cloud last" plan below is historical — FF Cloud actually shipped with its
+  "How I worked with AI" section and design-system showcase already live). Remaining
+  work is iteration, not porting: copy proofing, the one flagged placeholder metric,
+  and asset refinement per [`FF-Cloud-Assets-Todo.md`](./FF-Cloud-Assets-Todo.md) /
+  [`Case-Study-Asset-Spec_JK_2026-06-17.md`](./Case-Study-Asset-Spec_JK_2026-06-17.md).
+- **Base-canvas tone exploration** ✅ DONE — the wall rework (2026-08-07) + neutral-
+  palette cohesion pass (2026-08-08) above. Not "deferred to polish" anymore.
+- **Phase 6 — signature motion** [NEXT-ish, optional]: the card tilt/blobs + the
+  transition system already lean signature; spike further only if it's still wanted.
+- **Phase 7 — polish** [remaining]: responsive/mobile pass, a11y/contrast audit,
+  **perf (images are large PNGs → WebP/AVIF)**, motion-restraint review, copy
+  proofing across every case study + About + landing, OG art (sitemap/robots/JSON-LD
+  already done), **UTM tags on outbound links**, analytics wiring, DNS cutover
+  (justinkirkey.com → Cloudflare).
 - **Infra: DONE** — repo live at github.com/jjrkk/jk-portfolio-v2; Cloudflare Pages at jk-portfolio-v2.pages.dev. DNS cutover (justinkirkey.com → Cloudflare) happens in Phase 7.
 
 ## Model plan (per phase)
@@ -243,3 +254,19 @@ execution. Switch with `/model` at phase boundaries.
   self-hosted `@font-face` (these are static instances on font-weight
   *ranges*, not a true variable font). Type Lab and its other 10 unused
   candidate typefaces were deleted.
+- **2026-07-03 → 07-20:** résumé self-hosted (no more Google Drive dependency);
+  PageFrame mobile corner radius fixed to match the actual page card; sitemap/
+  canonical trailing-slash mismatch fixed; landing intro got a rotating-word
+  tagline; Violet & Magenta's NPS metric replaced with the real `+21` YoY figure;
+  About's client logo wall refreshed; legacy Framer URLs 404-redirected; FF Cloud
+  / ExperiencePoint asset uploads added.
+- **2026-08-07:** page-surface reworked from full-saturation fuchsia to a calm
+  cool-tinted `--wall` — see "Quick status" above. Also fixed a real bug where
+  returning from a case study via "ALL PROJECTS" could land on the wrong
+  slide/colour (Lenis racing its own restore, worse under Strict Mode); extracted
+  `SpecularBorder` into `components/ui`.
+- **2026-08-08:** neutral-palette cohesion pass — `--background` /
+  `--background-tinted` / `--border` re-tinted from the old warm-paper scale into
+  `--wall`'s cool hue family (see "Quick status" above). Also fixed two hardcoded
+  `#edeae6` duplicates (`CaseNarrative.tsx`, `CaseDesignSystem.tsx`) that would
+  have silently drifted out of sync.
