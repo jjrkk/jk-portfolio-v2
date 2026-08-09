@@ -1577,8 +1577,14 @@ function HorizontalCarousel({ className }: { className: string }) {
   // positioned, so a slide's offsetLeft is still relative to the track. The
   // contact sits exactly one step past the last slide (card right edge + gap),
   // so the uniform step math still resolves it as index TOTAL.
+  //
+  // Queried by [data-carousel-slide] rather than positional traversal
+  // (firstElementChild.firstElementChild) — the page card's first child is
+  // now the SpecularBorder overlay (spans the whole card), not the first
+  // slide, so positional indexing was measuring the wrong element's
+  // width/offset and threw off every scroll-position calculation below.
   const firstSlideEl = (el: HTMLElement): HTMLElement | null =>
-    (el.firstElementChild?.firstElementChild as HTMLElement | null) ?? null;
+    el.querySelector<HTMLElement>("[data-carousel-slide]");
 
   const goTo = (i: number) => {
     const el = trackRef.current;
@@ -1848,6 +1854,7 @@ function HorizontalCarousel({ className }: { className: string }) {
         {SLIDES.map((slide, i) => (
           <div
             key={slide.slug}
+            data-carousel-slide
             className="relative w-[calc(100vw-3rem)] flex-shrink-0 snap-center pt-[6.25rem] sm:w-[calc(100vw-3.5rem)]"
           >
               {/* Glow blob — uses each slide's own --blob (matches desktop's WorkStage
