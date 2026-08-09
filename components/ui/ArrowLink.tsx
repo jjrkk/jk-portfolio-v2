@@ -11,6 +11,7 @@ export function ArrowLink({
   children,
   external,
   direction = "right",
+  hideArrow,
   className,
 }: {
   href?: string;
@@ -18,6 +19,9 @@ export function ArrowLink({
   children: React.ReactNode;
   external?: boolean;
   direction?: "right" | "down";
+  /** Omit the trailing arrow — for CTAs that read fine as plain uppercase
+   *  labels without the directional cue (e.g. next to another arrowed CTA). */
+  hideArrow?: boolean;
   className?: string;
 }) {
   const classes = cn(
@@ -57,7 +61,7 @@ export function ArrowLink({
     return (
       <button type="button" onClick={onClick} className={classes}>
         {children}
-        {arrow}
+        {!hideArrow && arrow}
       </button>
     );
   }
@@ -66,14 +70,14 @@ export function ArrowLink({
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={classes}>
         {children}
-        {arrow}
+        {!hideArrow && arrow}
       </a>
     );
   }
   return (
     <Link href={href ?? "#"} className={classes}>
       {children}
-      {arrow}
+      {!hideArrow && arrow}
     </Link>
   );
 }

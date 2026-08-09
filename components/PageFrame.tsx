@@ -44,7 +44,7 @@ export function PageFrame() {
   // instead of leaving a visible accent sliver beyond the card's own corner.
   const [cornerRadius, setCornerRadius] = useState(16);
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 1280px)");
     const apply = (matches: boolean) => {
       setTopInset(matches ? 28 : 12);
       setCornerRadius(matches ? 32 : 16);

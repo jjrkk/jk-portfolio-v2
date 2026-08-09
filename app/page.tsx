@@ -21,7 +21,7 @@ export default function Home() {
           carousel. On mobile it lives as the final panel of the horizontal
           track (see HorizontalCarousel), so the landing stays one viewport
           tall with no vertical scroll. */}
-      <FooterReveal className="hidden min-[1024px]:block">
+      <FooterReveal className="hidden min-[1280px]:block">
         <Contact dark />
       </FooterReveal>
       </main>

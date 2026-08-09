@@ -9,6 +9,10 @@
  * routes (/work/<slug>) are built in Phase 3; FF Cloud imagery arrives Phase 4.
  */
 
+/** One run of a rich blurb: plain text, or a linked company name (renders as
+ *  an underlined external link — see BlurbText in Work.tsx). */
+export type BlurbSegment = { text: string; href?: string };
+
 export type WorkItem = {
   slug: string;
   kind: "intro" | "project";
@@ -16,6 +20,10 @@ export type WorkItem = {
   title: string;
   titleLines?: string[]; // if set, each string renders on its own line (desktop hero)
   blurb: string;
+  // Intro only: the same copy as `blurb`, broken into segments so specific
+  // company names render as links. `blurb` stays the plain-text source of
+  // truth (used wherever segments aren't rendered); keep the two in sync.
+  blurbSegments?: BlurbSegment[];
   image?: string; // path under /public; absent → placeholder stage
   href?: string;
   confidential?: boolean;
@@ -29,15 +37,27 @@ export const INTRO: WorkItem = {
   slug: "intro",
   kind: "intro",
   eyebrow: "AI-Native Product Design Leader",
-  title: "I design, build, & ship.",
-  // Explicit 3-line split (not left to soft-wrap): at --text-hero scale,
-  // "I design, build," alone doesn't fit one line on common desktop widths,
-  // so this locks the break points deliberately rather than leaving it to
-  // wrap unpredictably per viewport.
-  titleLines: ["I design,", "build,", "& ship."],
+  title: "Hello! I'm Justin",
+  // Single-line greeting, joined with a space at render time (see the isIntro
+  // branches in CarouselText / HorizontalCarousel / IntroBlock): the LAST
+  // segment renders in --accent, the rest in ink.
+  titleLines: ["Hello! I'm", "Justin"],
   blurb:
-    "15+ years in healthcare and high-stakes products — now building with agentic AI, from strategy to deployed code.",
-  image: "/personality/jk-whiteboard.webp",
+    "Toronto-based product design leader. Most recently I led product design + UX research at Future Fertility, an AI platform used by fertility doctors & patients worldwide. Before that, design leadership at ExperiencePoint, Fjord/Accenture, Synaptive Medical, and University Health Network. These days I design and build with agentic AI — from strategy through to code.",
+  blurbSegments: [
+    { text: "Toronto-based product design leader. Most recently I led product design + UX research at " },
+    { text: "Future Fertility", href: "https://futurefertility.com/" },
+    { text: ", an AI platform used by fertility doctors & patients worldwide. Before that, design leadership at " },
+    { text: "ExperiencePoint", href: "https://www.experiencepoint.com/" },
+    { text: ", " },
+    { text: "Fjord/Accenture", href: "https://www.accenture.com/us-en/about/accenture-song-index" },
+    { text: ", " },
+    { text: "Synaptive Medical", href: "https://www.synaptivemedical.com/" },
+    { text: ", and " },
+    { text: "University Health Network", href: "https://humanfactors.ca/" },
+    { text: ". These days I design and build with agentic AI — from strategy through to code." },
+  ],
+  image: "/about/justin-with-arms-outstretched.webp",
   href: "/about/",
 };
 

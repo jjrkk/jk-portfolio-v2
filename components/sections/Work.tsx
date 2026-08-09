@@ -49,7 +49,7 @@ function clearEdges() {
 
 const isDesktop = () =>
   typeof window !== "undefined" &&
-  window.matchMedia("(min-width: 1024px)").matches;
+  window.matchMedia("(min-width: 1280px)").matches;
 
 /**
  * The landing — the ENTIRE homepage is one pinned vertical card carousel:
@@ -145,7 +145,7 @@ export function Work() {
   return (
     <>
       <Carousel />
-      <HorizontalCarousel className="min-[1024px]:hidden" />
+      <HorizontalCarousel className="min-[1280px]:hidden" />
     </>
   );
 }
@@ -171,19 +171,41 @@ function initialSlideIndex(): number {
   return 0;
 }
 
-/** "Justin Kirkey" chrome button with a maple leaf SVG that bounces in from the left on hover. */
+/** "Justin Kirkey" chrome button — a maple leaf SVG bounces in from the left
+ *  on hover, same as before. The idle state is now the compact "JK"; on
+ *  hover it expands into the full name, "J" and "K" staying put as anchors
+ *  while the letters between/after them grow in from zero width (a CSS
+ *  grid-template-columns 0fr→1fr track, the standard trick for animating to
+ *  intrinsic content width with no JS layout measurement) with a quick fade,
+ *  staggered slightly so "ustin" leads "irkey" out. The visible letters are
+ *  aria-hidden; a permanent sr-only span carries the real accessible name so
+ *  screen readers aren't affected by the collapse/expand animation. */
 function NameButton() {
   const [hovered, setHovered] = useState(false);
+  // At rest, at the very top of the page, the name shows fully expanded
+  // (leaf + "JUSTIN KIRKEY") — hover only adds the secondary underline
+  // affordance below. Scrolling away collapses it to "JK"; from then on,
+  // hover drives the expand/collapse animation as before. Bound to scroll
+  // position (not a one-time mount flag) so scrolling back to top re-expands
+  // it too, matching how the rest of the nav already reacts to scroll.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const expanded = hovered || !scrolled;
   return (
     <button
       type="button"
       onClick={() => scrollToSlideIndex(0)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative cursor-pointer font-mono text-eyebrow uppercase text-[color:inherit] transition-opacity hover:opacity-70"
+      className="relative flex cursor-pointer items-baseline font-mono text-eyebrow uppercase text-[color:inherit] transition-opacity hover:opacity-70"
     >
       <AnimatePresence>
-        {hovered && (
+        {expanded && (
           <motion.span
             key="flag"
             aria-hidden
@@ -199,7 +221,39 @@ function NameButton() {
           </motion.span>
         )}
       </AnimatePresence>
-      Justin Kirkey
+
+      <span className="sr-only">Justin Kirkey</span>
+
+      <span aria-hidden className="flex items-baseline">
+        <span>J</span>
+        <span
+          className="grid overflow-hidden [transition:grid-template-columns_0.35s_ease]"
+          style={{ gridTemplateColumns: expanded ? "1fr" : "0fr" }}
+        >
+          <span className="min-w-0 overflow-hidden whitespace-nowrap">
+            <span
+              className="inline-block [transition:opacity_0.22s_ease]"
+              style={{ opacity: expanded ? 1 : 0, transitionDelay: expanded ? "70ms" : "0ms" }}
+            >
+              ustin&nbsp;
+            </span>
+          </span>
+        </span>
+        <span>K</span>
+        <span
+          className="grid overflow-hidden [transition:grid-template-columns_0.35s_ease]"
+          style={{ gridTemplateColumns: expanded ? "1fr" : "0fr" }}
+        >
+          <span className="min-w-0 overflow-hidden whitespace-nowrap">
+            <span
+              className="inline-block [transition:opacity_0.22s_ease]"
+              style={{ opacity: expanded ? 1 : 0, transitionDelay: expanded ? "130ms" : "0ms" }}
+            >
+              irkey
+            </span>
+          </span>
+        </span>
+      </span>
     </button>
   );
 }
@@ -240,7 +294,7 @@ function Carousel() {
     ref.current?.style.setProperty("--blob", v),
   );
 
-  // Intro-only top strip: the light card sits ~136px below the top at the very
+  // Intro-only top strip: the light card sits ~100px below the top at the very
   // top of the page so the nav rides directly on the wall. As you scroll off
   // the intro the card rises flush (translateY 120→0) like the rest of the deck.
   // The nav ink used to cross white→dark here (the wall was fuchsia at rest);
@@ -248,7 +302,10 @@ function Carousel() {
   // tint too, so dark ink + the fuchsia leaf mark both hold constant across
   // the whole journey — no crossfade needed. (Only the intro is ever dropped —
   // and the intro has no top peek — so the deck can never spill onto the strip.)
-  const STRIP = 136;
+  // A real floor, not leftover space, but not so generous it starves the hero
+  // image of room — see the pb-[140px] compensation below, which must track
+  // this value (STRIP + STRIP_OVER).
+  const STRIP = 100;
   // Animate past 0 to -40 so the rounded top corners slide above the sticky
   // container's overflow-hidden clip instead of morphing to flat.
   const stripY = useTransform(springPos, [0, 1], [STRIP, -40], { clamp: true });
@@ -650,7 +707,7 @@ function Carousel() {
     <section
       id="work"
       ref={ref}
-      className="relative mx-[12px] hidden min-[1024px]:block overflow-clip"
+      className="relative mx-[12px] hidden min-[1280px]:block overflow-clip"
       style={{ height: `${TOTAL * 100}vh` }}
     >
       {/* Pinned chrome + card group. The OUTER sticky is transparent so the
@@ -693,23 +750,24 @@ function Carousel() {
               reads crisply against the wall even where a blob's glow softens
               the boundary. Radius tracks the shell's own rounded-corner state. */}
           <SpecularBorder
+            uniform
             radius={cn("rounded-t-[2rem]", active >= TOTAL - 1 ? "rounded-b-[2rem]" : "rounded-b-none")}
           />
 
           {/* Pagination moved to sticky container sibling — see below */}
 
           {/* Centered stage — card gets the larger share; tight gap to the copy.
-              pb-[176px] on the intro (= STRIP 136 + STRIP_OVER 40) compensates for
+              pb-[140px] on the intro (= STRIP 100 + STRIP_OVER 40) compensates for
               the card being taller than its visible area, re-centering the content
               within the actual visible strip. Transitions away on slide change. */}
-          <div className={cn(`${PAD} flex flex-1 items-center [transition:padding-bottom_0.45s_ease]`, active === 0 && "pb-[176px]")}>
+          <div className={cn(`${PAD} flex flex-1 items-center [transition:padding-bottom_0.45s_ease]`, active === 0 && "pb-[140px]")}>
             <div className="grid w-full grid-cols-12 items-center gap-x-12">
-              <div className="relative col-span-5 min-h-[520px]">
+              <div className="relative col-span-5 min-h-[560px]">
                 <AnimatePresence mode="wait">
                   <CarouselText key={SLIDES[active].slug} item={SLIDES[active]} activeMorphRef={activeMorphRef} ctaRef={introCtaRef} />
                 </AnimatePresence>
               </div>
-              <div className={cn("relative col-span-7 h-[66vh] [transition:margin-top_0.45s_ease]", active === 0 && "-mt-[68px]")}>
+              <div className={cn("relative col-span-7 h-[66vh] [transition:margin-top_0.45s_ease]", active === 0 && "-mt-[24px]")}>
                 {SLIDES.map((item, i) => (
                   <CarouselCard key={item.slug} item={item} index={i} pos={springPos} active={active} activeMorphRef={activeMorphRef} />
                 ))}
@@ -734,7 +792,7 @@ function Carousel() {
             deck never reaches the nav. */}
         <motion.div
           style={{ color: navInk, "--nav-leaf-color": navLeafColor } as unknown as React.CSSProperties}
-          className={`${PAD} pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between pt-14`}
+          className={`${PAD} pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between pt-11`}
         >
           <div className="pointer-events-auto">
             <NameButton />
@@ -1053,20 +1111,41 @@ function CarouselCard({
   );
 }
 
+/** Intro-only bio paragraph: renders `item.blurbSegments` with each linked
+ *  company name as an underlined external link (default subtle, accent on
+ *  hover) — falls back to plain `item.blurb` for project items, which never
+ *  set segments. */
+function BlurbText({ item }: { item: WorkItem }) {
+  if (!item.blurbSegments) return <>{item.blurb}</>;
+  return (
+    <>
+      {item.blurbSegments.map((seg, i) => {
+        const href = seg.href;
+        return href ? (
+          <a
+            key={i}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("blurb_link_click", { company: seg.text, href })}
+            className="underline decoration-foreground/25 decoration-1 underline-offset-[3px] transition-colors duration-200 hover:decoration-accent"
+          >
+            {seg.text}
+          </a>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        );
+      })}
+    </>
+  );
+}
+
 function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; activeMorphRef?: React.MutableRefObject<(() => void) | null>; ctaRef?: React.RefObject<HTMLDivElement | null> }) {
   const isIntro = item.kind === "intro";
 
   return (
     <motion.div
-      className={cn(
-        "absolute inset-y-0 left-0 right-0 flex flex-col justify-center",
-        // Intro only: reserve the filmstrip's block (GAP + thumb height) at the
-        // bottom so justify-center centres the *whole* mass — text + CTAs + strip
-        // — as one group, lifting the copy slightly for even top/bottom padding.
-        // Tracks the strip's height tiers; nil ≤840px where the strip is hidden.
-        isIntro &&
-          "[@media(min-height:841px)_and_(max-height:1050px)]:pb-[88px] [@media(min-height:1051px)]:pb-[96px]",
-      )}
+      className="absolute inset-y-0 left-0 right-0 flex flex-col justify-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12, transition: { duration: 0.2, ease: "easeIn" } }}
@@ -1077,20 +1156,44 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
       </div>
 
       {isIntro ? (
-        <h1 className="mt-7 font-serif text-hero text-accent">
-          {item.titleLines?.map((line, i) => <span key={i} className="block">{line}</span>)}
+        // Bio-intro treatment (mirrors the About hero): a single-line
+        // greeting — ink, then the name in --accent. --text-intro-hero-desktop
+        // is a floor sized down from --text-hero (the project-title scale) to
+        // leave room for the longer paragraph below inside this slide's fixed
+        // viewport height — but that constraint eases at wider viewports (more
+        // horizontal room to spread into), so past 1600px the greeting steps
+        // up to --text-intro-hero-wide (a bolder tier, ~72% of --text-hero)
+        // instead of staying flat at the floor's ceiling on screens that have
+        // plenty of room to go bigger. At that same 1600px breakpoint the
+        // lines also switch from inline (one line) to block (stacked) — at
+        // the wide tier's larger size, a single line ran noticeably wider
+        // than the paragraph column below it; splitting back to two lines
+        // keeps the greeting's measure in proportion with the copy under it.
+        <h1 className="mt-6 font-serif text-intro-hero-desktop min-[1600px]:text-intro-hero-wide">
+          {item.titleLines?.map((line, i, arr) => (
+            <span
+              key={i}
+              className={cn(
+                "min-[1600px]:block",
+                i === arr.length - 1 ? "text-accent" : "text-foreground",
+              )}
+            >
+              {i > 0 ? " " : ""}
+              {line}
+            </span>
+          ))}
         </h1>
       ) : (
         <h2 className="mt-7 font-serif text-hero text-accent">{item.title}</h2>
       )}
 
-      <p className="mt-7 max-w-xl font-sans text-body-lg text-foreground/75">
-        {item.blurb}
+      <p className={cn("mt-6 font-sans text-foreground/75", isIntro ? "max-w-lg text-body" : "max-w-xl text-body-lg")}>
+        <BlurbText item={item} />
       </p>
 
       <div
         ref={isIntro ? ctaRef : undefined}
-        className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3"
+        className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
       >
         {isIntro ? (
           <>
@@ -1109,7 +1212,7 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
             </button>
             <ArrowLink
               onClick={() => { track("contact_cta_click", { surface: "desktop" }); scrollToContact(); }}
-              direction="down"
+              hideArrow
             >
               Get in touch
             </ArrowLink>
@@ -1141,6 +1244,14 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
 /** The card stage — edge-to-edge image, no frame, aggressive rounded corners. */
 function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus, activeMorphRef }: { item: WorkItem; animateBlobs?: boolean; isActive?: boolean; onRequestFocus?: () => void; activeMorphRef?: React.MutableRefObject<(() => void) | null> }) {
   const isClickable = !!item.href;
+  // Intro only: below 830px viewport height the width-driven aspect-[4/3] image
+  // (sized off the column's width, ignoring its own h-[66vh] box) squeezes the
+  // text column/CTAs toward the fold. At that breakpoint, switch to filling the
+  // column's real (already vh-relative, so naturally shorter) height instead —
+  // object-cover crops to whatever that box ends up being. Project cards keep
+  // the untouched width-driven aspect ratio at every height; only the intro's
+  // sizing model changes here.
+  const isIntro = item.kind === "intro";
   const cardRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const beginMorph = useMorphBegin();
@@ -1258,8 +1369,40 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
     glossY.set(50);
   };
 
-  const shell =
-    "relative z-10 w-full overflow-hidden rounded-[1rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]";
+  // Height-relative at every size, not just below a breakpoint: width-driven
+  // aspect-[4/3] has no ceiling, so on wide-but-only-moderately-tall viewports
+  // (e.g. 1920×930) it still balloons tall enough to cram the guaranteed top
+  // gap even though there's plenty of vertical room overall — the column
+  // width, not the height, was the problem there. clamp()'s floor keeps it
+  // from reading as a slim letterboxed strip at short heights; the ceiling
+  // keeps it from ballooning at very tall ones. Tapers to a lower band below
+  // 760px height on top of that, with its own (smaller) floor/ceiling.
+  //
+  // The ceiling (780px) trades width for height at the fixed 1090px box width
+  // (introMaxWidth): object-cover + the right-top anchor below crops ~80px
+  // (~7%) off the image's left edge to fill the taller box at the same width
+  // — deliberate, not a side effect. Capped here rather than at the source's
+  // full native height (800px, a ~9% crop) because past ~80px the crop starts
+  // eating into Owen's (the leftmost person's) face rather than just trimming
+  // past him — tuned by rendering the crop at several offsets side by side.
+  const introHeightTier = isIntro
+    ? "h-[clamp(460px,58vh,780px)] [@media(max-height:760px)]:h-[clamp(380px,46vh,520px)]"
+    : "";
+  // Caps how wide the image is allowed to get independent of the height cap
+  // above — without this, a wide column (ultra-wide viewports) paired with a
+  // capped height reads as an increasingly letterboxed strip since nothing
+  // was bounding the aspect ratio, only the height. Sized to read closer to
+  // the case-study hero's own generous width (1090ish) rather than reading
+  // small next to it. Flex-centered within the column by CarouselCard's
+  // wrapper, so it just gets even side margins past this width rather than
+  // stretching edge-to-edge.
+  const introMaxWidth = isIntro ? "max-w-[1090px]" : "";
+
+  const shell = cn(
+    "relative z-10 w-full overflow-hidden rounded-[1rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]",
+    introHeightTier,
+    introMaxWidth,
+  );
 
   const renderContent = () => {
     if (!item.image) {
@@ -1285,18 +1428,29 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
       // morph is applied to the whole card shell (see the shell motion.div
       // below), so the empty white card surface never shows behind the
       // in-flight clone.
-      <div ref={morphTargetRef} className="overflow-hidden rounded-[1rem]">
+      <div
+        ref={morphTargetRef}
+        className={cn("overflow-hidden rounded-[1rem]", isIntro && "h-full")}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
           src={item.image}
           alt={
             item.kind === "intro"
-              ? "Justin Kirkey sketching a product flow at the whiteboard"
+              ? "Justin Kirkey collaborating with his team"
               : `${item.title} — case study preview`
           }
           loading="lazy"
-          className="block aspect-[4/3] w-full rounded-[1rem] object-cover"
+          className={cn(
+            "block w-full rounded-[1rem] object-cover",
+            // Anchor top-right on the intro's crop: Justin is the rightmost
+            // person in frame with his head near the top, and object-cover's
+            // default center crop risked losing him — both on the horizontal
+            // squeeze (aspect ratio narrowing) and the vertical one (short,
+            // letterboxed heights) — more aggressively than the others.
+            isIntro ? "h-full object-right-top" : "aspect-[4/3]",
+          )}
         />
       </div>
     );
@@ -1304,7 +1458,11 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
 
   return (
     <div
-      className="group relative w-full transition-transform duration-500 hover:scale-[1.015]"
+      className={cn(
+        "group relative w-full transition-transform duration-500 hover:scale-[1.015]",
+        introHeightTier,
+        introMaxWidth,
+      )}
       // While this card is the target of an inbound (reverse) morph, hide the
       // ENTIRE card — shell surface, blob glow, and image together — so the
       // in-flight clone is the only thing visible; otherwise the empty white
@@ -1465,7 +1623,7 @@ function HorizontalCarousel({ className }: { className: string }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (window.innerWidth >= 1024) return;
+      if (window.innerWidth >= 1280) return;
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
         // The contact panel (index TOTAL) is the rightmost stop on the track.
@@ -1494,7 +1652,7 @@ function HorizontalCarousel({ className }: { className: string }) {
     let cooldown = false;
 
     const onWheel = (e: WheelEvent) => {
-      if (window.innerWidth >= 1024) return; // desktop carousel owns this
+      if (window.innerWidth >= 1280) return; // desktop carousel owns this
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // horizontal gesture — let native handle
       e.preventDefault();
       if (cooldown) return;
@@ -1511,12 +1669,12 @@ function HorizontalCarousel({ className }: { className: string }) {
     let touchStartY: number | null = null;
     let touchStartX: number | null = null;
     const onTouchStart = (e: TouchEvent) => {
-      if (window.innerWidth >= 1024) return;
+      if (window.innerWidth >= 1280) return;
       touchStartY = e.touches[0].clientY;
       touchStartX = e.touches[0].clientX;
     };
     const onTouchEnd = (e: TouchEvent) => {
-      if (window.innerWidth >= 1024 || touchStartY === null || touchStartX === null) return;
+      if (window.innerWidth >= 1280 || touchStartY === null || touchStartX === null) return;
       const dy = touchStartY - e.changedTouches[0].clientY;
       const dx = touchStartX - e.changedTouches[0].clientX;
       touchStartY = null; touchStartX = null;
@@ -1680,8 +1838,13 @@ function HorizontalCarousel({ className }: { className: string }) {
             on it) and envelops intro + projects with rounded corners, ending
             before the contact. The contact (next sibling) sits on the bare accent
             base canvas beyond its right edge. Static position so nested slides
-            keep the track as their offsetParent (scroll math). */}
-        <div className="flex flex-shrink-0 gap-3 rounded-[16px] bg-panel-bg pl-5 pr-3 [transition:background-color_0.45s_ease]">
+            keep the track as their offsetParent (scroll math). `relative` makes
+            this the positioning context for SpecularBorder below (rather than
+            the ancestor track, which is viewport-sized, not card-sized). */}
+        <div className="relative flex flex-shrink-0 gap-3 rounded-[16px] bg-panel-bg pl-5 pr-3 [transition:background-color_0.45s_ease]">
+        {/* Same uniform luminous edge as the desktop page-card shell / About /
+            case-study cards — mobile's own page card hadn't inherited it. */}
+        <SpecularBorder uniform radius="rounded-[16px]" />
         {SLIDES.map((slide, i) => (
           <div
             key={slide.slug}
@@ -1709,9 +1872,9 @@ function HorizontalCarousel({ className }: { className: string }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={slide.image ?? ""}
-                    alt={slide.kind === "intro" ? "Justin Kirkey at the whiteboard" : `${slide.title} — case study`}
+                    alt={slide.kind === "intro" ? "Justin Kirkey collaborating with his team" : `${slide.title} — case study`}
                     loading="eager"
-                    className="block h-full w-full object-cover"
+                    className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-right-top")}
                   />
                   <SpecularBorder />
                 </Link>
@@ -1724,9 +1887,9 @@ function HorizontalCarousel({ className }: { className: string }) {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={slide.image}
-                      alt="Justin Kirkey at the whiteboard"
+                      alt={slide.kind === "intro" ? "Justin Kirkey collaborating with his team" : `${slide.title} — case study`}
                       loading="eager"
-                      className="block h-full w-full object-cover"
+                      className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-right-top")}
                     />
                   ) : (
                     <div
@@ -1831,8 +1994,13 @@ function HorizontalCarousel({ className }: { className: string }) {
             </div>
 
             {isIntro ? (
-              <h1 className="mt-3 font-serif text-display-sm text-accent">
-                {item.titleLines ? item.titleLines.join(" ") : item.title}
+              <h1 className="mt-3 font-serif text-intro-hero-mobile">
+                {item.titleLines?.map((line, i, arr) => (
+                  <span key={i} className={i === arr.length - 1 ? "text-accent" : "text-foreground"}>
+                    {i > 0 ? " " : ""}
+                    {line}
+                  </span>
+                ))}
               </h1>
             ) : (
               <h2 className="mt-3 font-serif text-display-sm text-accent">
@@ -1840,8 +2008,8 @@ function HorizontalCarousel({ className }: { className: string }) {
               </h2>
             )}
 
-            <p className="mt-2 line-clamp-2 font-sans text-body text-foreground/75">
-              {item.blurb}
+            <p className={cn("mt-2 font-sans text-body text-foreground/75", !isIntro && "line-clamp-2")}>
+              <BlurbText item={item} />
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -1862,6 +2030,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                   </button>
                   <ArrowLink
                     onClick={() => { track("contact_cta_click", { surface: "mobile" }); goTo(TOTAL); }}
+                    hideArrow
                   >
                     Get in touch
                   </ArrowLink>
@@ -1921,8 +2090,21 @@ function IntroBlock({ item }: { item: WorkItem }) {
   return (
     <div className="mb-16">
       <Eyebrow>{item.eyebrow}</Eyebrow>
-      <h1 className="mt-6 font-serif text-display-sm text-accent">{item.title}</h1>
-      <p className="mt-6 font-sans text-body-lg text-muted">{item.blurb}</p>
+      <h1 className="mt-6 font-serif text-intro-hero-desktop min-[1600px]:text-intro-hero-wide">
+        {item.titleLines?.map((line, i, arr) => (
+          <span
+            key={i}
+            className={cn(
+              "min-[1600px]:block",
+              i === arr.length - 1 ? "text-accent" : "text-foreground",
+            )}
+          >
+            {i > 0 ? " " : ""}
+            {line}
+          </span>
+        )) ?? <span className="text-accent">{item.title}</span>}
+      </h1>
+      <p className="mt-6 max-w-xl font-sans text-body-lg text-muted"><BlurbText item={item} /></p>
       {item.image && (
         <div className="mt-8">
           <WorkStage item={item} />
@@ -1946,7 +2128,7 @@ function StackedItem({ item }: { item: WorkItem }) {
         <Eyebrow>{item.eyebrow}</Eyebrow>
       </div>
       <h2 className="mt-4 font-serif text-title text-accent">{item.title}</h2>
-      <p className="mt-3 font-sans text-body text-foreground/75">{item.blurb}</p>
+      <p className="mt-3 font-sans text-body text-foreground/75"><BlurbText item={item} /></p>
       <div className="mt-5">
         <WorkStage item={item} />
       </div>

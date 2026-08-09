@@ -37,6 +37,8 @@ type EngagementEvents = {
   filmstrip_thumb_click: { slug: string };
   /** Bottom "Next case study" panel clicked. */
   case_next_click: { from_slug: string; to_slug: string };
+  /** Linked company name clicked inside the intro's bio paragraph. */
+  blurb_link_click: { company: string; href: string };
 };
 
 type EventMap = ConversionEvents & EngagementEvents;

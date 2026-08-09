@@ -125,7 +125,7 @@ export function PageNav({
         }}
       />
 
-      <div className="relative flex items-center justify-between px-6 pb-5 pt-12 sm:px-10 lg:px-16 lg:pt-14 xl:px-24">
+      <div className="relative flex items-center justify-between px-6 pb-5 pt-11 sm:px-10 lg:px-16 xl:px-24">
         <Link
           href="/"
           onClick={(e) => {
