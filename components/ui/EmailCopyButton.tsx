@@ -56,7 +56,7 @@ export function EmailCopyButton({
         aria-live="polite"
         className={cn(
           "pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em] transition-all duration-200",
-          dark ? "bg-white text-accent" : "bg-foreground text-background",
+          dark ? "bg-[color:var(--accent-contrast)] text-[color:var(--accent)]" : "bg-foreground text-background",
           copied ? "opacity-100 -translate-y-1" : "opacity-0 translate-y-0",
         )}
       >
@@ -67,7 +67,9 @@ export function EmailCopyButton({
         onClick={handleCopy}
         className={cn(
           "group inline-flex cursor-pointer items-center gap-2 font-sans text-caption font-medium uppercase tracking-[0.12em] transition-colors",
-          dark ? "text-white/80 hover:text-white" : "text-foreground hover:text-accent",
+          dark
+            ? "text-[color:var(--accent-contrast)]/80 hover:text-[color:var(--accent-contrast)]"
+            : "text-foreground hover:text-accent",
           className,
         )}
       >

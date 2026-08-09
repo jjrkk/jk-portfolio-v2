@@ -5,6 +5,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { AboutHero } from "@/components/sections/about/AboutHero";
 import { AboutStatement } from "@/components/sections/about/AboutStatement";
 import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
+import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { AtWork } from "@/components/sections/about/AtWork";
 import { ExperienceTimeline } from "@/components/sections/about/ExperienceTimeline";
 import { LogoWall } from "@/components/sections/LogoWall";
@@ -51,6 +52,9 @@ export default function AboutPage() {
             <div aria-hidden data-nav-sentinel className="pointer-events-none h-0" />
 
             <div className="relative z-[2] mx-[12px] overflow-hidden rounded-t-[2rem] rounded-b-[2rem] bg-background">
+              {/* Same uniform luminous edge as the landing's page-card shell —
+                  consistent contrast against --wall on every side. */}
+              <SpecularBorder uniform radius="rounded-t-[2rem] rounded-b-[2rem]" />
               {/* Cool wash, not brand fuchsia — matches the landing intro's
                   cool-card treatment (INTRO_BLOB = FF Cloud's own accent,
                   reused for palette consistency rather than a new hue). */}

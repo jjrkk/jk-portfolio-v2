@@ -98,11 +98,11 @@
    ============================================================================ */
 
 :root {
-  /* — Frame top inset — 12px on mobile, 28px on desktop (1024px+). Used by
+  /* — Frame top inset — 12px on mobile, 28px on desktop (1280px+). Used by
      PageFrame (via JS matchMedia) and the intro-aperture animation. */
   --frame-top-inset: 12px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   :root {
     --frame-top-inset: 28px;
   }
@@ -210,6 +210,37 @@
   --text-display-sm--line-height: 0.98;
   --text-display-sm--letter-spacing: -0.02em;
   --text-display-sm--font-weight: 700;
+
+  /* Mobile-only intro hero — a step up from --text-display-sm (which the
+     horizontal carousel's project-slide titles share) so the intro's fixed
+     tagline reads with a bit more presence on phones without bumping every
+     project title's size too. */
+  --text-intro-hero-mobile: clamp(2.75rem, 7vw, 5.5rem);
+  --text-intro-hero-mobile--line-height: 0.98;
+  --text-intro-hero-mobile--letter-spacing: -0.02em;
+  --text-intro-hero-mobile--font-weight: 700;
+
+  /* Desktop intro greeting — a notch or two down from --text-display-sm
+     (which the desktop carousel doesn't otherwise use for the intro, but
+     IntroBlock's reduced-motion fallback shares with mobile project titles),
+     scoped separately so shrinking the greeting doesn't touch anything else. */
+  --text-intro-hero-desktop: clamp(2.25rem, 4.75vw, 4.25rem);
+  --text-intro-hero-desktop--line-height: 0.98;
+  --text-intro-hero-desktop--letter-spacing: -0.02em;
+  --text-intro-hero-desktop--font-weight: 700;
+
+  /* Wide-viewport tier for the same intro greeting (min-[1600px]: in
+     CarouselText / IntroBlock) — --text-intro-hero-desktop's floor is
+     deliberately conservative to leave room for the paragraph below inside
+     the pinned intro slide, but that constraint eases with more horizontal
+     room, so past 1600px it steps up toward --text-hero's boldness. Scaled
+     down from --text-hero itself (~72%, two notches) rather than reusing it
+     outright — bold enough to feel intentional next to project titles, but
+     staying clearly a step below matching them exactly. */
+  --text-intro-hero-wide: clamp(2.5rem, 5.5vw, 7.25rem);
+  --text-intro-hero-wide--line-height: 0.94;
+  --text-intro-hero-wide--letter-spacing: -0.024em;
+  --text-intro-hero-wide--font-weight: 700;
 
   --text-title: clamp(1.75rem, 3vw, 2.75rem);
   --text-title--line-height: 1.05;

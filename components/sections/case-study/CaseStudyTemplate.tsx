@@ -2,6 +2,7 @@ import { PageNav } from "@/components/PageNav";
 import { getProjectTheme } from "@/lib/theme";
 import { SITE } from "@/lib/site";
 import type { CaseStudy } from "@/lib/case-studies";
+import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { ProjectAccent } from "./ProjectAccent";
 import { CaseHero } from "./CaseHero";
 import { CaseSectionOpener } from "./CaseSectionOpener";
@@ -65,6 +66,10 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
           <div className="relative z-[2]">
             {/* Rounded top corners, inset to clear the PageFrame boundary */}
             <div className="relative mx-[12px] overflow-hidden rounded-t-[2rem]">
+              {/* Same uniform luminous edge as the landing's page-card shell —
+                  consistent contrast against the accent-colored surface behind
+                  it, on every side rather than just a directional glass sheen. */}
+              <SpecularBorder uniform radius="rounded-t-[2rem]" />
               <CaseSectionOpener />
               <CaseOverview study={study} />
               {study.body.map((block, i) => (
@@ -91,7 +96,7 @@ export function CaseStudyTemplate({ study }: { study: CaseStudy }) {
 
         {/* Footer — sticky underlay at bottom; content peels away to reveal it */}
         <FooterReveal>
-          <Contact dark />
+          <Contact dark variant="accent" />
         </FooterReveal>
       </main>
     </div>
