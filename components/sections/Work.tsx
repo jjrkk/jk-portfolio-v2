@@ -1781,7 +1781,7 @@ function HorizontalCarousel({ className }: { className: string }) {
       )}
     >
       {/* Chrome: name/counter row + pagination — replaced by ← BACK on contact */}
-      <div className="absolute inset-x-0 top-0 z-20 flex flex-col gap-5 pt-10">
+      <div className="absolute inset-x-0 top-0 z-20 flex flex-col gap-[27px] pt-10">
         {isContact ? (
           <button
             type="button"
