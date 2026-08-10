@@ -57,7 +57,7 @@ export const INTRO: WorkItem = {
     { text: "University Health Network", href: "https://humanfactors.ca/" },
     { text: ". These days I design and build with agentic AI — from strategy through to code." },
   ],
-  image: "/about/justin-with-arms-outstretched-arrow.webp",
+  image: "/about/jk-whiteboard-light-hero-image.webp",
   href: "/about/",
 };
 

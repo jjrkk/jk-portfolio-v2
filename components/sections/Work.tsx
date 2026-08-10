@@ -1444,12 +1444,12 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
           loading="lazy"
           className={cn(
             "block w-full rounded-[1rem] object-cover",
-            // Anchor top-right on the intro's crop: Justin is the rightmost
-            // person in frame with his head near the top, and object-cover's
+            // Anchor top-left on the intro's crop: Justin is on the left side
+            // of frame with his head near the top, and object-cover's
             // default center crop risked losing him — both on the horizontal
             // squeeze (aspect ratio narrowing) and the vertical one (short,
             // letterboxed heights) — more aggressively than the others.
-            isIntro ? "h-full object-right-top" : "aspect-[4/3]",
+            isIntro ? "h-full object-left-top" : "aspect-[4/3]",
           )}
         />
       </div>
@@ -1881,7 +1881,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                     src={slide.image ?? ""}
                     alt={slide.kind === "intro" ? "Justin Kirkey collaborating with his team" : `${slide.title} — case study`}
                     loading="eager"
-                    className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-right-top")}
+                    className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-left-top")}
                   />
                   <SpecularBorder />
                 </Link>
@@ -1896,7 +1896,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                       src={slide.image}
                       alt={slide.kind === "intro" ? "Justin Kirkey collaborating with his team" : `${slide.title} — case study`}
                       loading="eager"
-                      className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-right-top")}
+                      className={cn("block h-full w-full object-cover", slide.kind === "intro" && "object-left-top")}
                     />
                   ) : (
                     <div
@@ -1937,8 +1937,8 @@ function HorizontalCarousel({ className }: { className: string }) {
               Let&rsquo;s build something.
             </h2>
             <p className="mt-4 max-w-sm font-sans text-body text-muted">
-              Open to Lead, Staff, and Director product-design roles — and
-              AI-first teams where designing and building live in the same person.
+              Open to Principal / Staff / Lead or Design Director roles doing
+              meaningful work on AI-first teams.
             </p>
 
             <div className="mt-7 flex flex-col items-start gap-5">

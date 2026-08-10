@@ -55,8 +55,8 @@ export function Contact({ dark, variant = "brand" }: { dark?: boolean; variant?:
               onAccent ? "text-[color:var(--accent-contrast)]/85" : "text-muted",
             )}
           >
-            Open to Lead, Staff, and Director product-design roles — and
-            AI-first teams where designing and building live in the same person.
+            Open to Principal / Staff / Lead or Design Director roles doing
+            meaningful work on AI-first teams.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -122,8 +122,8 @@ export function Contact({ dark, variant = "brand" }: { dark?: boolean; variant?:
         </Reveal>
         <Reveal delay={0.1}>
           <p className="mt-7 max-w-xl font-sans text-body-lg text-muted">
-            Open to Lead, Staff, and Director product-design roles — and
-            AI-first teams where designing and building live in the same person.
+            Open to Principal / Staff / Lead or Design Director roles doing
+            meaningful work on AI-first teams.
           </p>
         </Reveal>
 

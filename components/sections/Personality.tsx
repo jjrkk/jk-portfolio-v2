@@ -9,7 +9,7 @@ const PHOTOS = [
   { src: "/personality/talk.webp", alt: "Justin speaking at a design talk" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
   { src: "/about/justin-during-movember.jpg", alt: "Justin during Movember" },
-  { src: "/about/justin-jumping-off-a-cliff.webp", alt: "Justin jumping off a cliff" },
+  { src: "/personality/jk-whiteboard.webp", alt: "Justin sketching a product flow at the whiteboard" },
 ];
 
 export function Personality() {
