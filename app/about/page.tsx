@@ -3,7 +3,6 @@ import { AccentReset } from "@/components/AccentReset";
 import { PageNav } from "@/components/PageNav";
 import { PageTransition } from "@/components/PageTransition";
 import { AboutHero } from "@/components/sections/about/AboutHero";
-import { AboutStatement } from "@/components/sections/about/AboutStatement";
 import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
 import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { AtWork } from "@/components/sections/about/AtWork";
@@ -27,8 +26,9 @@ export const metadata: Metadata = {
   },
 };
 
-// About: split hero → big statement → "at work" philosophy → experience
-// timeline → clients & recognition → off-the-clock → contact. The page frame
+// About: split hero (now carrying the "I design... then build them" statement
+// directly) → "at work" philosophy → experience timeline → clients &
+// recognition → off-the-clock → contact. The page frame
 // holds the wall here (no carousel to drive per-project theming) — the hero
 // sits on the same light wall as the rest of the page now, so the nav can
 // use its default dark-ink tone throughout (no scroll-driven flip needed).
@@ -59,7 +59,6 @@ export default function AboutPage() {
                   cool-card treatment (INTRO_BLOB = FF Cloud's own accent,
                   reused for palette consistency rather than a new hue). */}
               <CaseSectionOpener color={INTRO_BLOB} />
-              <AboutStatement />
               <LogoWall />
               <AtWork />
               <ExperienceTimeline />

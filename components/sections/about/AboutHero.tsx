@@ -28,19 +28,19 @@ export function AboutHero() {
 
           <div className="lg:col-span-7">
             <Reveal>
-              <h1 className="font-serif text-display font-semibold leading-[0.92]"
+              <h1 className="font-serif text-display-sm font-semibold leading-[1.02]"
                   style={{ color: "var(--wall-ink)" }}>
-                Hi, I&rsquo;m
-                <br />
-                <span style={{ color: "var(--accent)" }}>Justin.</span>
+                I design digital products for healthcare, high-stakes, and
+                AI-first teams — then{" "}
+                <span style={{ color: "var(--accent)" }}>build them</span> with
+                agentic AI.
               </h1>
             </Reveal>
             <Reveal delay={0.08}>
               <p className="mt-8 max-w-xl font-sans text-body-lg text-muted">
-                I&rsquo;m a product design leader based in Toronto — 15+ years
-                across healthcare and other high-stakes, regulated products, and
-                a hands-on builder who ships with agentic AI. Open to Lead,
-                Staff, and Director roles, and AI-first teams.
+                15+ years leading product design across healthcare and other
+                high-stakes, regulated industries. Open to Principal / Staff or
+                Design Director roles for meaningful work on AI-first teams.
               </p>
             </Reveal>
             <Reveal delay={0.16}>
