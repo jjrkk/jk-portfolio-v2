@@ -29,9 +29,9 @@ export function AboutHero() {
           <div className="lg:col-span-7">
             <Reveal>
               <h1 className="font-serif text-display-sm font-semibold leading-[1.02]"
-                  style={{ color: "var(--wall-ink)" }}>
+                  style={{ color: "var(--wall-ink)", fontSize: "clamp(2.25rem, 5vw, 4.5rem)" }}>
                 I design digital products for healthcare, high-stakes, and
-                AI-first teams — then{" "}
+                AI-first teams — and{" "}
                 <span style={{ color: "var(--accent)" }}>build them</span> with
                 agentic AI.
               </h1>

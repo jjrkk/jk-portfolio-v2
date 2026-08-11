@@ -127,7 +127,15 @@
   --faint: #8a8780; /* labels / tertiary — large or non-essential text only */
   --border: #dfe2ea; /* hairline structure: "borders before shadows" */
   --surface: #ffffff; /* light "stages" screenshots sit on — the brightest layer */
-  --background-tinted: #e8eaf1; /* one step darker than --background; section contrast rhythm */
+  /* Re-stepped (2026-08-10): the old #e8eaf1 sat only ~2pts of HSL lightness
+     below --background — imperceptible as its own layer, part of why About's
+     panels/case-study narrative alternation read as "muddy." Same hue family,
+     pushed to a real, deliberate step. Nudged lighter again once --wall
+     settled at #dde0ee (the first pass, #dee1ed, landed within ~1 unit/
+     channel of the new wall — an accidental collision between two tokens
+     tuned in separate passes). Now a clean middle rung: --background (97%L)
+     > --background-tinted (94%L) > --wall (90%L). */
+  --background-tinted: #e6e9f2; /* a clear step below --background, clearly short of --wall */
 
   /* — Accent — site BRAND value: the violet-magenta "home" color (eyebrows,
      links, focus, the hero before you enter a project). LOCKED via Direction A
@@ -161,8 +169,18 @@
      deviation from --background's "warm off-white" for this token only.
      Iterated twice more the same day: lightened ("less grey"), then
      re-darkened a step once the intro card went almost-white, to keep the
-     two surfaces legibly distinct. */
-  --wall: #eef0f6;
+     two surfaces legibly distinct.
+     Deepened again (2026-08-10): at #eef0f6 the wall sat only ~1.05:1
+     contrast from --background — the wall→card boundary was doing no work
+     on its own (About in particular), leaving the SpecularBorder ring with
+     nothing to glow against. First tried a bolder ~H227 S46 L77 push, but
+     Justin preferred keeping the resting wall light/wispy/atmospheric and
+     reserving bolder saturated color for the case-study accent walls
+     (ProjectAccent, untouched by this). Settled on a lighter step within
+     the SAME hue family (~H227 S38 L90) — enough presence for the
+     wall→card seam and SpecularBorder ring to read, without losing the
+     calm, airy feel. */
+  --wall: #dde0ee;
   --wall-ink: var(--foreground);
 }
 

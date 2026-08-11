@@ -3,18 +3,26 @@ import { Section } from "@/components/ui/Section";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 
-// DRAFT copy + interim photos (the cats/music shots from the old site aren't in
-// the repo — swap in when available).
-const PHOTOS = [
+const PHOTOS: { src: string; alt: string; position?: string }[] = [
   { src: "/personality/talk.webp", alt: "Justin speaking at a design talk" },
   { src: "/personality/candid-2.jpg", alt: "Candid" },
-  { src: "/about/justin-during-movember.jpg", alt: "Justin during Movember" },
   { src: "/personality/jk-whiteboard.webp", alt: "Justin sketching a product flow at the whiteboard" },
+  {
+    src: "/personality/justin-and-danica.webp",
+    alt: "Justin and his wife Danica at a Blue Jays game",
+    // Nudged left off dead-center so a stranger's head at the frame's right
+    // edge crops out and the two of them sit more centered in the square.
+    position: "44% center",
+  },
 ];
 
 export function Personality() {
   return (
-    <Section tone="tinted">
+    // Surface (white), matching LogoWall — the two bookend sections now
+    // share the same base so the top/bottom CaseSectionOpener washes read
+    // as true mirrors of each other instead of one popping (over white)
+    // and the other going muddy (over a differently-tinted panel).
+    <Section tone="surface">
       <Container>
         <Reveal>
           <Eyebrow>Off the clock</Eyebrow>
@@ -39,6 +47,7 @@ export function Personality() {
                   alt={p.alt}
                   loading="lazy"
                   className="aspect-square w-full object-cover"
+                  style={p.position ? { objectPosition: p.position } : undefined}
                 />
               </li>
             ))}

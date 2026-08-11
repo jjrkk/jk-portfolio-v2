@@ -36,10 +36,15 @@ export const SITE_ACCENT = "#D7355D";
  *  rest state, About, PageFrame, Contact). Re-darkened a step per Justin's
  *  steer (2026-08-07) — once the intro card (INTRO_PANEL_BG) went almost
  *  white, the wall needed to sit a bit deeper again to keep the two surfaces
- *  legibly distinct; still nowhere near the original "too grey" value. Must
+ *  legibly distinct; still nowhere near the original "too grey" value.
+ *  Deepened again (2026-08-10) within the same blue-grey hue family so the
+ *  wall→card boundary carries real contrast — settled on a light/wispy step
+ *  (not the bolder first attempt) per Justin's steer to keep the resting
+ *  wall atmospheric and save saturated color for the case-study accent
+ *  walls (see globals.css's --wall comment for the full history). Must
  *  stay in sync with --wall's :root default in globals.css — same
  *  manual-sync convention as SITE_ACCENT / --accent. */
-export const WALL_LIGHT = "#eef0f6";
+export const WALL_LIGHT = "#dde0ee";
 
 /** Intro slide's own card surface — almost white, just a whisper cool, so the
  *  INTRO_BLOB glow (kept at full strength, unchanged) does the work of
