@@ -73,6 +73,25 @@ const MIN_SCALE = 0.82;
 // so it never sprawls on ultrawide. Top bar and content share this padding.
 const PAD = "mx-auto w-full max-w-[140rem] px-6 sm:px-10 lg:px-16 xl:px-24";
 
+// Mobile/tablet carousel card height (HorizontalCarousel, <1280px width):
+// width-driven 4:3 (`* 0.75`), capped by viewport height (`52svh`) so a tall
+// narrow phone doesn't grow the card enough to push the copy below the fold.
+// Kept as the card SHELL's own height, unchanged. Two things were tried and
+// dropped here: (1) raising this to chase the photo's aspect ratio fixes the
+// crop but blows the layout budget on landscape tablet/small-laptop widths
+// (e.g. 1024×768), overlapping the copy below; (2) letterboxing the intro
+// photo's own width inside this unchanged shell (matching desktop's bounded-
+// crop fix) traded that overlap for visible bars instead — and worse bars
+// than desktop's, since this shell runs much flatter (≈2.4 aspect at
+// 1024×768) than any reasonable crop bound. There's also no vertical slack
+// to grow into: at 1024×768 the WORK/GET IN TOUCH row is already being
+// clipped by the section's overflow-hidden even at this unchanged height —
+// a pre-existing bug, unrelated to the intro photo, worth its own fix.
+// Given neither alternative reads better, the intro photo is back to plain
+// full-bleed object-cover here (see the isIntro img classes below) — same
+// crop behaviour as before this round of fixes, no bars, no overlap.
+const MOBILE_CARD_HEIGHT = "min(calc((100vw - 6rem) * 0.75), 52svh)";
+
 // Per-slide theme: intro rides the base canvas + brand accent, then the work.
 // `wall` drives the outer page-surface backdrop (--wall): light/neutral at
 // the intro, then tracks each project's own accent exactly like `accent`
@@ -1376,27 +1395,33 @@ function WorkStage({ item, animateBlobs = true, isActive = true, onRequestFocus,
   // width, not the height, was the problem there. clamp()'s floor keeps it
   // from reading as a slim letterboxed strip at short heights; the ceiling
   // keeps it from ballooning at very tall ones. Tapers to a lower band below
-  // 760px height on top of that, with its own (smaller) floor/ceiling.
-  //
-  // The ceiling (780px) trades width for height at the fixed 1090px box width
-  // (introMaxWidth): object-cover + the right-top anchor below crops ~80px
-  // (~7%) off the image's left edge to fill the taller box at the same width
-  // — deliberate, not a side effect. Capped here rather than at the source's
-  // full native height (800px, a ~9% crop) because past ~80px the crop starts
-  // eating into Owen's (the leftmost person's) face rather than just trimming
-  // past him — tuned by rendering the crop at several offsets side by side.
+  // 760px height on top of that, with its own (smaller) floor/ceiling — the
+  // short tier's ceiling (460px) is deliberately set to match the tall tier's
+  // floor (also 460px), and its curve is tuned (calc(50vh + 80px)) to equal
+  // that same 460px right at the 760px handoff, so the two tiers meet with no
+  // visible jump in the image's size as a viewport crosses 760px tall.
   const introHeightTier = isIntro
-    ? "h-[clamp(460px,58vh,780px)] [@media(max-height:760px)]:h-[clamp(380px,46vh,520px)]"
+    ? "h-[clamp(460px,58vh,780px)] [@media(max-height:760px)]:h-[clamp(380px,calc(50vh_+_80px),460px)]"
     : "";
-  // Caps how wide the image is allowed to get independent of the height cap
-  // above — without this, a wide column (ultra-wide viewports) paired with a
-  // capped height reads as an increasingly letterboxed strip since nothing
-  // was bounding the aspect ratio, only the height. Sized to read closer to
-  // the case-study hero's own generous width (1090ish) rather than reading
-  // small next to it. Flex-centered within the column by CarouselCard's
-  // wrapper, so it just gets even side margins past this width rather than
-  // stretching edge-to-edge.
-  const introMaxWidth = isIntro ? "max-w-[1090px]" : "";
+  // Caps how wide the image is allowed to get, tied to the clamped HEIGHT
+  // above via a ratio a little FLATTER than the source photo's own aspect
+  // (2200×1512 ≈ 1.455 → capped at 1.6, not 1.455 itself). An exact-aspect
+  // cap traded crop for letterboxing: on wide monitors (e.g. 1920×900) the
+  // column comfortably exceeds ceiling×1.455, so the box got pinned narrower
+  // than the column and --panel-bg showed as bars on both sides — a look we
+  // decided reads worse than a small amount of crop. 1.6 instead means the
+  // box can go a bit flatter than the photo before the cap engages, so
+  // object-cover's left/top anchor only has to crop a BOUNDED amount off the
+  // bottom (≤ 1 − 1.455⁄1.6 ≈ 9% of the photo's height, worst case, vs. the
+  // 22–40% crop the uncapped flat-1090px version allowed) — enough to keep
+  // his raised hand/the marker off the true top edge without resorting to
+  // bars in the common wide-desktop range. Each tier mirrors its height
+  // tier's numbers × 1.6 (736=460×1.6, 1248=780×1.6, 608=380×1.6, and the
+  // short tier's calc mirrors calc(50vh+80px)×1.6) so the width handoff at
+  // 760px stays exactly as jump-free as the height's.
+  const introMaxWidth = isIntro
+    ? "max-w-[clamp(736px,92.8vh,1248px)] [@media(max-height:760px)]:max-w-[clamp(608px,calc(80vh_+_128px),736px)]"
+    : "";
 
   const shell = cn(
     "relative z-10 w-full overflow-hidden rounded-[1rem] bg-surface shadow-[0_20px_60px_-25px_rgba(0,0,0,0.35)]",
@@ -1874,7 +1899,7 @@ function HorizontalCarousel({ className }: { className: string }) {
                 <Link
                   href={slide.href}
                   className="relative block overflow-hidden rounded-[1rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
-                  style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
+                  style={{ height: MOBILE_CARD_HEIGHT }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -1888,7 +1913,7 @@ function HorizontalCarousel({ className }: { className: string }) {
               ) : (
                 <div
                   className="relative overflow-hidden rounded-[1rem] bg-surface shadow-[0_24px_32px_-8px_rgba(0,0,0,0.32)]"
-                  style={{ height: "min(calc((100vw - 6rem) * 0.75), 52svh)" }}
+                  style={{ height: MOBILE_CARD_HEIGHT }}
                 >
                   {slide.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
