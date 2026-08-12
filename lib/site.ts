@@ -13,8 +13,12 @@ export const SITE = {
   description:
     "AI-native Product Design Leader who builds. 15+ years across healthcare and regulated products — and ships production-grade work with agentic AI, not just designs for it.",
   // Site-wide OG/Twitter card (1200×630). Per-study cards live in /public/social
-  // and are wired via each CaseStudy's `social` field.
-  ogImage: "/social/og-image.png",
+  // and are wired via each CaseStudy's `social` field. The `?v=` query param is
+  // a deliberate cache-buster — LinkedIn (and other unfurl bots) cache the
+  // fetched image by this exact URL string, separately from the page's HTML
+  // metadata, and won't refetch just because the page was re-scraped. Bump the
+  // version whenever this image changes so sharers actually see the update.
+  ogImage: "/social/og-image.png?v=2",
   // TODO(phase-7): confirm exact handles before launch; feeds JSON-LD `sameAs`.
   socials: {
     linkedin: "https://www.linkedin.com/in/justinkirkey/",
