@@ -39,10 +39,6 @@ type EngagementEvents = {
   case_next_click: { from_slug: string; to_slug: string };
   /** Linked company name clicked inside the intro's bio paragraph. */
   blurb_link_click: { company: string; href: string };
-  /** A "Proved in" case-study link clicked inside About's Range/Method section. */
-  method_case_click: { slug: string; stage: string };
-  /** "See it in the work" CTA clicked at the end of About's Range section. */
-  method_see_work_click: Record<string, never>;
 };
 
 type EventMap = ConversionEvents & EngagementEvents;

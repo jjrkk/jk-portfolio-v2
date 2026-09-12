@@ -6,6 +6,7 @@ import { AboutHero } from "@/components/sections/about/AboutHero";
 import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
 import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { Method } from "@/components/sections/about/Method";
+import { Recommendations } from "@/components/sections/about/Recommendations";
 import { AtWork } from "@/components/sections/about/AtWork";
 import { ExperienceTimeline } from "@/components/sections/about/ExperienceTimeline";
 import { LogoWall } from "@/components/sections/LogoWall";
@@ -29,9 +30,11 @@ export const metadata: Metadata = {
 
 // About: split hero (now carrying the "I design... then build them" statement
 // directly) → Range (the spectrum-of-tactics claim, backed by real case-study
-// evidence) → clients & recognition → "at work" AI-build philosophy (de-
-// emphasized under Range now — see lib/method.ts) → experience timeline →
-// off-the-clock → contact. The page frame
+// evidence) → In their words (LinkedIn recommendations corroborating Range's
+// altitude claim — placed immediately after it on purpose, not deeper down)
+// → clients & recognition → "at work" AI-build philosophy (de-emphasized
+// under Range now — see lib/method.ts) → experience timeline → off-the-clock
+// → contact. The page frame
 // holds the wall here (no carousel to drive per-project theming) — the hero
 // sits on the same light wall as the rest of the page now, so the nav can
 // use its default dark-ink tone throughout (no scroll-driven flip needed).
@@ -63,6 +66,7 @@ export default function AboutPage() {
                   reused for palette consistency rather than a new hue). */}
               <CaseSectionOpener color={INTRO_BLOB} />
               <Method />
+              <Recommendations />
               <LogoWall />
               <AtWork />
               <ExperienceTimeline />

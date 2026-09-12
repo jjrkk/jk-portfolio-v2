@@ -75,7 +75,7 @@ export function ArrowLink({
     );
   }
   return (
-    <Link href={href ?? "#"} className={classes}>
+    <Link href={href ?? "#"} onClick={onClick} className={classes}>
       {children}
       {!hideArrow && arrow}
     </Link>
