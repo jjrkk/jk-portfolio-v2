@@ -5,11 +5,11 @@ import { scrollToId } from "@/lib/scroll";
 
 /** Nav labels are curated separately from each section's own Eyebrow text —
  *  they don't have to match 1:1 (e.g. "In their words" on the page reads as
- *  "Recommendations" here). "Off the clock" and "Contact" are deliberately
+ *  "Street cred" here). "Off the clock" and "Contact" are deliberately
  *  left out — asides/closing, not destinations worth a link. */
 const LINKS = [
   { id: "process", label: "Process" },
-  { id: "recommendations", label: "Recommendations" },
+  { id: "recommendations", label: "Street cred" },
   { id: "clients", label: "Clients & recognition" },
   { id: "at-work", label: "At work" },
   { id: "experience", label: "Experience" },
@@ -31,7 +31,7 @@ export function AboutSectionNav() {
     <nav aria-label="Jump to section" className="hidden lg:block">
       <Container>
         <ul
-          className="flex items-center gap-x-6 overflow-x-auto py-5 font-mono text-eyebrow uppercase tracking-[0.12em] text-muted [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex items-center gap-x-6 overflow-x-auto py-7 font-mono text-eyebrow uppercase tracking-[0.12em] text-muted [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {LINKS.map((l, i) => (
             <li key={l.id} className="flex shrink-0 items-center gap-x-6">
