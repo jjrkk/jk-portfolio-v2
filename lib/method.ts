@@ -63,7 +63,7 @@ export const METHOD_STAGES: MethodStage[] = [
     body: "Ethnography and clinician interviews under real constraints — a live operating room, a fertility lab, a transit platform — not a usability lab.",
     tactics: [
       { label: "Ethnographic field research", emphasis: true },
-      { label: "Clinician & interviews" },
+      { label: "User interviews" },
       { label: "Workflow mapping" },
     ],
     proof: [
