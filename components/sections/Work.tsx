@@ -1241,7 +1241,7 @@ function CarouselText({ item, activeMorphRef, ctaRef }: { item: WorkItem; active
             href={item.href ?? "#"}
             onClick={(e) => {
               if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-              track("case_study_open", { slug: item.slug, source: "carousel" });
+              track("case_study_open", { slug: item.slug, nav_source: "carousel" });
               const trigger = activeMorphRef?.current;
               if (trigger) { e.preventDefault(); trigger(); }
             }}

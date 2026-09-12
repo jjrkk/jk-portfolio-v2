@@ -28,7 +28,7 @@ type EngagementEvents = {
   /** A carousel slide became active (desktop peeking-deck). */
   carousel_slide_view: { slug: string; index: number };
   /** "Case study" morph link or carousel text link clicked. */
-  case_study_open: { slug: string; source: "carousel" | "case_next" };
+  case_study_open: { slug: string; nav_source: "carousel" | "case_next" };
   /** WORK ↓ CTA on the intro slide clicked. */
   work_cta_click: Record<string, never>;
   /** "GET IN TOUCH" secondary CTA on the intro slide clicked. */

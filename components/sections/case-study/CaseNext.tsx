@@ -24,7 +24,7 @@ export function CaseNext({ next, currentSlug }: { next: NonNullable<CaseStudy["n
           href={`/work/${next.slug}/`}
           onClick={() => {
             track("case_next_click", { from_slug: currentSlug, to_slug: next.slug });
-            track("case_study_open", { slug: next.slug, source: "case_next" });
+            track("case_study_open", { slug: next.slug, nav_source: "case_next" });
           }}
           className="group flex flex-col gap-4 py-20 sm:py-28"
         >
