@@ -21,7 +21,11 @@ import { RECOMMENDATIONS, RECOMMENDATIONS_TOTAL, RECOMMENDATIONS_URL } from "@/l
  * shells (SpecularBorder) on a whisper-off-white fill (--panel-bg, not pure
  * --surface white) instead of a flat all-sides border — and fold the
  * relationship tag into the byline instead of a bottom pill badge — one
- * fewer "SaaS testimonial" tell.
+ * fewer "SaaS testimonial" tell. Each card also carries a low-opacity
+ * corner wash in its own curated color (lib/recommendations.ts's `color`
+ * field) — decorative variety behind the content, not a claimed legend
+ * the way Range's tile colors are. The white SpecularBorder stroke sits
+ * on top of it, untouched.
  */
 export function Recommendations() {
   return (
@@ -43,8 +47,14 @@ export function Recommendations() {
           {RECOMMENDATIONS.map((r, i) => (
             <Reveal as="li" key={r.id} delay={Math.min(i * 0.04, 0.2)} className="h-full">
               <div className="relative flex h-full flex-col gap-5 overflow-hidden rounded-2xl bg-panel-bg p-6 sm:p-7">
-                <SpecularBorder radius="rounded-2xl" />
-                <div className="min-w-0">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-0"
+                  style={{
+                    background: `linear-gradient(135deg, color-mix(in srgb, ${r.color} 10%, transparent) 0%, transparent 60%)`,
+                  }}
+                />
+                <div className="relative z-10 min-w-0">
                   <div className="flex items-baseline justify-between gap-3">
                     <p className="font-sans text-body font-medium text-foreground">{r.name}</p>
                     <span className="shrink-0 font-mono text-[11px] text-faint">{r.year}</span>
@@ -63,9 +73,10 @@ export function Recommendations() {
                   </p>
                 </div>
 
-                <p className="flex-1 font-serif text-body-lg text-foreground">
+                <p className="relative z-10 flex-1 font-serif text-body-lg text-foreground">
                   &ldquo;{r.quote}&rdquo;
                 </p>
+                <SpecularBorder radius="rounded-2xl" />
               </div>
             </Reveal>
           ))}

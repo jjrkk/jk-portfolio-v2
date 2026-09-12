@@ -18,7 +18,7 @@ export const EXPERIENCE: Role[] = [
   {
     company: "Future Fertility",
     title: "Product Design Lead",
-    period: "2024 — Present",
+    period: "2024 — 2026",
     blurb:
       "Leading product design & UX research for an AI-powered fertility platform. Redesigned the flagship oocyte-evaluation reports (VIOLET™ & MAGENTA™) into five languages for a global clinical audience.",
     photo: "/experience/future-fertility-team-pic.jpg",

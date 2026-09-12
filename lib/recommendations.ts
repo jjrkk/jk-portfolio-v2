@@ -21,7 +21,17 @@
  * was written, not when the working relationship happened). Surfaced per
  * card — spanning 2013–2026 — so the longitudinal spread reads implicitly
  * from the cards themselves rather than needing a summary stat line.
- */
+ *
+ * `color` drives a low-opacity corner wash behind each card's content (see
+ * Recommendations.tsx) — decorative variety, not a claimed legend like
+ * Range's tile colors. Pulled from the same harmonized family already
+ * established in lib/theme.ts's PROJECT_THEMES (7 of these 9 already
+ * appear one section up, in Range) plus two new hues (plum, terracotta)
+ * added to fill gaps in the wheel. Assigned so every pair of grid-adjacent
+ * cards (3-col layout) stays well-separated in hue — Kirsten's magenta and
+ * David/Andrew's ExperiencePoint yellow are the only "accurate" ties (she
+ * names the Violet & Magenta reports directly; they were both there); the
+ * rest are chosen for separation and variety, not claimed meaning. */
 
 export type Recommendation = {
   id: string;
@@ -30,6 +40,7 @@ export type Recommendation = {
   company?: string;
   relationship: string;
   year: number;
+  color: string;
   quote: string;
 };
 
@@ -41,6 +52,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "FortNine & Defender Marine",
     relationship: "Managed Justin",
     year: 2023,
+    color: "#40539e", // blue
     quote:
       "Justin was my right hand. Whether operating at 10,000 ft or executing in sprints, Justin always delivered with the highest quality of work. He is versatile, quick thinking and kind. A unique blend for a leader.",
   },
@@ -51,6 +63,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "Future Fertility",
     relationship: "Senior to Justin",
     year: 2026,
+    color: "#b1309a", // magenta — Violet & Magenta, which she names directly
     quote:
       "Justin quickly got up to speed and took the lead on redesigning our flagship products — egg quality reports used by both clinical staff and fertility patients. His design process was very thoughtful and thorough, gaining both cross-functional and external clinical/patient feedback to shape the new designs.",
   },
@@ -61,6 +74,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "ExperiencePoint",
     relationship: "Peer, same team",
     year: 2024,
+    color: "#F2CA3F", // yellow — Impact/ExperiencePoint
     quote:
       "Justin is an incredible leader, manager and top-tier designer. He's uniquely capable of operating at any level of an opportunity, from business model to user experience… I would work with Justin again in a heartbeat.",
   },
@@ -71,6 +85,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "ExperiencePoint",
     relationship: "Senior to Justin",
     year: 2024,
+    color: "#D7355D", // brand fuchsia
     quote:
       "If you need someone to lead a team and tackle complex or ambiguous problems, Justin is a great option — and he's also a great option if that team needs to roll up their sleeves and design an architecture or front-end experience.",
   },
@@ -80,6 +95,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     role: "Experienced Product Professional",
     relationship: "Hired & managed Justin",
     year: 2021,
+    color: "#0e8c9c", // teal
     quote:
       "It's rare that you come across a talent like Justin… Justin earns my highest recommendation. Any organization would be very lucky to have him.",
   },
@@ -90,6 +106,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "Jobber",
     relationship: "Reported to Justin",
     year: 2019,
+    color: "#3e8e57", // green
     quote:
       "I was very fortunate to have worked with Justin on multiple projects, witnessing what strong design leadership truly looks like. He brings a careful balance to his management style, giving his team the confidence to solve problems independently while supporting along the way.",
   },
@@ -99,6 +116,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     role: "Service & Interaction Designer",
     relationship: "Reported to Justin",
     year: 2019,
+    color: "#5b3a66", // plum
     quote:
       "Justin led with accountability, transparency, humility, and expertise — but best of all, he made it his priority to ensure that each team member's individual personal growth objectives were being met.",
   },
@@ -109,6 +127,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "CS Disco",
     relationship: "Peer, same team",
     year: 2013,
+    color: "#c1553a", // terracotta
     quote:
       "Justin has the ability to break down complex problems into something regular people can understand — and he can do it without even breaking a sweat.",
   },
@@ -119,6 +138,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     company: "Accenture Song",
     relationship: "Peer, same team",
     year: 2016,
+    color: "#6d54c9", // purple
     quote:
       "Justin's leadership style promotes great teamwork amongst colleagues and clients. During a co-creation workshop for Prostate Cancer Canada and the Movember Foundation, he tactfully brought clients, patients and caregivers into the design process, ensuring they felt heard, involved, and at ease the whole way through.",
   },
