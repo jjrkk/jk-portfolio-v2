@@ -9,7 +9,7 @@ import { EXPERIENCE, EDUCATION } from "@/lib/experience";
  *  right. Hairline rules keep it editorial and calm. */
 export function ExperienceTimeline() {
   return (
-    <Section>
+    <Section id="experience" className="scroll-mt-28">
       <Container>
         <Reveal>
           <Eyebrow>Experience</Eyebrow>

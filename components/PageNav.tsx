@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { SITE } from "@/lib/site";
+import { scrollToId } from "@/lib/scroll";
 import { useMorphBackTrigger } from "@/components/morph/MorphProvider";
 
 /**
@@ -50,19 +51,7 @@ export function PageNav({
 
   const handleAnchorClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const target = document.getElementById(rightHref.slice(1));
-    if (!target) return;
-    // The Contact footer uses `sticky bottom-0` — its element position never
-    // changes, so scrollTo(element) barely moves. Scroll to page bottom instead
-    // so the sticky footer is fully revealed by scrolling past all content above.
-    const isSticky = getComputedStyle(target).position === "sticky"
-      || getComputedStyle(target.parentElement ?? target).position === "sticky";
-    const dest = isSticky
-      ? document.documentElement.scrollHeight - window.innerHeight
-      : target;
-    const lenis = (window as unknown as { lenis?: { scrollTo: (t: HTMLElement | number, o?: { duration?: number }) => void } }).lenis;
-    if (lenis?.scrollTo) lenis.scrollTo(dest as number, { duration: 1.1 });
-    else window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+    scrollToId(rightHref.slice(1));
   };
 
   useEffect(() => {

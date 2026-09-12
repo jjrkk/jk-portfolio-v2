@@ -29,7 +29,7 @@ import { RECOMMENDATIONS, RECOMMENDATIONS_TOTAL, RECOMMENDATIONS_URL } from "@/l
  */
 export function Recommendations() {
   return (
-    <Section tone="tinted">
+    <Section id="recommendations" tone="tinted" className="scroll-mt-28">
       <Container>
         <div className="max-w-2xl">
           <Reveal>

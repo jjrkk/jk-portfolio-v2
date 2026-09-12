@@ -3,6 +3,7 @@ import { AccentReset } from "@/components/AccentReset";
 import { PageNav } from "@/components/PageNav";
 import { PageTransition } from "@/components/PageTransition";
 import { AboutHero } from "@/components/sections/about/AboutHero";
+import { AboutSectionNav } from "@/components/sections/about/AboutSectionNav";
 import { CaseSectionOpener } from "@/components/sections/case-study/CaseSectionOpener";
 import { SpecularBorder } from "@/components/ui/SpecularBorder";
 import { Method } from "@/components/sections/about/Method";
@@ -29,12 +30,13 @@ export const metadata: Metadata = {
 };
 
 // About: split hero (now carrying the "I design... then build them" statement
-// directly) → Range (the spectrum-of-tactics claim, backed by real case-study
-// evidence) → In their words (LinkedIn recommendations corroborating Range's
-// altitude claim — placed immediately after it on purpose, not deeper down)
-// → clients & recognition → "at work" AI-build philosophy (de-emphasized
-// under Range now — see lib/method.ts) → experience timeline → off-the-clock
-// → contact. The page frame
+// directly) → a one-time jump-in section nav (AboutSectionNav — not sticky;
+// see that file for why) → Range (the spectrum-of-tactics claim, backed by
+// real case-study evidence) → In their words (LinkedIn recommendations
+// corroborating Range's altitude claim — placed immediately after it on
+// purpose, not deeper down) → clients & recognition → "at work" AI-build
+// philosophy (de-emphasized under Range now — see lib/method.ts) →
+// experience timeline → off-the-clock → contact. The page frame
 // holds the wall here (no carousel to drive per-project theming) — the hero
 // sits on the same light wall as the rest of the page now, so the nav can
 // use its default dark-ink tone throughout (no scroll-driven flip needed).
@@ -65,6 +67,7 @@ export default function AboutPage() {
                   cool-card treatment (INTRO_BLOB = FF Cloud's own accent,
                   reused for palette consistency rather than a new hue). */}
               <CaseSectionOpener color={INTRO_BLOB} />
+              <AboutSectionNav />
               <Method />
               <Recommendations />
               <LogoWall />

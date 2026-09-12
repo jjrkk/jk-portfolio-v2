@@ -12,7 +12,8 @@ import { METHOD_STAGES } from "@/lib/method";
 import { WORK } from "@/lib/work";
 
 /**
- * "Range" — the spectrum-of-tactics section (CLAUDE.md About IA addition).
+ * "Process" — the spectrum-of-tactics section (CLAUDE.md About IA addition;
+ * labelled "Range" during earlier build, since renamed for the page).
  * One quiet list, five rows — same restrained grammar as AtWork's point list
  * (hairline rule, sans row title, one line of support) rather than a second,
  * heavier taxonomy. Each row opens with a small icon tile instead of pure
@@ -29,11 +30,11 @@ import { WORK } from "@/lib/work";
  */
 export function Method() {
   return (
-    <Section tone="surface">
+    <Section id="process" tone="surface" className="scroll-mt-28">
       <Container>
         <div className="max-w-2xl">
           <Reveal>
-            <Eyebrow>Range</Eyebrow>
+            <Eyebrow>Process</Eyebrow>
           </Reveal>
           <Reveal delay={0.05}>
             <h2 className="mt-6 font-serif text-display-sm font-semibold text-foreground">

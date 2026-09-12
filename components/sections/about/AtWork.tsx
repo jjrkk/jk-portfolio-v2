@@ -23,7 +23,7 @@ const POINTS = [
 
 export function AtWork() {
   return (
-    <Section tone="tinted">
+    <Section id="at-work" tone="tinted" className="scroll-mt-28">
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
